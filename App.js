@@ -16,6 +16,7 @@ import Chat from "./Components/WhatsappClone/Chat";
 import Profile from "./Components/WhatsappClone/Profile";
 import AllContacts from "./Components/WhatsappClone/AllContacts";
 import Archived from "./Components/WhatsappClone/Archived";
+import Camera from "./Components/WhatsappClone/Camera";
 import {
   View,
   Image,
@@ -255,6 +256,14 @@ export default function App() {
             component={BarCodeScannerScreen}
             options={{
               title: "Scan QR code",
+            }}
+          />
+          <Stack.Screen
+            name="Camera"
+            component={Camera}
+            options={{
+              title: "",
+              headerLeft:() => null,
             }}
           />
         </Stack.Group>

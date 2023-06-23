@@ -23,7 +23,6 @@ const CommunityComponent = ({
   setisFocused,
   onPress
 }) => {
-  const navigation = useNavigation();
 
   return (
     <View style={[styles.container, { backgroundColor: CHAT_BACKROUND_COLOR }]}>

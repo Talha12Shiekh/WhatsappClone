@@ -497,7 +497,7 @@ const WhatsAppNavbar = ({
           </Text>
         </View>
         <View style={styles.iconContainer}>
-          <RippleButton>
+          <RippleButton onPress={() => navigation.navigate("Camera")}>
             <Camera name="camera" color={INACTIVE_TAB_WHITE_COLOR} size={18} />
           </RippleButton>
           <RippleButton onPress={handleOpenSearchBar}>
