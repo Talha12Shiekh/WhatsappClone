@@ -31,6 +31,7 @@ import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { RippleButton } from "./Components/WhatsappClone/RippleButton";
 import { useState } from "react";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
+import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -168,15 +169,6 @@ export default function App() {
     );
   };
 
-  const ImageScreen = ({route}) => {
-    const {uri} = route.params;
-    return (
-      <View style={{flex:1}}>
-        <Image source={{uri}} style={{flex:1}}/>
-      </View>
-    )
-  }
-
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
@@ -278,7 +270,7 @@ export default function App() {
           />
           <Stack.Screen
             name="ImageScreen"
-            component={ImageScreen}
+            component={CaptureImageScreen}
             options={{
               title: "",
               headerLeft:() => null,
