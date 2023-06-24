@@ -51,6 +51,7 @@ export default function App() {
       }, [navigation, name])
     );
 
+
     return (
       <View
         style={[
@@ -167,6 +168,15 @@ export default function App() {
     );
   };
 
+  const ImageScreen = ({route}) => {
+    const {uri} = route.params;
+    return (
+      <View style={{flex:1}}>
+        <Image source={{uri}} style={{flex:1}}/>
+      </View>
+    )
+  }
+
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
@@ -261,6 +271,14 @@ export default function App() {
           <Stack.Screen
             name="Camera"
             component={Camera}
+            options={{
+              title: "",
+              headerLeft:() => null,
+            }}
+          />
+          <Stack.Screen
+            name="ImageScreen"
+            component={ImageScreen}
             options={{
               title: "",
               headerLeft:() => null,

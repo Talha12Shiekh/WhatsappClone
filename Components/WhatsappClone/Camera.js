@@ -1,18 +1,22 @@
 import { Camera, CameraType } from "expo-camera";
 import { useRef, useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { Foundation } from "@expo/vector-icons";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Animated,
+} from "react-native";
 import { TITLE_COLOR } from "./WhatsappMainScreen";
-import { Platform } from "react-native";
-import { UIManager } from "react-native";
-import { LayoutAnimation } from "react-native";
-import { Animated } from "react-native";
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Entypo, MaterialIcons, Foundation, Feather } from "@expo/vector-icons";
+import * as MediaLibrary from "expo-media-library";
+import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/native";
 
-export default function CameraComponent({navigation}) {
+export default function CameraComponent({ navigation }) {
   const [type, setType] = useState(CameraType.back);
+
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const rotateAnimation = useRef(new Animated.Value(0)).current;
@@ -22,6 +26,13 @@ export default function CameraComponent({navigation}) {
   const [isrotated, setisrotated] = useState(false);
 
   const [istranslated, setistranslated] = useState(false);
+
+  const Cameraref = useRef(null);
+
+  const [permissionResponse, requestPermissionToSave] =
+    MediaLibrary.usePermissions();
+
+  const [flash, setFlash] = useState(true);
 
   const handleRotation = () => {
     const toValue = !isrotated ? 1 : 0;
@@ -39,7 +50,8 @@ export default function CameraComponent({navigation}) {
       duration: 500,
       useNativeDriver: true,
     }).start();
-    setistranslated(istranslted => !istranslted)
+    setistranslated((istranslted) => !istranslted);
+    setFlash(flsh => !flsh);
   };
 
   const TopIconsStyles = {
@@ -51,6 +63,22 @@ export default function CameraComponent({navigation}) {
         }),
       },
     ],
+  };
+
+
+  const handleTakePicture = async () => {
+    if (!Cameraref.current) return;
+    const { uri } = await Cameraref.current.takePictureAsync({
+      quality: 1,
+    });
+    requestPermissionToSave();
+    if (uri) {
+      try {
+        navigation.push("ImageScreen",{uri});
+      } catch (e) {
+        console.log(e)
+      }
+    }
   };
 
   if (!permission) {
@@ -76,12 +104,6 @@ export default function CameraComponent({navigation}) {
     );
   }
 
-  if (Platform.OS === "android") {
-    if (UIManager.setLayoutAnimationEnabledExperimental) {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-    }
-  }
-
   const IconsContainer = ({ children, onPress, ...props }) => {
     return (
       <View {...props}>
@@ -90,16 +112,39 @@ export default function CameraComponent({navigation}) {
     );
   };
 
+  const handleShowLibrary = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      aspect: [3, 2],
+      quality: 1,
+    });
+    const uri =  result.assets[0].uri
+    if (!result.canceled) {
+      navigation.push("ImageScreen",{uri})
+    }
+  }   
+
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type}>
+      <Camera
+        style={styles.camera}
+        flashMode={
+          flash ? Camera.Constants.FlashMode.on : Camera.Constants.FlashMode.off
+        }
+        type={type}
+        ref={Cameraref}
+      >
         <View style={styles.buttonContainer}>
           <View style={styles.cameraTopButtons}>
-            <IconsContainer onPress={() => navigation.navigate("Main")}>
+            <IconsContainer onPress={() => navigation.popToTop()}>
               <Entypo name="cross" size={35} color={TITLE_COLOR} />
             </IconsContainer>
             <IconsContainer
-              onPress={handleMoveFlash}
+              onPress={(e) => {
+                handleMoveFlash();
+                console.log(e.elementType);
+              }}
               style={{
                 width: 35,
                 aspectRatio: 1,
@@ -117,12 +162,15 @@ export default function CameraComponent({navigation}) {
           <View style={{ flex: 7 }}></View>
           <View style={styles.cameraBottomButtons}>
             <View style={styles.cameraSideIcons}>
-              <IconsContainer onPress={() => {}} style={styles.icon}>
+              <IconsContainer onPress={handleShowLibrary} style={styles.icon}>
                 <Foundation name="photo" size={24} color={TITLE_COLOR} />
               </IconsContainer>
             </View>
             <View>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleTakePicture}
+              >
                 <View style={styles.cameraWrapper}>
                   <View style={styles.cameraButton}></View>
                 </View>
