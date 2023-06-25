@@ -1,14 +1,26 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { Image } from "react-native";
-import { TextInput } from "react-native";
-import { TouchableOpacity } from "react-native";
+import React, { useRef, useState } from "react";
+import {
+  TouchableOpacity,
+  PanResponder,
+  TextInput,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+} from "react-native";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
-import { AntDesign, Feather, Entypo, FontAwesome } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Feather,
+  Entypo,
+  FontAwesome,
+  Foundation,
+} from "@expo/vector-icons";
 
 const IconsContainer = ({ children, onPress }) => {
   return (
@@ -29,8 +41,27 @@ const IconsContainer = ({ children, onPress }) => {
   );
 };
 
-const CaptureImageScreen = ({ route,navigation }) => {
+const CaptureImageScreen = ({ route, navigation }) => {
+  const pan = useRef(new Animated.ValueXY()).current;
+
+  const [ButtonClicked,setButtonClicked] = useState(false);
+
+  const [title,setTitle] = useState("");
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
+        useNativeDriver: true,
+      }),
+      onPanResponderRelease: () => {
+        pan.extractOffset();
+      },
+    })
+  ).current;
+
   const { uri } = route.params;
+
   const LastThreeIcons = [
     {
       name: "photo",
@@ -52,6 +83,87 @@ const CaptureImageScreen = ({ route,navigation }) => {
     <View style={{ flex: 1 }}>
       <View
         style={{
+          width: 300,
+          height: 50,
+          backgroundColor: "red",
+          position: "absolute",
+          zIndex: 9999999999,
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexDirection: "row",
+          paddingHorizontal: 10,
+        }}
+      >
+        <View>
+          <TouchableOpacity>
+            <View
+              style={{
+                width: 60,
+                height: 30,
+                backgroundColor: "black",
+                borderColor: TITLE_COLOR,
+                borderWidth: 1,
+                borderRadius: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ fontSize: 12, color: TITLE_COLOR }}>Done</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: "row", gap: 20 }}>
+          <TouchableOpacity>
+            <View>
+              <Feather name="align-center" size={24} color={TITLE_COLOR} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setButtonClicked(btnClcked => !btnClcked)}>
+            <View
+              style={{
+                backgroundColor: ButtonClicked ? "black" : TITLE_COLOR,
+                width: 25,
+                aspectRatio: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 5,
+              }}
+            >
+              <Foundation name="text-color" size={20} color={ButtonClicked ? TITLE_COLOR : "black"} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        style={{
+          backgroundColor: "rgba(0,0,0,.5)",
+          position: "absolute",
+          zIndex: 1000000,
+          ...StyleSheet.absoluteFill,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Animated.View
+          style={{
+            padding: 10,
+            borderRadius: 20,
+            backgroundColor:ButtonClicked ? TITLE_COLOR : "transparent",
+            transform: [{ translateX: pan.x }, { translateY: pan.y }],
+          }}
+          {...panResponder.panHandlers}
+        >
+          <TextInput
+            autoFocus
+            value={title}
+            placeholder={"Add text"}
+            onChangeText={(text) => setTitle(text)}
+            style={{ color: !ButtonClicked ? TITLE_COLOR : "black", fontSize: 20 }}
+          ></TextInput>
+        </Animated.View>
+      </View>
+      <View
+        style={{
           width: "100%",
           height: 60,
           position: "absolute",
@@ -66,7 +178,9 @@ const CaptureImageScreen = ({ route,navigation }) => {
           <Entypo name="cross" size={24} color={TITLE_COLOR} />
         </IconsContainer>
         <View style={{ flexDirection: "row", gap: 10 }}>
-          <IconsContainer>
+          <IconsContainer
+            onPress={() => navigation.navigate("ImageCropScreen", { uri })}
+          >
             <Feather name="crop" size={20} color={TITLE_COLOR} />
           </IconsContainer>
           {LastThreeIcons.map((icon) => {

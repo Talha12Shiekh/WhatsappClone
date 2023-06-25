@@ -32,6 +32,7 @@ import { RippleButton } from "./Components/WhatsappClone/RippleButton";
 import { useState } from "react";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
+import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -169,6 +170,7 @@ export default function App() {
     );
   };
 
+
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
@@ -271,6 +273,14 @@ export default function App() {
           <Stack.Screen
             name="ImageScreen"
             component={CaptureImageScreen}
+            options={{
+              title: "",
+              headerLeft:() => null,
+            }}
+          />
+          <Stack.Screen
+            name="ImageCropScreen"
+            component={ImageCropScreen}
             options={{
               title: "",
               headerLeft:() => null,
