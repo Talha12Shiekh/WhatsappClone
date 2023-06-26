@@ -51,13 +51,11 @@ const CaptureImageScreen = ({ route, navigation }) => {
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-        useNativeDriver: true,
-      }),
+      onPanResponderMove: Animated.event([null, {dx: pan.x, dy: pan.y}]),
       onPanResponderRelease: () => {
         pan.extractOffset();
       },
-    })
+    }),
   ).current;
 
   const { uri } = route.params;
@@ -85,7 +83,6 @@ const CaptureImageScreen = ({ route, navigation }) => {
         style={{
           width: 300,
           height: 50,
-          backgroundColor: "red",
           position: "absolute",
           zIndex: 9999999999,
           justifyContent: "space-between",
@@ -100,7 +97,7 @@ const CaptureImageScreen = ({ route, navigation }) => {
               style={{
                 width: 60,
                 height: 30,
-                backgroundColor: "black",
+                backgroundColor: "transparent",
                 borderColor: TITLE_COLOR,
                 borderWidth: 1,
                 borderRadius: 30,
@@ -146,19 +143,23 @@ const CaptureImageScreen = ({ route, navigation }) => {
       >
         <Animated.View
           style={{
-            padding: 10,
             borderRadius: 20,
             backgroundColor:ButtonClicked ? TITLE_COLOR : "transparent",
-            transform: [{ translateX: pan.x }, { translateY: pan.y }],
+            transform: pan.getTranslateTransform(),
+            height:50,
+            justifyContent:"center",
+            alignItems:'center',
+            paddingHorizontal:10
           }}
           {...panResponder.panHandlers}
         >
           <TextInput
-            autoFocus
             value={title}
             placeholder={"Add text"}
+            textAlign="center"
+            placeholderTextColor={TITLE_COLOR}
             onChangeText={(text) => setTitle(text)}
-            style={{ color: !ButtonClicked ? TITLE_COLOR : "black", fontSize: 20 }}
+            style={{ color: !ButtonClicked ? TITLE_COLOR : "black",fontWeight:"bold",width:"100%",fontSize:20 }}
           ></TextInput>
         </Animated.View>
       </View>
