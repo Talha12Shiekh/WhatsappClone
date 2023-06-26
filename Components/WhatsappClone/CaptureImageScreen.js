@@ -21,6 +21,8 @@ import {
   FontAwesome,
   Foundation,
 } from "@expo/vector-icons";
+import { showToast } from "./RippleButton";
+import * as MediaLibrary from "expo-media-library";
 
 const IconsContainer = ({ children, onPress }) => {
   return (
@@ -42,23 +44,18 @@ const IconsContainer = ({ children, onPress }) => {
 };
 
 const CaptureImageScreen = ({ route, navigation }) => {
-  const pan = useRef(new Animated.ValueXY()).current;
-
-  const [ButtonClicked,setButtonClicked] = useState(false);
-
-  const [title,setTitle] = useState("");
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event([null, {dx: pan.x, dy: pan.y}]),
-      onPanResponderRelease: () => {
-        pan.extractOffset();
-      },
-    }),
-  ).current;
-
   const { uri } = route.params;
+
+  const handledownloadImage = async () => {
+    try {
+      if (uri) {
+        await MediaLibrary.saveToLibraryAsync(uri);
+        showToast("Image saved to gallery");
+      }
+    } catch (err) {
+      showToast("Unable to save the picture");
+    }
+  };
 
   const LastThreeIcons = [
     {
@@ -68,101 +65,14 @@ const CaptureImageScreen = ({ route, navigation }) => {
     },
     {
       name: "text-width",
-      onPress: () => {},
+      onPress: () => {
+        setopenTextEditor(true);
+      },
       key: 2,
-    },
-    {
-      name: "pencil",
-      onPress: () => {},
-      key: 3,
     },
   ];
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          width: 300,
-          height: 50,
-          position: "absolute",
-          zIndex: 9999999999,
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexDirection: "row",
-          paddingHorizontal: 10,
-        }}
-      >
-        <View>
-          <TouchableOpacity>
-            <View
-              style={{
-                width: 60,
-                height: 30,
-                backgroundColor: "transparent",
-                borderColor: TITLE_COLOR,
-                borderWidth: 1,
-                borderRadius: 30,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 12, color: TITLE_COLOR }}>Done</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={{ flexDirection: "row", gap: 20 }}>
-          <TouchableOpacity>
-            <View>
-              <Feather name="align-center" size={24} color={TITLE_COLOR} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setButtonClicked(btnClcked => !btnClcked)}>
-            <View
-              style={{
-                backgroundColor: ButtonClicked ? "black" : TITLE_COLOR,
-                width: 25,
-                aspectRatio: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: 5,
-              }}
-            >
-              <Foundation name="text-color" size={20} color={ButtonClicked ? TITLE_COLOR : "black"} />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View
-        style={{
-          backgroundColor: "rgba(0,0,0,.5)",
-          position: "absolute",
-          zIndex: 1000000,
-          ...StyleSheet.absoluteFill,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Animated.View
-          style={{
-            borderRadius: 20,
-            backgroundColor:ButtonClicked ? TITLE_COLOR : "transparent",
-            transform: pan.getTranslateTransform(),
-            height:50,
-            justifyContent:"center",
-            alignItems:'center',
-            paddingHorizontal:10
-          }}
-          {...panResponder.panHandlers}
-        >
-          <TextInput
-            value={title}
-            placeholder={"Add text"}
-            textAlign="center"
-            placeholderTextColor={TITLE_COLOR}
-            onChangeText={(text) => setTitle(text)}
-            style={{ color: !ButtonClicked ? TITLE_COLOR : "black",fontWeight:"bold",width:"100%",fontSize:20 }}
-          ></TextInput>
-        </Animated.View>
-      </View>
       <View
         style={{
           width: "100%",
@@ -186,7 +96,7 @@ const CaptureImageScreen = ({ route, navigation }) => {
           </IconsContainer>
           {LastThreeIcons.map((icon) => {
             return (
-              <IconsContainer key={icon.key}>
+              <IconsContainer key={icon.key} onPress={icon.onPress}>
                 <FontAwesome name={icon.name} size={20} color={TITLE_COLOR} />
               </IconsContainer>
             );
@@ -258,7 +168,7 @@ const CaptureImageScreen = ({ route, navigation }) => {
             </View>
           </View>
           <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handledownloadImage}>
               <View
                 style={{
                   width: 45,
