@@ -1,4 +1,11 @@
 import React, { useRef, useState } from "react";
+import { GestureHandlerRootView,PanGestureHandler } from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  useAnimatedGestureHandler,
+  withSpring,
+} from 'react-native-reanimated';
 import {
   TouchableOpacity,
   PanResponder,
@@ -7,7 +14,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Animated,
 } from "react-native";
 import {
   ACTIVE_TAB_GREEN_COLOR,
@@ -46,19 +52,15 @@ const IconsContainer = ({ children, onPress }) => {
 const CaptureImageScreen = ({ route, navigation }) => {
   const { uri } = route.params;
 
-  const [title, setTitle] = useState("");
+  const AnimatedView = Animated.createAnimatedComponent(View);
 
-  const pan = useRef(new Animated.ValueXY(0)).current;
+  const translateX = useSharedValue(0);
 
-  const panResponder = useRef(
-      PanResponder.create({
-        onMoveShouldSetPanResponder: () => true,
-        onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
-        onPanResponderRelease: () => {
-          pan.extractOffset();
-        },
-      })
-    ).current;
+  const translateY = useSharedValue(0);
+
+  const inputValue = useRef("");
+
+  const [showInput,setshowInput] = useState(false);
 
   const handledownloadImage = async () => {
     try {
@@ -71,6 +73,33 @@ const CaptureImageScreen = ({ route, navigation }) => {
     }
   };
 
+  const onDrag = useAnimatedGestureHandler({
+    onStart: (event, context) => {
+      context.translateX = translateX.value;
+      context.translateY = translateY.value;
+    },
+    onActive: (event, context) => {
+      translateX.value = event.translationX + context.translateX;
+      translateY.value = event.translationY + context.translateY;
+    },
+  });
+
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: translateX.value,
+        },
+        {
+          translateY: translateY.value,
+        },
+        {
+          scale: showInput ? 1 : 0,
+        }
+      ],
+    };
+  });
+
   const LastThreeIcons = [
     {
       name: "photo",
@@ -79,42 +108,41 @@ const CaptureImageScreen = ({ route, navigation }) => {
     },
     {
       name: "text-width",
-      onPress: () => {},
+      onPress: () => {
+        setshowInput(showinpt => !showinpt)
+      },
       key: 2,
     },
   ];
   return (
-    <View style={{ flex: 1 }}>
-      <Animated.View
-        style={{
-          width: 50,
-          height: 40,
-          backgroundColor: "white",
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PanGestureHandler onGestureEvent={onDrag}>
+      <AnimatedView
+        style={[containerStyle,{
+          backgroundColor: TITLE_COLOR,
           position: "absolute",
           zIndex: 99999,
-          transform: [{translateX:pan.x},{translateY:pan.y}],
-          top: "50%",
-          left: "50%",
-          borderRadius:10
-        }}
-        {...panResponder.panHandlers}
+          borderRadius:10,
+          top:240,
+          padding:10,
+        }]}
       >
-        {/* <TextInput
-          value={title}
+        <TextInput
+          ref={inputValue}
           placeholder={"Add text"}
           textAlign={"center"}
           placeholderTextColor={"black"}
-          onChangeText={(text) => setTitle(text)}
           style={{
-            color: TITLE_COLOR ,
+            color: "black" ,
             fontWeight: "bold",
             width: "100%",
             fontSize: 20,
             height: 50,
-            padding:10
+            padding:10,
           }}
-        ></TextInput> */}
-      </Animated.View>
+        ></TextInput>
+      </AnimatedView>
+      </PanGestureHandler>
       <View
         style={{
           width: "100%",
@@ -227,7 +255,7 @@ const CaptureImageScreen = ({ route, navigation }) => {
           </View>
         </View>
       </View>
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
