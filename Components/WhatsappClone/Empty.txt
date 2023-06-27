@@ -1,8 +1,7 @@
-const pan = useRef(new Animated.ValueXY()).current;
 
   // const [ButtonClicked, setButtonClicked] = useState(false);
 
-  // const [title, setTitle] = useState("");
+  // 
 
   // const [textAlign, setTextAlign] = useState("center");
 

@@ -46,6 +46,20 @@ const IconsContainer = ({ children, onPress }) => {
 const CaptureImageScreen = ({ route, navigation }) => {
   const { uri } = route.params;
 
+  const [title, setTitle] = useState("");
+
+  const pan = useRef(new Animated.ValueXY(0)).current;
+
+  const panResponder = useRef(
+      PanResponder.create({
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
+        onPanResponderRelease: () => {
+          pan.extractOffset();
+        },
+      })
+    ).current;
+
   const handledownloadImage = async () => {
     try {
       if (uri) {
@@ -65,14 +79,42 @@ const CaptureImageScreen = ({ route, navigation }) => {
     },
     {
       name: "text-width",
-      onPress: () => {
-        setopenTextEditor(true);
-      },
+      onPress: () => {},
       key: 2,
     },
   ];
   return (
     <View style={{ flex: 1 }}>
+      <Animated.View
+        style={{
+          width: 50,
+          height: 40,
+          backgroundColor: "white",
+          position: "absolute",
+          zIndex: 99999,
+          transform: [{translateX:pan.x},{translateY:pan.y}],
+          top: "50%",
+          left: "50%",
+          borderRadius:10
+        }}
+        {...panResponder.panHandlers}
+      >
+        {/* <TextInput
+          value={title}
+          placeholder={"Add text"}
+          textAlign={"center"}
+          placeholderTextColor={"black"}
+          onChangeText={(text) => setTitle(text)}
+          style={{
+            color: TITLE_COLOR ,
+            fontWeight: "bold",
+            width: "100%",
+            fontSize: 20,
+            height: 50,
+            padding:10
+          }}
+        ></TextInput> */}
+      </Animated.View>
       <View
         style={{
           width: "100%",
