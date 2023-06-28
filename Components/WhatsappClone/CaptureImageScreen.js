@@ -1,11 +1,14 @@
 import React, { useRef, useState } from "react";
-import { GestureHandlerRootView,PanGestureHandler } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  PanGestureHandler,
+} from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   useAnimatedGestureHandler,
   withSpring,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 import {
   TouchableOpacity,
   PanResponder,
@@ -15,6 +18,7 @@ import {
   Text,
   View,
 } from "react-native";
+import EmojiPicker from "./EmojiPicker";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   TAB_BACKGROUND_COLOR,
@@ -29,6 +33,7 @@ import {
 } from "@expo/vector-icons";
 import { showToast } from "./RippleButton";
 import * as MediaLibrary from "expo-media-library";
+import EmojiShower from "./EmojiShower";
 
 const IconsContainer = ({ children, onPress }) => {
   return (
@@ -60,7 +65,11 @@ const CaptureImageScreen = ({ route, navigation }) => {
 
   const inputValue = useRef("");
 
-  const [showInput,setshowInput] = useState(false);
+  const [showInput, setshowInput] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [emojis, setemojis] = useState([]);
 
   const handledownloadImage = async () => {
     try {
@@ -92,9 +101,6 @@ const CaptureImageScreen = ({ route, navigation }) => {
         },
         {
           translateY: translateY.value,
-        },
-        {
-          scale: showInput ? 1 : 0,
         }
       ],
     };
@@ -103,45 +109,56 @@ const CaptureImageScreen = ({ route, navigation }) => {
   const LastThreeIcons = [
     {
       name: "photo",
-      onPress: () => {},
+      onPress: () => {
+        setModalVisible(true);
+      },
       key: 1,
     },
     {
       name: "text-width",
       onPress: () => {
-        setshowInput(showinpt => !showinpt)
+        setshowInput((showinpt) => !showinpt);
       },
       key: 2,
     },
   ];
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <EmojiPicker
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        setemojis={setemojis}
+      />
       <PanGestureHandler onGestureEvent={onDrag}>
-      <AnimatedView
-        style={[containerStyle,{
-          backgroundColor: TITLE_COLOR,
-          position: "absolute",
-          zIndex: 99999,
-          borderRadius:10,
-          top:240,
-          padding:10,
-        }]}
-      >
-        <TextInput
-          ref={inputValue}
-          placeholder={"Add text"}
-          textAlign={"center"}
-          placeholderTextColor={"black"}
-          style={{
-            color: "black" ,
-            fontWeight: "bold",
-            width: "100%",
-            fontSize: 20,
-            height: 50,
-            padding:10,
-          }}
-        ></TextInput>
-      </AnimatedView>
+        <AnimatedView
+          style={[
+            containerStyle,
+            {
+              backgroundColor: TITLE_COLOR,
+              position: "absolute",
+              zIndex: 99999,
+              borderRadius: 10,
+              top: 240,
+              padding: 10,
+              opacity: showInput ? 1 : 0,
+            },
+          ]}
+        >
+          <TextInput
+            ref={inputValue}
+            placeholder={"Add text"}
+            textAlign={"center"}
+            placeholderTextColor={"black"}
+            style={{
+              color: "black",
+              fontWeight: "bold",
+              width: "100%",
+              fontSize: 20,
+              height: 50,
+              padding: 10,
+            }}
+          ></TextInput>
+        </AnimatedView>
       </PanGestureHandler>
       <View
         style={{
@@ -173,6 +190,7 @@ const CaptureImageScreen = ({ route, navigation }) => {
           })}
         </View>
       </View>
+      <EmojiShower emojis={emojis}/>
       <Image source={{ uri }} style={{ flex: 5 }} resizeMode="cover" />
       <View
         style={{
@@ -261,4 +279,3 @@ const CaptureImageScreen = ({ route, navigation }) => {
 
 export default CaptureImageScreen;
 
-const styles = StyleSheet.create({});

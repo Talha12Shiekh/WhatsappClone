@@ -67,8 +67,6 @@ const WhatsAppNavbar = ({
 
   const navigationState = useNavigationState(state => state);
 
-  const currentRouteName = navigationState.routes[navigationState.index].name;
-
   const navigation = useNavigation();
   
   const SelectChatMenuAnimation = useRef(new Animated.Value(0)).current;
@@ -209,7 +207,7 @@ const WhatsAppNavbar = ({
   const handleShowMenu = () => {
     Animated.timing(MenuAnimation, {
       toValue: 1,
-      duration: 500,
+      duration: 1100,
       useNativeDriver: true,
     }).start();
   };
@@ -331,9 +329,9 @@ const WhatsAppNavbar = ({
   // *! FUNCTION TO OPEN THE SELECTEDCHAT MENU
 
   const hanldeOpenMenu = () => {
-    Animated.spring(SelectChatMenuAnimation, {
+    Animated.timing(SelectChatMenuAnimation, {
       toValue: 1,
-      duration: 2500,
+      duration: 1500,
       useNativeDriver: true,
     }).start();
   };
