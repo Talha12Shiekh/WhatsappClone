@@ -14,7 +14,7 @@ import {
   import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
   
-  export default function TextEditor({modalVisible,setModalVisible}) {
+  const TextEditor = ({modalVisible,setModalVisible}) => {
     const [background, setbackground] = React.useState(false);
   
     const [alignment, setalignment] = React.useState('center');
@@ -32,6 +32,7 @@ import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
     const [isedited, setisedited] = React.useState(false);
   
     const [editedIndex,seteditedIndex] = React.useState(null);
+
   
     const handleAlignment = () => {
       if (alignment == 'center') {
@@ -152,8 +153,8 @@ import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
           </TouchableOpacity>
         </View>
       </GestureHandlerRootView>
-    );
-  }
+    )
+  };
   
   const styles = StyleSheet.create({
     container: {
@@ -228,3 +229,5 @@ import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
     },
   });
   
+
+  export default TextEditor;

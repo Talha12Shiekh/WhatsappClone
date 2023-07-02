@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useWindowDimensions } from "react-native";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { PanGestureHandler } from "react-native-gesture-handler";
+import { PanGestureHandler,PinchGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   useAnimatedGestureHandler,
+  withSpring
 } from "react-native-reanimated";
 
 const MovableView = ({
@@ -59,6 +60,8 @@ const TextContainer = ({
 
   const translateY = useSharedValue(0);
 
+  const scale = useSharedValue(1);
+
   const onDrag = useAnimatedGestureHandler({
     onStart: (event, context) => {
       context.translateX = translateX.value;
@@ -79,6 +82,9 @@ const TextContainer = ({
         {
           translateY: translateY.value,
         },
+        {
+          scale:scale.value
+        }
       ],
     };
   });
@@ -90,8 +96,14 @@ const TextContainer = ({
     seteditedIndex(index);
   }
 
+  const onPinch = useAnimatedGestureHandler({
+    onActive: (event) => {
+      scale.value = withSpring(event.scale);
+    },
+  });
+
   return (
-    <PanGestureHandler onGestureEvent={onDrag}>
+    <PinchGestureHandler onGestureEvent={onPinch}>
       <AnimatedView
         style={[
           styles.MovableViewContainer,
@@ -100,10 +112,12 @@ const TextContainer = ({
             backgroundColor: !backgrounds[index] ? "transparent" : "white",
             top: positions[index],
             alignSelf: alignments[index],
-            left:Leftpositions[index]
+            left: Leftpositions[index],
           },
         ]}
       >
+    <PanGestureHandler onGestureEvent={onDrag}>
+      <AnimatedView>
         <TouchableOpacity
           onPress={() => {
             setModalVisible(true);
@@ -123,6 +137,8 @@ const TextContainer = ({
         </TouchableOpacity>
       </AnimatedView>
     </PanGestureHandler>
+    </AnimatedView>
+    </PinchGestureHandler>
   );
 };
 

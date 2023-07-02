@@ -1,10 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useRef } from "react";
-import { PanGestureHandler } from "react-native-gesture-handler";
+import React from "react";
+import {
+  PanGestureHandler,
+  PinchGestureHandler,
+} from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
+  withSpring
 } from "react-native-reanimated";
 
 const EmojiShower = ({ emojis }) => {
@@ -22,6 +26,8 @@ const Emoji = ({ emoji }) => {
 
   const translateY = useSharedValue(0);
 
+  const scale = useSharedValue(1);
+
   const AnimatedView = Animated.createAnimatedComponent(View);
 
   const containerStyle = useAnimatedStyle(() => {
@@ -32,7 +38,10 @@ const Emoji = ({ emoji }) => {
         },
         {
           translateY: translateY.value,
-        }
+        },
+        {
+          scale: scale.value,
+        },
       ],
     };
   });
@@ -48,13 +57,25 @@ const Emoji = ({ emoji }) => {
     },
   });
 
+  const onPinch = useAnimatedGestureHandler({
+    onActive: (event) => {
+      scale.value = withSpring(event.scale);
+    },
+  });
 
   return (
-    <PanGestureHandler style={{ flex: 1 }} onGestureEvent={onDrag}>
-        <AnimatedView style={[styles.emojiImage, containerStyle]}>
-          <Text style={styles.emoji}>{emoji}</Text>
-        </AnimatedView>
-    </PanGestureHandler>
+    <PinchGestureHandler
+      onGestureEvent={onPinch}
+      onHandlerStateChange={onPinch}
+    >
+      <AnimatedView style={[styles.emojiImage, containerStyle]}>
+        <PanGestureHandler onGestureEvent={onDrag}>
+          <Animated.View>
+            <Text style={styles.emoji}>{emoji}</Text>
+          </Animated.View>
+        </PanGestureHandler>
+      </AnimatedView>
+    </PinchGestureHandler>
   );
 };
 
@@ -66,8 +87,12 @@ const styles = StyleSheet.create({
     zIndex: 9999999999,
     top: 320,
     left: 100,
+    width:80,
+    aspectRatio:1,
+    justifyContent:"center",
+    alignItems:'center'
   },
   emoji: {
     fontSize: 50,
-  },
+  }
 });

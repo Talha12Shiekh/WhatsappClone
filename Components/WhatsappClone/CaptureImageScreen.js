@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   GestureHandlerRootView,
   PanGestureHandler,
@@ -64,8 +64,6 @@ const CaptureImageScreen = ({ route, navigation }) => {
 
   const translateY = useSharedValue(0);
 
-  const inputValue = useRef("");
-
   const [showInput, setshowInput] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -73,7 +71,6 @@ const CaptureImageScreen = ({ route, navigation }) => {
   const [emojis, setemojis] = useState([]);
 
   const [TextmodalVisible, setTextModalVisible] = React.useState(false);
-
 
 
   const handledownloadImage = async () => {
@@ -135,37 +132,6 @@ const CaptureImageScreen = ({ route, navigation }) => {
         setModalVisible={setModalVisible}
         setemojis={setemojis}
       />
-      <PanGestureHandler onGestureEvent={onDrag}>
-        <AnimatedView
-          style={[
-            containerStyle,
-            {
-              backgroundColor: TITLE_COLOR,
-              position: "absolute",
-              zIndex: 99999,
-              borderRadius: 10,
-              top: 240,
-              padding: 10,
-              opacity: showInput ? 1 : 0,
-            },
-          ]}
-        >
-          <TextInput
-            ref={inputValue}
-            placeholder={"Add text"}
-            textAlign={"center"}
-            placeholderTextColor={"black"}
-            style={{
-              color: "black",
-              fontWeight: "bold",
-              width: "100%",
-              fontSize: 20,
-              height: 50,
-              padding: 10,
-            }}
-          ></TextInput>
-        </AnimatedView>
-      </PanGestureHandler>
       <View
         style={{
           width: "100%",
