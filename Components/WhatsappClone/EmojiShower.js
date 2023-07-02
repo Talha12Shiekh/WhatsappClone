@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useRef } from "react";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
@@ -32,7 +32,7 @@ const Emoji = ({ emoji }) => {
         },
         {
           translateY: translateY.value,
-        },
+        }
       ],
     };
   });
@@ -47,11 +47,13 @@ const Emoji = ({ emoji }) => {
       translateY.value = event.translationY + context.translateY;
     },
   });
+
+
   return (
     <PanGestureHandler style={{ flex: 1 }} onGestureEvent={onDrag}>
-      <AnimatedView style={[styles.emojiImage, containerStyle]}>
-        <Text style={styles.emoji}>{emoji}</Text>
-      </AnimatedView>
+        <AnimatedView style={[styles.emojiImage, containerStyle]}>
+          <Text style={styles.emoji}>{emoji}</Text>
+        </AnimatedView>
     </PanGestureHandler>
   );
 };

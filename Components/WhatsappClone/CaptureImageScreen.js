@@ -34,6 +34,7 @@ import {
 import { showToast } from "./RippleButton";
 import * as MediaLibrary from "expo-media-library";
 import EmojiShower from "./EmojiShower";
+import TextEditor from "./TextEditor";
 
 const IconsContainer = ({ children, onPress }) => {
   return (
@@ -70,6 +71,10 @@ const CaptureImageScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const [emojis, setemojis] = useState([]);
+
+  const [TextmodalVisible, setTextModalVisible] = React.useState(false);
+
+
 
   const handledownloadImage = async () => {
     try {
@@ -117,13 +122,14 @@ const CaptureImageScreen = ({ route, navigation }) => {
     {
       name: "text-width",
       onPress: () => {
-        setshowInput((showinpt) => !showinpt);
+        setTextModalVisible(true);
       },
       key: 2,
     },
   ];
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <TextEditor modalVisible={TextmodalVisible} setModalVisible={setTextModalVisible}/>
       <EmojiPicker
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
