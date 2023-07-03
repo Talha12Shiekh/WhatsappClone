@@ -7,7 +7,7 @@ import {
     Modal,
     TextInput,
   } from 'react-native';
-  import React from 'react';
+  import React, { useState } from 'react';
   import { Feather } from '@expo/vector-icons';
   import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
   import MovableView from './MovableView';
@@ -15,23 +15,23 @@ import {
 import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
   
   const TextEditor = ({modalVisible,setModalVisible}) => {
-    const [background, setbackground] = React.useState(false);
+    const [background, setbackground] = useState(false);
   
-    const [alignment, setalignment] = React.useState('center');
+    const [alignment, setalignment] = useState('center');
   
-    const [Iconalignment, setIconalignment] = React.useState('align-center');
+    const [Iconalignment, setIconalignment] = useState('align-center');
   
-    const [value, setvalue] = React.useState('');
+    const [value, setvalue] = useState('');
   
-    const [values, setvalues] = React.useState([]);
+    const [values, setvalues] = useState([]);
   
-    const [backgrounds, setbackgrounds] = React.useState([]);
+    const [backgrounds, setbackgrounds] = useState([]);
   
-    const [alignments, setalignments] = React.useState([]);
+    const [alignments, setalignments] = useState([]);
   
-    const [isedited, setisedited] = React.useState(false);
+    const [isedited, setisedited] = useState(false);
   
-    const [editedIndex,seteditedIndex] = React.useState(null);
+    const [editedIndex,seteditedIndex] = useState(null);
 
   
     const handleAlignment = () => {
@@ -98,7 +98,7 @@ import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
           seteditedIndex={seteditedIndex}
         />
         <Modal animationType="fade" transparent={true} visible={modalVisible}>
-          <View style={[styles.modalContainer,{backgroundColor:ACTIVE_TAB_GREEN_COLOR}]}>
+          <View style={[styles.modalContainer,{backgroundColor:"rgba(0,0,0,.9)"}]}>
             <View style={styles.topIconsContainer}>
               <View style={styles.DoneButtonContainer}>
                 <TouchableOpacity onPress={handleSubmitText}>

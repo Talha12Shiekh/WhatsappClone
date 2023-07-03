@@ -27,14 +27,6 @@ export const CHAT_SELECTION_BACKGROUND = "#182329";
 export const BADGE_BACKGROUND_COLOR = "#27343d";
 export const MENU_BACKGROUND_COLOR = "#233239";
 
-const getData = async () => {
-  let localItems = await AsyncStorage.getItem(STORAGE_KEY);
-  if (localItems !== null) {
-    return JSON.parse(localItems);
-  } else {
-    return [];
-  }
-};
 
   
   const WhatsappMainScreen = ({isEnabled}) => {
@@ -53,13 +45,8 @@ const getData = async () => {
 
   const month = time.getMonth();
 
-  const year = time.getFullYear();
+  const year = time.getFullYear();;
 
-
-
-  const storeData = async () => {
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
-  };
 
   const handleChatsMaking = useCallback(
     (name, number, about, photo) => {
@@ -82,11 +69,10 @@ const getData = async () => {
         };
         setchats((chts) => [...chts, ChatInformation]);
         setFileredChats((chts) => [...chts, ChatInformation]);
-        AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
       }
     },
     [chats]
-  );
+  )
 
   const Community = ({setisFocused}) => {
     const navigation = useNavigation()
@@ -105,20 +91,6 @@ const getData = async () => {
       </View>
     );
   };
-
-  useEffect(() => {
-    storeData();
-  }, [chats]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      let items = await getData();
-      if (items) {
-        setchats(items);
-      }
-    };
-    fetchData();
-  }, []);
 
   const findSelected = chats.some((chat) => chat.selected);
 

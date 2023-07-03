@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   GestureHandlerRootView,
   PanGestureHandler,
@@ -35,6 +35,7 @@ import { showToast } from "./RippleButton";
 import * as MediaLibrary from "expo-media-library";
 import EmojiShower from "./EmojiShower";
 import TextEditor from "./TextEditor";
+import { captureRef } from "react-native-view-shot";
 
 const IconsContainer = ({ children, onPress }) => {
   return (
@@ -70,43 +71,31 @@ const CaptureImageScreen = ({ route, navigation }) => {
 
   const [emojis, setemojis] = useState([]);
 
-  const [TextmodalVisible, setTextModalVisible] = React.useState(false);
+  const [TextmodalVisible, setTextModalVisible] = useState(false);
 
+  const [status, requestPermission] = MediaLibrary.usePermissions();
+
+  const imageRef = useRef();
+
+  if (status === null) {
+    requestPermission();
+  }
 
   const handledownloadImage = async () => {
     try {
-      if (uri) {
-        await MediaLibrary.saveToLibraryAsync(uri);
+      const localUri = await captureRef(imageRef, {
+        height: 440,
+        quality: 1,
+      });
+
+      await MediaLibrary.saveToLibraryAsync(localUri);
+      if (localUri) {
         showToast("Image saved to gallery");
       }
-    } catch (err) {
-      showToast("Unable to save the picture");
+    } catch (e) {
+      showToast("Unable to save the image !")
     }
   };
-
-  const onDrag = useAnimatedGestureHandler({
-    onStart: (event, context) => {
-      context.translateX = translateX.value;
-      context.translateY = translateY.value;
-    },
-    onActive: (event, context) => {
-      translateX.value = event.translationX + context.translateX;
-      translateY.value = event.translationY + context.translateY;
-    },
-  });
-
-  const containerStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: translateX.value,
-        },
-        {
-          translateY: translateY.value,
-        }
-      ],
-    };
-  });
 
   const LastThreeIcons = [
     {
@@ -126,7 +115,6 @@ const CaptureImageScreen = ({ route, navigation }) => {
   ];
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TextEditor modalVisible={TextmodalVisible} setModalVisible={setTextModalVisible}/>
       <EmojiPicker
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -162,8 +150,14 @@ const CaptureImageScreen = ({ route, navigation }) => {
           })}
         </View>
       </View>
-      <EmojiShower emojis={emojis}/>
-      <Image source={{ uri }} style={{ flex: 5 }} resizeMode="cover" />
+      <View ref={imageRef} style={{ flex: 5 }} collapsable={false}>
+        <TextEditor
+          modalVisible={TextmodalVisible}
+          setModalVisible={setTextModalVisible}
+        />
+        <EmojiShower emojis={emojis} />
+        <Image source={{ uri }} style={{ flex: 5 }} resizeMode="cover" />
+      </View>
       <View
         style={{
           flex: 1,
@@ -250,4 +244,3 @@ const CaptureImageScreen = ({ route, navigation }) => {
 };
 
 export default CaptureImageScreen;
-

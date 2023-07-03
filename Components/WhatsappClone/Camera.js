@@ -1,5 +1,5 @@
 import { Camera, CameraType } from "expo-camera";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   StyleSheet,
@@ -8,7 +8,12 @@ import {
   View,
   Animated,
 } from "react-native";
-import { TITLE_COLOR } from "./WhatsappMainScreen";
+import {
+  BADGE_BACKGROUND_COLOR,
+  CHAT_BACKROUND_COLOR,
+  TAB_BACKGROUND_COLOR,
+  TITLE_COLOR,
+} from "./WhatsappMainScreen";
 import { Entypo, MaterialIcons, Foundation, Feather } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
@@ -34,6 +39,10 @@ export default function CameraComponent({ navigation }) {
 
   const [flash, setFlash] = useState(true);
 
+  const [loaded, setloaded] = useState(false);
+
+  const [clicked, setclicked] = useState(true);
+
   const handleRotation = () => {
     const toValue = !isrotated ? 1 : 0;
     Animated.timing(rotateAnimation, {
@@ -51,7 +60,7 @@ export default function CameraComponent({ navigation }) {
       useNativeDriver: true,
     }).start();
     setistranslated((istranslted) => !istranslted);
-    setFlash(flsh => !flsh);
+    setFlash((flsh) => !flsh);
   };
 
   const TopIconsStyles = {
@@ -65,6 +74,13 @@ export default function CameraComponent({ navigation }) {
     ],
   };
 
+  navigation.addListener("focus", () => {
+    setloaded(true);
+  });
+
+  navigation.addListener("blur", () => {
+    setloaded(false);
+  });
 
   const handleTakePicture = async () => {
     if (!Cameraref.current) return;
@@ -74,9 +90,9 @@ export default function CameraComponent({ navigation }) {
     requestPermissionToSave();
     if (uri) {
       try {
-        navigation.push("ImageScreen",{uri});
+        navigation.push("ImageScreen", { uri });
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   };
@@ -119,93 +135,123 @@ export default function CameraComponent({ navigation }) {
       aspect: [3, 2],
       quality: 1,
     });
-    const uri =  result.assets[0].uri
+    const uri = result.assets[0].uri;
     if (!result.canceled) {
-      navigation.push("ImageScreen",{uri})
+      navigation.push("ImageScreen", { uri });
     }
-  }   
+  };
 
   return (
     <View style={styles.container}>
-      <Camera
-        style={styles.camera}
-        flashMode={
-          flash ? Camera.Constants.FlashMode.on : Camera.Constants.FlashMode.off
-        }
-        type={type}
-        ref={Cameraref}
-      >
-        <View style={styles.buttonContainer}>
-          <View style={styles.cameraTopButtons}>
-            <IconsContainer onPress={() => navigation.popToTop()}>
-              <Entypo name="cross" size={35} color={TITLE_COLOR} />
-            </IconsContainer>
-            <IconsContainer
-              onPress={(e) => {
-                handleMoveFlash();
-                console.log(e.elementType);
-              }}
-              style={{
-                width: 35,
-                aspectRatio: 1,
-                overflow: "hidden",
-              }}
-            >
-              <Animated.View style={TopIconsStyles}>
-                <Entypo name="flash" size={35} color={TITLE_COLOR} />
-              </Animated.View>
-              <Animated.View style={TopIconsStyles}>
-                <MaterialIcons name="flash-off" size={30} color={TITLE_COLOR} />
-              </Animated.View>
-            </IconsContainer>
-          </View>
-          <View style={{ flex: 7 }}></View>
-          <View style={styles.cameraBottomButtons}>
-            <View style={styles.cameraSideIcons}>
-              <IconsContainer onPress={handleShowLibrary} style={styles.icon}>
-                <Foundation name="photo" size={24} color={TITLE_COLOR} />
+      {loaded && (
+        <Camera
+          style={styles.camera}
+          flashMode={
+            flash
+              ? Camera.Constants.FlashMode.on
+              : Camera.Constants.FlashMode.off
+          }
+          type={type}
+          ref={Cameraref}
+        >
+          <View style={styles.buttonContainer}>
+            <View style={styles.cameraTopButtons}>
+              <IconsContainer onPress={() => navigation.popToTop()}>
+                <Entypo name="cross" size={35} color={TITLE_COLOR} />
               </IconsContainer>
-            </View>
-            <View>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleTakePicture}
-              >
-                <View style={styles.cameraWrapper}>
-                  <View style={styles.cameraButton}></View>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cameraSideIcons}>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleCameraType();
-                  handleRotation();
-                  setisrotated(!isrotated);
+              <IconsContainer
+                onPress={(e) => {
+                  handleMoveFlash();
+                  console.log(e.elementType);
+                }}
+                style={{
+                  width: 35,
+                  aspectRatio: 1,
+                  overflow: "hidden",
                 }}
               >
-                <Animated.View
-                  style={[
-                    styles.icon,
-                    {
-                      transform: [
-                        {
-                          rotate: rotateAnimation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ["0deg", "180deg"],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}
-                >
-                  <Feather name="rotate-ccw" size={24} color={TITLE_COLOR} />
+                <Animated.View style={TopIconsStyles}>
+                  <Entypo name="flash" size={35} color={TITLE_COLOR} />
                 </Animated.View>
-              </TouchableOpacity>
+                <Animated.View style={TopIconsStyles}>
+                  <MaterialIcons
+                    name="flash-off"
+                    size={30}
+                    color={TITLE_COLOR}
+                  />
+                </Animated.View>
+              </IconsContainer>
+            </View>
+            <View style={{ flex: 7 }}></View>
+            <View style={styles.cameraBottomButtons}>
+              <View style={styles.cameraSideIcons}>
+                <IconsContainer onPress={handleShowLibrary} style={styles.icon}>
+                  <Foundation name="photo" size={24} color={TITLE_COLOR} />
+                </IconsContainer>
+              </View>
+              <View>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleTakePicture}
+                >
+                  <View style={styles.cameraWrapper}>
+                    <View style={styles.cameraButton}></View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.cameraSideIcons}>
+                <TouchableOpacity
+                  onPress={() => {
+                    toggleCameraType();
+                    handleRotation();
+                    setisrotated(!isrotated);
+                  }}
+                >
+                  <Animated.View
+                    style={[
+                      styles.icon,
+                      {
+                        transform: [
+                          {
+                            rotate: rotateAnimation.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: ["0deg", "180deg"],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                  >
+                    <Feather name="rotate-ccw" size={24} color={TITLE_COLOR} />
+                  </Animated.View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Camera>
+        </Camera>
+      )}
+      <View style={styles.bottomSheet}>
+        <TouchableOpacity onPress={() => setclicked((clcked) => !clcked)}>
+          <View
+            style={[
+              styles.bottomSheetTextContainer,
+              !clicked ? styles.activeBackground : {},
+            ]}
+          >
+            <Text style={styles.bottomSheettext}>Video</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setclicked((clcked) => !clcked)}>
+          <View
+            style={[
+              styles.bottomSheetTextContainer,
+              clicked ? styles.activeBackground : {},
+            ]}
+          >
+            <Text style={styles.bottomSheettext}>Image</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -261,5 +307,36 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
+  },
+  bottomSheet: {
+    width: "100%",
+    height: 80,
+    backgroundColor: "red",
+    position: "absolute",
+    bottom: 0,
+    backgroundColor: TAB_BACKGROUND_COLOR,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+  },
+  bottomSheettext: {
+    color: TITLE_COLOR,
+    fontWeight: "bold",
+  },
+  bottomSheetTextContainer: {
+    padding: 10,
+    borderRadius: 20,
+    shadowColor: TITLE_COLOR,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 1,
+  },
+  activeBackground: {
+    backgroundColor: BADGE_BACKGROUND_COLOR,
   },
 });
