@@ -10,7 +10,7 @@ import WhatsAppNavbar from "./WhatsAppNavbar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import People from "react-native-vector-icons/Ionicons";
 import CommunityComponent from "./CommunityComponent";
-import { useFocusEffect, useNavigation, useNavigationState, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -74,7 +74,7 @@ export const MENU_BACKGROUND_COLOR = "#233239";
     [chats]
   )
 
-  const Community = ({setisFocused}) => {
+  const Community = () => {
     const navigation = useNavigation()
     return (
       <View style={{ flex: 1 }}>
@@ -83,7 +83,6 @@ export const MENU_BACKGROUND_COLOR = "#233239";
           para="Easily organize your related groups and send announcements. Now, your communities, like neighborhoods or schools, can have their own space."
           btnText="Start a community"
           imagepath={require("./Images/community.png")}
-          setisFocused={setisFocused}
           onPress={() => {
             navigation.navigate("Profile", { handleChatsMaking });
           }}
@@ -93,8 +92,6 @@ export const MENU_BACKGROUND_COLOR = "#233239";
   };
 
   const findSelected = chats.some((chat) => chat.selected);
-
-  const [Focused,setisFocused] = useState(false);
 
   return (
     <SafeAreaProvider>
@@ -170,9 +167,7 @@ export const MENU_BACKGROUND_COLOR = "#233239";
           }}
         >
           {(props) => {
-            const route = useRoute()
-            return <Community {...props} setisFocused={setisFocused}
-            route={route}/>
+            return <Community {...props}/>
           }}
         </Tab.Screen>
         <Tab.Screen
@@ -182,10 +177,8 @@ export const MENU_BACKGROUND_COLOR = "#233239";
           }}
         >
           {(props) => {
-            const route = useRoute()
             return <Chats
               {...props}
-              route={route}
               chats={chats}
               setchats={setchats}
               opensearchBar={opensearchBar}

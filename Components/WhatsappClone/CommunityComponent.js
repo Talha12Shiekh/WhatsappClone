@@ -20,7 +20,6 @@ const CommunityComponent = ({
   btnText,
   handleChatsMaking,
   imagepath,
-  setisFocused,
   onPress
 }) => {
 

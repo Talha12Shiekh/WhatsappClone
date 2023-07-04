@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   GestureHandlerRootView,
   PanGestureHandler,
@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedGestureHandler,
   withSpring,
 } from "react-native-reanimated";
+import { Video, ResizeMode } from "expo-av";
 import {
   TouchableOpacity,
   PanResponder,
@@ -57,7 +58,7 @@ const IconsContainer = ({ children, onPress }) => {
 };
 
 const CaptureImageScreen = ({ route, navigation }) => {
-  const { uri } = route.params;
+  const { uri, clicked } = route.params;
 
   const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -77,9 +78,21 @@ const CaptureImageScreen = ({ route, navigation }) => {
 
   const imageRef = useRef();
 
+  const videoRef = useRef();
+
+  const [paused, setpaused] = useState(false);
+
+  const [statusVideo, setStatus] = React.useState({});
+
   if (status === null) {
     requestPermission();
   }
+
+  useEffect(() => {
+    if (clicked) {
+      videoRef.current.playAsync();
+    }
+  }, [clicked]);
 
   const handledownloadImage = async () => {
     try {
@@ -93,7 +106,7 @@ const CaptureImageScreen = ({ route, navigation }) => {
         showToast("Image saved to gallery");
       }
     } catch (e) {
-      showToast("Unable to save the image !")
+      showToast("Unable to save the image !");
     }
   };
 
@@ -156,7 +169,59 @@ const CaptureImageScreen = ({ route, navigation }) => {
           setModalVisible={setTextModalVisible}
         />
         <EmojiShower emojis={emojis} />
-        <Image source={{ uri }} style={{ flex: 5 }} resizeMode="cover" />
+        {!clicked ? (
+          <Image source={{ uri }} style={{ flex: 5 }} resizeMode="cover" />
+        ) : (
+          <View style={{ flex: 5, justifyContent: "center" }}>
+            <View style={{ flex: 5 }}>
+              <Video
+                ref={videoRef}
+                style={{ flex: 5 }}
+                source={{ uri }}
+                resizeMode={ResizeMode.COVER}
+                isLooping
+                onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  setpaused(true);
+                  if (statusVideo.isPlaying) {
+                    videoRef.current.pauseAsync();
+                  }
+                }}
+                style={[StyleSheet.absoluteFillObject]}
+              />
+            </View>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 999999999,
+                justifyContent: "center",
+                alignSelf: "center",
+                width: 80,
+                aspectRatio: 1,
+                backgroundColor: "rgba(0,0,0,.5)",
+                borderRadius: 50,
+                justifyContent: "center",
+                alignItems: "center",
+                opacity: !paused ? 0 : 1,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  if (!statusVideo.isPlaying) {
+                    videoRef.current.playAsync();
+                    setpaused(false);
+                  }
+                }}
+              >
+                <View>
+                  <AntDesign name="caretright" size={30} color={TITLE_COLOR} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
       <View
         style={{

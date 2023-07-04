@@ -24,6 +24,9 @@ export default function CameraComponent({ navigation }) {
 
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
+  const [status, requestPermissionofMicrophone] =
+    Camera.useMicrophonePermissions();
+
   const rotateAnimation = useRef(new Animated.Value(0)).current;
 
   const flashAnimation = useRef(new Animated.Value(0)).current;
@@ -41,7 +44,9 @@ export default function CameraComponent({ navigation }) {
 
   const [loaded, setloaded] = useState(false);
 
-  const [clicked, setclicked] = useState(true);
+  const [clicked, setclicked] = useState(false);
+
+  const [video, setvideo] = useState(false);
 
   const handleRotation = () => {
     const toValue = !isrotated ? 1 : 0;
@@ -90,7 +95,7 @@ export default function CameraComponent({ navigation }) {
     requestPermissionToSave();
     if (uri) {
       try {
-        navigation.push("ImageScreen", { uri });
+        navigation.push("ImageScreen", { uri ,clicked});
       } catch (e) {
         console.log(e);
       }
@@ -137,9 +142,26 @@ export default function CameraComponent({ navigation }) {
     });
     const uri = result.assets[0].uri;
     if (!result.canceled) {
-      navigation.push("ImageScreen", { uri });
+      navigation.push("ImageScreen", { uri,clicked });
     }
   };
+
+  async function handleMakeVideo() {
+    setvideo((vdeo) => !vdeo);
+    try {
+      if (!video) {
+        requestPermissionofMicrophone();
+        let { uri } = await Cameraref.current.recordAsync();
+        if (uri) {
+          navigation.push("ImageScreen", { uri,clicked });
+        }
+      } else {
+        Cameraref.current.stopRecording();
+      }
+    } catch (er) {
+      console.log(er);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -162,7 +184,6 @@ export default function CameraComponent({ navigation }) {
               <IconsContainer
                 onPress={(e) => {
                   handleMoveFlash();
-                  console.log(e.elementType);
                 }}
                 style={{
                   width: 35,
@@ -190,14 +211,33 @@ export default function CameraComponent({ navigation }) {
                 </IconsContainer>
               </View>
               <View>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleTakePicture}
-                >
-                  <View style={styles.cameraWrapper}>
-                    <View style={styles.cameraButton}></View>
-                  </View>
-                </TouchableOpacity>
+                {!clicked ? (
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleTakePicture}
+                  >
+                    <View style={styles.cameraWrapper}>
+                      <View style={styles.cameraButton}></View>
+                    </View>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={handleMakeVideo}
+                    style={styles.button}
+                  >
+                    {!video ? (
+                      <View style={styles.cameraWrapper}>
+                        <View
+                          style={[styles.cameraButton, { borderWidth: 15 }]}
+                        ></View>
+                      </View>
+                    ) : (
+                      <View style={styles.VideoWrapper}>
+                        <View style={[styles.videoButton]}></View>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                )}
               </View>
               <View style={styles.cameraSideIcons}>
                 <TouchableOpacity
@@ -316,8 +356,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: TAB_BACKGROUND_COLOR,
     flexDirection: "row",
-    justifyContent: "space-evenly",
     alignItems: "center",
+    justifyContent: "center",
+    gap: 20,
   },
   bottomSheettext: {
     color: TITLE_COLOR,
@@ -338,5 +379,20 @@ const styles = StyleSheet.create({
   },
   activeBackground: {
     backgroundColor: BADGE_BACKGROUND_COLOR,
+  },
+  videoButton: {
+    width: 25,
+    aspectRatio: 1,
+    backgroundColor: "red",
+    borderRadius: 5,
+  },
+  VideoWrapper: {
+    width: 70,
+    aspectRatio: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: TITLE_COLOR,
+    borderRadius: 50,
   },
 });
