@@ -151,7 +151,8 @@ export default function CameraComponent({ navigation }) {
     try {
       if (!video) {
         requestPermissionofMicrophone();
-        let { uri } = await Cameraref.current.recordAsync();
+        
+        let { uri } = await Cameraref.current.recordAsync({quality:Camera.Constants.VideoQuality["1080p"]});
         if (uri) {
           navigation.push("ImageScreen", { uri,clicked });
         }
@@ -170,7 +171,7 @@ export default function CameraComponent({ navigation }) {
           style={styles.camera}
           flashMode={
             flash
-              ? Camera.Constants.FlashMode.on
+              ? (!video ? Camera.Constants.FlashMode.on : Camera.Constants.FlashMode.torch)
               : Camera.Constants.FlashMode.off
           }
           type={type}
@@ -275,7 +276,7 @@ export default function CameraComponent({ navigation }) {
           <View
             style={[
               styles.bottomSheetTextContainer,
-              !clicked ? styles.activeBackground : {},
+              clicked ? styles.activeBackground : {},
             ]}
           >
             <Text style={styles.bottomSheettext}>Video</Text>
@@ -285,7 +286,7 @@ export default function CameraComponent({ navigation }) {
           <View
             style={[
               styles.bottomSheetTextContainer,
-              clicked ? styles.activeBackground : {},
+              !clicked ? styles.activeBackground : {},
             ]}
           >
             <Text style={styles.bottomSheettext}>Image</Text>
@@ -365,17 +366,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   bottomSheetTextContainer: {
-    padding: 10,
     borderRadius: 20,
-    shadowColor: TITLE_COLOR,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-
+    width:80,
+    height:30,
     elevation: 1,
+    justifyContent:"center",
+    alignItems:"center"
   },
   activeBackground: {
     backgroundColor: BADGE_BACKGROUND_COLOR,

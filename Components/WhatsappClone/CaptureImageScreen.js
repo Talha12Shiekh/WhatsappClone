@@ -60,14 +60,6 @@ const IconsContainer = ({ children, onPress }) => {
 const CaptureImageScreen = ({ route, navigation }) => {
   const { uri, clicked } = route.params;
 
-  const AnimatedView = Animated.createAnimatedComponent(View);
-
-  const translateX = useSharedValue(0);
-
-  const translateY = useSharedValue(0);
-
-  const [showInput, setshowInput] = useState(false);
-
   const [modalVisible, setModalVisible] = useState(false);
 
   const [emojis, setemojis] = useState([]);
@@ -80,17 +72,13 @@ const CaptureImageScreen = ({ route, navigation }) => {
 
   const videoRef = useRef();
 
-  const [paused, setpaused] = useState(false);
-
-  const [statusVideo, setStatus] = React.useState({});
-
   if (status === null) {
     requestPermission();
   }
 
   useEffect(() => {
     if (clicked) {
-      videoRef.current.playAsync();
+      videoRef.current.playAsync()
     }
   }, [clicked]);
 
@@ -126,6 +114,21 @@ const CaptureImageScreen = ({ route, navigation }) => {
       key: 2,
     },
   ];
+
+  const handleDownloadVideo = async () => {
+    try {
+      if(uri){
+        await MediaLibrary.saveToLibraryAsync(uri);
+        showToast("Video saved to gallery")
+      }else {
+        showToast("Unable to save the video")
+      }
+    } catch (error) {
+        console.log(error)
+    }
+    
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <EmojiPicker
@@ -180,45 +183,8 @@ const CaptureImageScreen = ({ route, navigation }) => {
                 source={{ uri }}
                 resizeMode={ResizeMode.COVER}
                 isLooping
-                onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+                useNativeControls
               />
-              <TouchableOpacity
-                onPress={() => {
-                  setpaused(true);
-                  if (statusVideo.isPlaying) {
-                    videoRef.current.pauseAsync();
-                  }
-                }}
-                style={[StyleSheet.absoluteFillObject]}
-              />
-            </View>
-            <View
-              style={{
-                position: "absolute",
-                zIndex: 999999999,
-                justifyContent: "center",
-                alignSelf: "center",
-                width: 80,
-                aspectRatio: 1,
-                backgroundColor: "rgba(0,0,0,.5)",
-                borderRadius: 50,
-                justifyContent: "center",
-                alignItems: "center",
-                opacity: !paused ? 0 : 1,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  if (!statusVideo.isPlaying) {
-                    videoRef.current.playAsync();
-                    setpaused(false);
-                  }
-                }}
-              >
-                <View>
-                  <AntDesign name="caretright" size={30} color={TITLE_COLOR} />
-                </View>
-              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -287,7 +253,7 @@ const CaptureImageScreen = ({ route, navigation }) => {
             </View>
           </View>
           <View>
-            <TouchableOpacity onPress={handledownloadImage}>
+            <TouchableOpacity onPress={!clicked ? handledownloadImage : handleDownloadVideo}>
               <View
                 style={{
                   width: 45,

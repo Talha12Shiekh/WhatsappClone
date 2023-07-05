@@ -31,7 +31,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import Menu from "./Menu";
 
-const Archived = ({ route, navigation,isEnabled }) => {
+const Archived = ({ route, navigation }) => {
   const checkedAnimaton = new Animated.Value(0);
 
   const { setchats, setarchived } = route.params;
@@ -156,7 +156,7 @@ const Archived = ({ route, navigation,isEnabled }) => {
   const resetAnimation = () => {
     Animated.timing(archiveChatMenuAnimation, {
       toValue: 0,
-      duration: 100,
+      duration: 1000,
       useNativeDriver: true,
     }).start();
   };
@@ -196,7 +196,12 @@ const Archived = ({ route, navigation,isEnabled }) => {
               />
               <View style={{ position: "absolute", right: 0 }}>
                 <RippleButton
-                  onPress={() => navbarAnimation(archiveChatMenuAnimation)}
+                  onPress={() => Animated.timing(archiveChatMenuAnimation,{
+                    toValue:1,
+                    duration:1000,
+                    useNativeDriver:true
+                  }).start()
+                }
                 >
                   <SimpleLineIcons
                     name="options-vertical"
@@ -251,7 +256,11 @@ const Archived = ({ route, navigation,isEnabled }) => {
                 </RippleButton>
                 <RippleButton
                   onPress={() =>
-                    navbarAnimation(selectedarchiveChatMenuAnimation)
+                    Animated.timing(selectedarchiveChatMenuAnimation,{
+                      toValue:1,
+                      duration:1000,
+                      useNativeDriver:true
+                    }).start()
                   }
                 >
                   <SimpleLineIcons

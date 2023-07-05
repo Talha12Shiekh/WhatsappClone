@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     zIndex: 9999999999,
     top: 320,
     left: 100,
-    width:80,
+    width:100,
     aspectRatio:1,
     justifyContent:"center",
     alignItems:'center'
