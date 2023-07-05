@@ -23,6 +23,7 @@ export const CHAT_HEIGHT = 90;
 export const TITLE_COLOR = "white";
 export const CHAT_DATA_STATUS_COLOR = "#75828a";
 export const STORAGE_KEY = "items";
+export const ARCHIVED_STORAGE_KEY = "archived_items";
 export const CHAT_SELECTION_BACKGROUND = "#182329";
 export const BADGE_BACKGROUND_COLOR = "#27343d";
 export const MENU_BACKGROUND_COLOR = "#233239";
@@ -32,14 +33,23 @@ export const MENU_BACKGROUND_COLOR = "#233239";
 const WhatsappMainScreen = ({ isEnabled }) => {
   const [chats, setchats] = useState([]);
 
+  const [archived, setarchived] = useState([]);
+
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
     let updatedchats = await JSON.parse(asyncChats);
     setchats(updatedchats);
   };
 
+  const getArchivedChats = async () => {
+    let asyncArchivedChats = await AsyncStorage.getItem(ARCHIVED_STORAGE_KEY);
+    let updatedArchivedchats = await JSON.parse(asyncArchivedChats);
+    setarchived(updatedArchivedchats);
+  };
+
   useEffect(() => {
-    getChats()
+    getChats();
+    getArchivedChats();
   }, [])
   
 
@@ -47,7 +57,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const [opensearchBar, setopensearchBar] = useState(false);
 
-  const [archived, setarchived] = useState([]);
 
   const time = new Date();
 
@@ -59,6 +68,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const storeChats = async () => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+  };
+
+  const storeArchivedChats = async () => {
+    await AsyncStorage.setItem(ARCHIVED_STORAGE_KEY, JSON.stringify(archived));
   };
 
   const handleChatsMaking = useCallback(
@@ -91,6 +104,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   useEffect(() => {
     storeChats();
   }, [chats]);
+
+  useEffect(() => {
+    storeArchivedChats();
+  }, [archived]);
 
   const Community = () => {
     const navigation = useNavigation();

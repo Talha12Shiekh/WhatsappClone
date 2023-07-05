@@ -29,6 +29,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ACTIVE_TAB_GREEN_COLOR } from "./WhatsappMainScreen";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { showToast } from "./RippleButton";
+import { DummyChats } from "./DummyChats";
 
 if (
   Platform.OS === "android" &&
@@ -185,6 +186,7 @@ const Chats = ({
           ) : null}
           </View> : null}
           <FlatList
+            contentContainerStyle={{paddingBottom:50}}
             data={chats}
             keyExtractor={(chat) => chat.key}
             ItemSeparatorComponent={() => {
