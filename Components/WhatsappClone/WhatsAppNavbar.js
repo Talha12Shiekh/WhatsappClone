@@ -48,8 +48,9 @@ const WhatsAppNavbar = ({
   archived,
   setarchived,
   handleChatsMaking,
-  activeroute,
-  activeroutename
+  currentTabIndex,
+  setactiveRoute,
+  activeRoute
 }) => {
 
    // *! DATA OF THE BADGES IN THE NAVBAR
@@ -65,9 +66,14 @@ const WhatsAppNavbar = ({
     { badgeText: "Polls", badgeIcons: "poll", size: 20, key: 8 },
   ];
 
-  const navigationState = useNavigationState(state => state);
-
   const navigation = useNavigation();
+
+  let screens = ["Community", "Chats", "Status", "Calls"];
+
+  useFocusEffect(() => {
+    setactiveRoute(screens[currentTabIndex]);
+  });
+
   
   const SelectChatMenuAnimation = useRef(new Animated.Value(0)).current;
 
@@ -85,10 +91,7 @@ const WhatsAppNavbar = ({
 
   const [readed,setreaded] = useState(false);
 
-  const route = useRoute();
-
   const [isAllselected,setisAllselected] = useState(false);
-
 
   // *! DATA OF THE MENU OF THE CHAT WHEN WE SELECT IT
 
@@ -340,7 +343,7 @@ const WhatsAppNavbar = ({
 
   useEffect(() => {
     
-    if (route.name == "Community") {
+    if (activeRoute == "Community") {
       const UpDatedData = [{ text: "Settings", onPress: () => {}, key: 10 }];
       setMenuData(UpDatedData);
 
@@ -374,7 +377,7 @@ const WhatsAppNavbar = ({
 
       setMenuData(UpDatedData);
     }
-  }, [route.name]);
+  }, [activeRoute]);
 
   return (
     <>
@@ -498,9 +501,9 @@ const WhatsAppNavbar = ({
           <RippleButton onPress={() => navigation.navigate("Camera")}>
             <Camera name="camera" color={INACTIVE_TAB_WHITE_COLOR} size={18} />
           </RippleButton>
-          <RippleButton onPress={handleOpenSearchBar}>
+          {activeRoute == "Community" ? null : <RippleButton onPress={handleOpenSearchBar}>
             <Search name="search" color={INACTIVE_TAB_WHITE_COLOR} size={18} />
-          </RippleButton>
+          </RippleButton>}
           <RippleButton onPress={handleShowMenu}>
             <SimpleLineIcons
               name="options-vertical"

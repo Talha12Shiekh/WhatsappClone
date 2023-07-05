@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState,useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import Calls from "./Calls";
@@ -28,16 +28,26 @@ export const BADGE_BACKGROUND_COLOR = "#27343d";
 export const MENU_BACKGROUND_COLOR = "#233239";
 
 
-  
-  const WhatsappMainScreen = ({isEnabled}) => {
 
+const WhatsappMainScreen = ({ isEnabled }) => {
   const [chats, setchats] = useState([]);
+
+  const getChats = async () => {
+    let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
+    let updatedchats = await JSON.parse(asyncChats);
+    setchats(updatedchats);
+  };
+
+  useEffect(() => {
+    getChats()
+  }, [])
+  
 
   const [FileredChats, setFileredChats] = useState([]);
 
   const [opensearchBar, setopensearchBar] = useState(false);
 
-  const [archived,setarchived] = useState([]);
+  const [archived, setarchived] = useState([]);
 
   const time = new Date();
 
@@ -45,8 +55,11 @@ export const MENU_BACKGROUND_COLOR = "#233239";
 
   const month = time.getMonth();
 
-  const year = time.getFullYear();;
+  const year = time.getFullYear();
 
+  const storeChats = async () => {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+  };
 
   const handleChatsMaking = useCallback(
     (name, number, about, photo) => {
@@ -65,17 +78,22 @@ export const MENU_BACKGROUND_COLOR = "#233239";
           selected: false,
           pinned: false,
           muted: false,
-          readed:false
+          readed: false,
         };
         setchats((chts) => [...chts, ChatInformation]);
         setFileredChats((chts) => [...chts, ChatInformation]);
+        storeChats();
       }
     },
     [chats]
-  )
+  );
+
+  useEffect(() => {
+    storeChats();
+  }, [chats]);
 
   const Community = () => {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
     return (
       <View style={{ flex: 1 }}>
         <CommunityComponent
@@ -93,6 +111,10 @@ export const MENU_BACKGROUND_COLOR = "#233239";
 
   const findSelected = chats.some((chat) => chat.selected);
 
+  const [currentTabIndex, setcurrentTabIndex] = useState(0);
+
+  const [activeRoute, setactiveRoute] = useState("Chats");
+
   return (
     <SafeAreaProvider>
       <WhatsAppNavbar
@@ -106,9 +128,17 @@ export const MENU_BACKGROUND_COLOR = "#233239";
         archived={archived}
         setarchived={setarchived}
         handleChatsMaking={handleChatsMaking}
+        currentTabIndex={currentTabIndex}
+        setactiveRoute={setactiveRoute}
+        activeRoute={activeRoute}
       />
       <Tab.Navigator
         initialRouteName="Chats"
+        screenListeners={{
+          state: (e) => {
+            setcurrentTabIndex(e.data.state.index);
+          },
+        }}
         screenOptions={({ route }) => ({
           tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
@@ -167,7 +197,7 @@ export const MENU_BACKGROUND_COLOR = "#233239";
           }}
         >
           {(props) => {
-            return <Community {...props}/>
+            return <Community {...props} />;
           }}
         </Tab.Screen>
         <Tab.Screen
@@ -177,18 +207,20 @@ export const MENU_BACKGROUND_COLOR = "#233239";
           }}
         >
           {(props) => {
-            return <Chats
-              {...props}
-              chats={chats}
-              setchats={setchats}
-              opensearchBar={opensearchBar}
-              FileredChats={FileredChats}
-              setFileredChats={setFileredChats}
-              archived={archived}
-              setarchived={setarchived}
-              handleChatsMaking={handleChatsMaking}
-              isEnabled={isEnabled}
-            />
+            return (
+              <Chats
+                {...props}
+                chats={chats}
+                setchats={setchats}
+                opensearchBar={opensearchBar}
+                FileredChats={FileredChats}
+                setFileredChats={setFileredChats}
+                archived={archived}
+                setarchived={setarchived}
+                handleChatsMaking={handleChatsMaking}
+                isEnabled={isEnabled}
+              />
+            );
           }}
         </Tab.Screen>
         <Tab.Screen
