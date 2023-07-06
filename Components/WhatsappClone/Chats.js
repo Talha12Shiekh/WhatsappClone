@@ -186,7 +186,6 @@ const Chats = ({
           ) : null}
           </View> : null}
           <FlatList
-            contentContainerStyle={{paddingBottom:50}}
             data={chats}
             keyExtractor={(chat) => chat.key}
             ItemSeparatorComponent={() => {

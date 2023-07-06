@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Modal,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   ScrollView,
+  BackHandler,
 } from "react-native";
 import {
   ACTIVE_TAB_GREEN_COLOR,
@@ -24,6 +25,7 @@ import Button from "./Button";
 
 const Profile = ({ route, navigation }) => {
   const { handleChatsMaking } = route.params;
+
   const [chatinformation, setchatinformation] = useState({
     name: "",
     number: "",
@@ -41,7 +43,7 @@ const Profile = ({ route, navigation }) => {
       about: "",
       photo: "",
     });
-    if ((name, about)) {
+    if ((name, about,number)) {
       navigation.navigate("Chats");
     } else {
     }
@@ -71,6 +73,29 @@ const Profile = ({ route, navigation }) => {
       });
     }
   };
+
+  const backAction = () => {
+    if (chatinformation.name !== "" && chatinformation.number !== "") {
+      Alert.alert("Hold on!", "Are you sure you want to save the changes ?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "YES",
+          onPress: () => {
+            handleSubmitModel()
+            navigation.goBack();
+          },
+        },
+      ]);
+    }
+    return true;
+  };
+
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
 
   return (
     <View
@@ -182,10 +207,12 @@ const Profile = ({ route, navigation }) => {
             </View>
           </View>
           <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
-
-            <Button color={ACTIVE_TAB_GREEN_COLOR} onPress={handleSubmitModel}
-            width="100%">
-            <Text style={styles.textStyle}>Make Chat</Text>
+            <Button
+              color={ACTIVE_TAB_GREEN_COLOR}
+              onPress={handleSubmitModel}
+              width="100%"
+            >
+              <Text style={styles.textStyle}>Make Chat</Text>
             </Button>
           </View>
         </ScrollView>

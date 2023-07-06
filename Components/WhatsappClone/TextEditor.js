@@ -7,12 +7,12 @@ import {
     Modal,
     TextInput,
   } from 'react-native';
-  import React, { useState } from 'react';
+  import React, { useEffect, useRef, useState } from 'react';
   import { Feather } from '@expo/vector-icons';
   import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
   import MovableView from './MovableView';
   import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
+  import DynamicText from "react-native-dynamic-fonts"
   
   const TextEditor = ({modalVisible,setModalVisible}) => {
     const [background, setbackground] = useState(false);
@@ -33,6 +33,14 @@ import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
   
     const [editedIndex,seteditedIndex] = useState(null);
 
+    const textRef = useRef(null);
+
+    useEffect(() => {
+      if(modalVisible){
+        textRef?.current?.focus();
+      }
+    }, [modalVisible])
+  
   
     const handleAlignment = () => {
       if (alignment == 'center') {
@@ -140,6 +148,7 @@ import { ACTIVE_TAB_GREEN_COLOR } from './WhatsappMainScreen';
                   },
                 ]}
                 placeholder="Add text"
+                ref={textRef}
                 placeholderTextColor={!background ? 'white' : 'black'}
               />
             </View>

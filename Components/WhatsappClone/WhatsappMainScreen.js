@@ -11,6 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import People from "react-native-vector-icons/Ionicons";
 import CommunityComponent from "./CommunityComponent";
 import { useNavigation } from "@react-navigation/native";
+import { showToast } from "./RippleButton";
 
 const Tab = createMaterialTopTabNavigator();
 

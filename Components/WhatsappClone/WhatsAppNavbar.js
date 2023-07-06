@@ -168,6 +168,7 @@ const WhatsAppNavbar = ({
 
   const handleOpenSearchBar = () => {
     setopensearchBar(!opensearchBar);
+    inputRef.current.focus()
   };
 
   const searchNavbarInterpolation = searchNavbarAnimation.interpolate({
@@ -195,8 +196,14 @@ const WhatsAppNavbar = ({
       }
       return chat;
     });
-    setchats(selectedChats);
-    setFileredChats(selectedChats);
+
+    const pinnedChats = selectedChats.filter(chat => chat.pinned);
+    const unpinnedChats = selectedChats.filter(chat => !chat.pinned);
+
+    const newSelectedChats = [...pinnedChats, ...unpinnedChats];
+
+    setchats(newSelectedChats);
+    setFileredChats(newSelectedChats);
 
     showToast("Pinned chat");
   }else{

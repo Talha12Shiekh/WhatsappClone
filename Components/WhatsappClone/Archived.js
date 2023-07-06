@@ -399,7 +399,7 @@ const Archived = ({ route, navigation }) => {
                       aspectRatio: 1,
                       backgroundColor: ACTIVE_TAB_GREEN_COLOR,
                       borderRadius: 100,
-                      marginRight:20,
+                      marginRight:40,
                       transform: [{ scale: item.readed ? 1 : 0 }],
                     }}
                   ></View>

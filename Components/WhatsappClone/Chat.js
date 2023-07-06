@@ -74,7 +74,7 @@ const Chat = (item) => {
                   {item.name.length > 18 ? item.name.slice(0, 19) : item.name}
                 </Text>
               </View>
-              <View style={{ width: "30%" }}>
+              <View style={{ width: "30%",marginRight:10 }}>
                 {item.NotshowChatMakingDate && <Text style={[styles.time, { color: CHAT_DATA_STATUS_COLOR }]}>
                   {item.date < 10 ? "0" + item.date : item.date}/
                   {item.month < 10 ? "0" + item.month : item.month}/{item.year}
