@@ -50,7 +50,7 @@ const WhatsAppNavbar = ({
   handleChatsMaking,
   currentTabIndex,
   setactiveRoute,
-  activeRoute
+  activeRoute,
 }) => {
 
    // *! DATA OF THE BADGES IN THE NAVBAR
@@ -90,6 +90,7 @@ const WhatsAppNavbar = ({
   const [MenuData,setMenuData] = useState();
 
   const [readed,setreaded] = useState(false);
+
 
   const [isAllselected,setisAllselected] = useState(false);
 
@@ -351,7 +352,9 @@ const WhatsAppNavbar = ({
   useEffect(() => {
     
     if (activeRoute == "Community") {
-      const UpDatedData = [{ text: "Settings", onPress: () => {}, key: 10 }];
+      const UpDatedData = [{ text: "Settings", onPress: () => {
+        navigation.navigate("Settings",{handleChatsMaking})
+      }, key: 10 }];
       setMenuData(UpDatedData);
 
     } else {
@@ -379,7 +382,9 @@ const WhatsAppNavbar = ({
           key: 3,
         },
         { text: "Starred Messages", onPress: () => {}, key: 4 },
-        { text: "Settings", onPress: () => {}, key: 5 },
+        { text: "Settings", onPress: () => {
+          navigation.navigate("Settings",{handleChatsMaking})
+        }, key: 5 },
       ];
 
       setMenuData(UpDatedData);

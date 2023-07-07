@@ -10,19 +10,20 @@ import { FlatList } from "react-native";
 import { Image } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-const Settings = ({ route ,navigation,settingsChats}) => {
+const Settings = ({ route ,navigation,SettingsChats}) => {
   const { handleChatsMaking } = route.params;
 
+  let edited = true;
 
   const findItemstoEdit = (key) => {
-    const findedChat = settingsChats.find(chat => chat.key == key);
-    navigation.navigate("Profile",{handleChatsMaking,findedChat,editing:true})
+    const findedChat = SettingsChats.find(chat => chat.key == key);
+    navigation.navigate("Profile",{handleChatsMaking,findedChat,edited})
   } 
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={settingsChats}
+        data={SettingsChats}
         keyExtractor={(chat) => chat.key}
         ItemSeparatorComponent={() => {
           return (

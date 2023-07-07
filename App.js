@@ -33,9 +33,12 @@ import { useState } from "react";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
+import Settings from "./Components/WhatsappClone/Settings";
 
 export default function App() {
   const Stack = createStackNavigator();
+
+  const [SettingsChats,setSettingsChats] = useState();
 
   const date = new Date();
   const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
@@ -212,7 +215,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" options={{ headerShown: false }}>
           {(props) => {
-            return <WhatsappMainScreen {...props} isEnabled={isEnabled} />;
+            return <WhatsappMainScreen {...props} isEnabled={isEnabled} setSettingsChats={setSettingsChats}/>
           }}
         </Stack.Screen>
         <Stack.Group
@@ -286,6 +289,13 @@ export default function App() {
               headerLeft:() => null,
             }}
           />
+          <Stack.Screen
+            name="Settings"
+          >
+            {(props) => {
+            return <Settings {...props} SettingsChats={SettingsChats} />
+          }}
+          </Stack.Screen>
         </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer>

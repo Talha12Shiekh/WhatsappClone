@@ -31,8 +31,13 @@ export const MENU_BACKGROUND_COLOR = "#233239";
 
 
 
-const WhatsappMainScreen = ({ isEnabled }) => {
+const WhatsappMainScreen = ({ isEnabled ,setSettingsChats}) => {
   const [chats, setchats] = useState([]);
+
+  useEffect(() => {
+    setSettingsChats(chats)
+  }, [chats])
+  
 
   const [archived, setarchived] = useState([]);
 
@@ -76,7 +81,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   };
 
   const handleChatsMaking = useCallback(
-    (name, number, about, photo) => {
+    (name, number, about, photo,key,edited) => {
       if (name.length == "" && number.length == "") {
         showToast("You can not make an empty chat");
       } else {
@@ -94,8 +99,14 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           muted: false,
           readed: false,
         };
-        setchats((chts) => [...chts, ChatInformation]);
-        setFileredChats((chts) => [...chts, ChatInformation]);
+        if(!edited){
+          setchats((chts) => [...chts, ChatInformation]);
+          setFileredChats((chts) => [...chts, ChatInformation]);
+        }else{
+          let newChats = [...chats];
+          const editedChat = newChats.findIndex(chat => chat.key == key);
+          alert(JSON.stringify(editedChat))
+        }
         storeChats();
       }
     },
