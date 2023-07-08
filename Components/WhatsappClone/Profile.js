@@ -24,7 +24,7 @@ import { Feather, Ionicons } from "react-native-vector-icons";
 import Button from "./Button";
 
 const Profile = ({ route, navigation }) => {
-  const { handleChatsMaking } = route.params;
+  const { handleChatsMaking,findedEditedChat,findedIndex,edited } = route.params;
 
   const [chatinformation, setchatinformation] = useState({
     name: "",
@@ -35,7 +35,13 @@ const Profile = ({ route, navigation }) => {
 
   const handleSubmitModel = () => {
     const { name, number, about, photo } = chatinformation;
-    handleChatsMaking(name, number, about, photo);
+
+    if(!edited){
+      handleChatsMaking(name, number, about, photo);
+    }else{
+      handleChatsMaking(name, number, about, photo,findedIndex,edited);
+    }
+
 
     setchatinformation({
       name: "",
@@ -48,6 +54,18 @@ const Profile = ({ route, navigation }) => {
     } else {
     }
   };
+
+  useEffect(() => {
+    if(edited){
+      setchatinformation({
+        name: findedEditedChat.name,
+        number: findedEditedChat.number,
+        about: findedEditedChat.about,
+        photo: findedEditedChat.photo,
+      });
+    }
+  }, [edited])
+  
 
   const handleChangeInputs = (name, value) => {
     setchatinformation((previous) => ({

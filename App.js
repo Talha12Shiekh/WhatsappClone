@@ -17,6 +17,7 @@ import Profile from "./Components/WhatsappClone/Profile";
 import AllContacts from "./Components/WhatsappClone/AllContacts";
 import Archived from "./Components/WhatsappClone/Archived";
 import Camera from "./Components/WhatsappClone/Camera";
+import Settings from "./Components/WhatsappClone/Settings"
 import {
   View,
   Image,
@@ -36,6 +37,8 @@ import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
 
 export default function App() {
   const Stack = createStackNavigator();
+
+  const [settingsChats,setsettingsChats] = useState([]);
 
   const date = new Date();
   const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
@@ -212,7 +215,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" options={{ headerShown: false }}>
           {(props) => {
-            return <WhatsappMainScreen {...props} isEnabled={isEnabled} />;
+            return <WhatsappMainScreen {...props} isEnabled={isEnabled} setsettingsChats={setsettingsChats} settingsChats={settingsChats}/>
           }}
         </Stack.Screen>
         <Stack.Group
@@ -286,6 +289,13 @@ export default function App() {
               headerLeft:() => null,
             }}
           />
+          <Stack.Screen
+            name="Settings"
+          >
+            {(props) => {
+              return <Settings {...props} settingsChats={settingsChats}/>
+            }}
+          </Stack.Screen>
         </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer>
