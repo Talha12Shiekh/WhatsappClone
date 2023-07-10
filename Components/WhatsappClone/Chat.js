@@ -31,7 +31,7 @@ const Chat = (item) => {
   const [modalphoto, setmodalphoto] = useState("");
   const [modalName, setmodalName] = useState("");
   const { RightPlaceRenderThing,LeftPlaceRenderThing } = item;
-  let aboutlimit = "Lorem ipsum dolor sit amet";
+  let aboutlimit = item.NotshowChatMakingDate ? "Lorem ipsum dolor sit amet" : "Lorem ipsum dolor sit amet talha call" ;
 
 
   function handleOpenDpModel(photo, name) {
@@ -82,7 +82,7 @@ const Chat = (item) => {
               </View>
             </View>
             <View style={[styles.textContainer]}>
-              <View style={{ width: "70%", marginBottom: -5 }}>
+              <View style={{ width: item.NotshowChatMakingDate ? "70%" : "80%", marginBottom: -5 }}>
                 <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
                   {item.about.length > aboutlimit.length
                     ? item.about.slice(0, aboutlimit.length - 1) + "..."

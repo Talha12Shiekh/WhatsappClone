@@ -11,12 +11,11 @@ import WhatsappMainScreen, {
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import CommunityComponent from "./Components/WhatsappClone/CommunityComponent";
-import Chat from "./Components/WhatsappClone/Chat";
-
 import Profile from "./Components/WhatsappClone/Profile";
 import AllContacts from "./Components/WhatsappClone/AllContacts";
 import Archived from "./Components/WhatsappClone/Archived";
 import Camera from "./Components/WhatsappClone/Camera";
+import CallDetails from "./Components/WhatsappClone/CallDetails";
 import {
   View,
   Image,
@@ -28,7 +27,7 @@ import {
 } from "react-native";
 import { useCallback } from "react";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { RippleButton } from "./Components/WhatsappClone/RippleButton";
+import { NormalChatComponent } from "./Components/WhatsappClone/RippleButton";
 import { useState } from "react";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
@@ -36,11 +35,6 @@ import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
 
 export default function App() {
   const Stack = createStackNavigator();
-
-  const date = new Date();
-  const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-  const miutes = date.getMinutes() > 9 ? date.getMinutes() : "0"+date.getMinutes();
-  const am_pm = date.getHours() >= 12 ? "PM" : "AM";
 
   const ProfileImage = ({ route, navigation }) => {
     const { photo, name } = route.params;
@@ -52,7 +46,6 @@ export default function App() {
         });
       }, [navigation, name])
     );
-
 
     return (
       <View
@@ -85,7 +78,7 @@ export default function App() {
   const LinkedDevices = ({ handleChatsMaking }) => {
     const navigation = useNavigation();
 
-    const [isscanned,setisscanned] = useState(false);
+    const [isscanned, setisscanned] = useState(false);
 
     return (
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
@@ -96,7 +89,7 @@ export default function App() {
             imagepath={require("./Components/WhatsappClone/Images/connection.png")}
             handleChatsMaking={handleChatsMaking}
             onPress={() => {
-              navigation.navigate("BarCodeScanner",{setisscanned});
+              navigation.navigate("BarCodeScanner", { setisscanned });
             }}
           />
         </View>
@@ -109,67 +102,44 @@ export default function App() {
             borderTopColor: CHAT_DATA_STATUS_COLOR,
           }}
         >
-           {isscanned && <View
-            style={{
-              width: "100%",
-              height: 160,
-              backgroundColor: TAB_BACKGROUND_COLOR,
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-            }}
-          >
-            <Text style={{ color: CHAT_DATA_STATUS_COLOR, marginBottom: 10 }}>
-              Device status
-            </Text>
-            <Text style={{ color: CHAT_DATA_STATUS_COLOR }}>
-              Tap a device log out
-            </Text>
-            <TouchableNativeFeedback
-              background={TouchableNativeFeedback.Ripple(
-                TAB_PRESS_ACTIVE_WHITE_COLOR,
-                false
-              )}
+          {isscanned && (
+            <View
+              style={{
+                width: "100%",
+                height: 160,
+                backgroundColor: TAB_BACKGROUND_COLOR,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+              }}
             >
-              <View
-                style={{
-                  width: "100%",
-                  height: 80,
-                  marginTop: 10,
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
+              <Text style={{ color: CHAT_DATA_STATUS_COLOR, marginBottom: 10 }}>
+                Device status
+              </Text>
+              <Text style={{ color: CHAT_DATA_STATUS_COLOR }}>
+                Tap a device log out
+              </Text>
+              <TouchableNativeFeedback
+                background={TouchableNativeFeedback.Ripple(
+                  TAB_PRESS_ACTIVE_WHITE_COLOR,
+                  false
+                )}
               >
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
-                  <Image
-                    source={require("./Components/WhatsappClone/Images/chrome.png")}
-                    style={{ aspectRatio: 1, height: 50 }}
-                  />
-                </View>
-                <View style={{ marginLeft: 15 }}>
-                  <Text
-                    style={{
-                      color: TITLE_COLOR,
-                      marginBottom: 4,
-                      fontSize: 15,
-                      fontWeight: 400,
-                    }}
-                  >
-                    Goggle Chrome (Windows)
-                  </Text>
-                  <Text style={{ color: CHAT_DATA_STATUS_COLOR }}>
-                    Last active today at {hour}:{miutes} {am_pm}
-                  </Text>
-                </View>
-              </View>
-            </TouchableNativeFeedback>
-          </View> }
+                <NormalChatComponent
+                  showText={true}
+                  LeftComponent={() => {
+                    return <Image
+                      source={require("./Components/WhatsappClone/Images/chrome.png")}
+                      style={{ aspectRatio: 1, height: 50 }}
+                    />
+                  }}
+                />
+              </TouchableNativeFeedback>
+            </View>
+          )}
         </View>
       </View>
     );
   };
-
 
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -267,7 +237,7 @@ export default function App() {
             component={Camera}
             options={{
               title: "",
-              headerLeft:() => null,
+              headerLeft: () => null,
             }}
           />
           <Stack.Screen
@@ -275,7 +245,7 @@ export default function App() {
             component={CaptureImageScreen}
             options={{
               title: "",
-              headerLeft:() => null,
+              headerLeft: () => null,
             }}
           />
           <Stack.Screen
@@ -283,7 +253,15 @@ export default function App() {
             component={ImageCropScreen}
             options={{
               title: "",
-              headerLeft:() => null,
+              headerLeft: () => null,
+            }}
+          />
+          <Stack.Screen
+            name="CallDetails"
+            component={CallDetails}
+            options={{
+              title: "Create call link",
+              headerTintColor: CHAT_DATA_STATUS_COLOR,
             }}
           />
         </Stack.Group>
