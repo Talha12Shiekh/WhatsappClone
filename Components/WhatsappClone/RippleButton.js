@@ -9,7 +9,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   TAB_BACKGROUND_COLOR,
@@ -23,6 +23,8 @@ import {
   MaterialCommunityIcons,
 } from "react-native-vector-icons";
 import { useNavigation } from "@react-navigation/native";
+
+
 
 export const center = {
   justifyContent: "center",
@@ -145,23 +147,14 @@ export const navbarAnimation = (openanim) => {
   }).start();
 };
 
-export const NormalChatComponent = ({ showText, LeftComponent }) => {
+export const NormalChatComponent = ({ showText, LeftComponent,text }) => {
+
   const date = new Date();
   const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
   const miutes =
     date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes();
   const am_pm = date.getHours() >= 12 ? "PM" : "AM";
-  function generatePassword() {
-    let length = 22,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = "";
-        n = charset.length;
-    for (let i = 0; i < length; i++) {
-        retVal += charset.charAt(Math.floor(Math.random() * n));
-    }
-    return retVal;
-};
-  const passwordString = generatePassword() 
+
   return (
     <View
       style={{
@@ -192,21 +185,70 @@ export const NormalChatComponent = ({ showText, LeftComponent }) => {
           </Text>
         </View>
       ) : (
-          <TouchableOpacity>
-            <View>
-              <Text style={{color:"#1a0dab"}}>https://call.whatsapp.com/video/{passwordString}</Text>
-            </View>
-          </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={{ marginLeft: 15 }}>
+            <Text style={{ color: "lightblue", fontSize: 15 }}>
+                {text}
+            </Text>
+          </View>
+        </TouchableOpacity>
       )}
     </View>
   );
 };
 
-export const ChatGreenLeftComponent = ({ children,...rest }) => {
+export const ChatGreenLeftComponent = ({ children }) => {
   return (
     <View style={{ ...center }}>
-      <View style={styles.callLeftPlaceImage}>{children}</View>
+      <View
+        style={[
+          styles.callLeftPlaceImage,
+          {
+            backgroundColor: ACTIVE_TAB_GREEN_COLOR,
+          },
+        ]}
+      >
+        {children}
+      </View>
     </View>
+  );
+};
+
+export const CallReusableComponent = ({Children,text,onPress}) => {
+  return (
+    <TouchableNativeFeedback
+    onPress={onPress}
+    background={TouchableNativeFeedback.Ripple(
+      TAB_PRESS_ACTIVE_WHITE_COLOR,
+      false
+    )}
+    >
+    <View
+      style={{
+        height: 60,
+        flexDirection: "row",
+        gap: 20,
+        paddingLeft: 30,
+        alignItems: "center",
+        marginBottom:15,
+      }}
+    >
+      <View style={center}>
+        <Children/>
+      </View>
+      <View>
+        <Text
+          style={{
+            color: TITLE_COLOR,
+            fontSize: 18,
+            marginLeft: 20,
+          }}
+        >
+          {text}
+        </Text>
+      </View>
+    </View>
+    </TouchableNativeFeedback>
   );
 };
 
@@ -251,6 +293,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginTop: 10,
     ...center,
-    backgroundColor:ACTIVE_TAB_GREEN_COLOR
+  },
+  callComponentContainer: {
+    width: "80%",
+    height: 50,
+    backgroundColor: "blue",
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 40,
   },
 });
