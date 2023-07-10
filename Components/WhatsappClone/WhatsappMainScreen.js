@@ -10,7 +10,7 @@ import WhatsAppNavbar from "./WhatsAppNavbar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import People from "react-native-vector-icons/Ionicons";
 import CommunityComponent from "./CommunityComponent";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation ,useFocusEffect} from "@react-navigation/native";
 import { showToast } from "./RippleButton";
 
 const Tab = createMaterialTopTabNavigator();
@@ -110,8 +110,13 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     storeArchivedChats();
   }, [archived]);
 
-  const Community = () => {
+  const Community = ({setcurrentTabIndex}) => {
     const navigation = useNavigation();
+
+    useFocusEffect(() => {
+      setcurrentTabIndex(0);
+    })
+
     return (
       <View style={{ flex: 1 }}>
         <CommunityComponent
@@ -152,11 +157,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       />
       <Tab.Navigator
         initialRouteName="Chats"
-        screenListeners={{
-          state: (e) => {
-            setcurrentTabIndex(e.data.state.index);
-          },
-        }}
         screenOptions={({ route }) => ({
           tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
@@ -215,7 +215,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           }}
         >
           {(props) => {
-            return <Community {...props} />;
+            return <Community {...props} setcurrentTabIndex={setcurrentTabIndex}/>
           }}
         </Tab.Screen>
         <Tab.Screen
@@ -237,20 +237,27 @@ const WhatsappMainScreen = ({ isEnabled }) => {
                 setarchived={setarchived}
                 handleChatsMaking={handleChatsMaking}
                 isEnabled={isEnabled}
+                setcurrentTabIndex={setcurrentTabIndex}
               />
             );
           }}
         </Tab.Screen>
         <Tab.Screen
           name="Status"
-          component={Status}
           options={{ tabBarLabel: "Status" }}
-        />
+        >
+          {(props) => {
+            return <Status {...props} setcurrentTabIndex={setcurrentTabIndex}/>
+          }}
+        </Tab.Screen>
         <Tab.Screen
           name="Calls"
-          component={Calls}
           options={{ tabBarLabel: "Calls" }}
-        />
+        >
+          {(props) => {
+            return <Calls {...props} setcurrentTabIndex={setcurrentTabIndex}/>
+          }}
+        </Tab.Screen>
       </Tab.Navigator>
     </SafeAreaProvider>
   );

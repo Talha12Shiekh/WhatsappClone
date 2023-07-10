@@ -23,7 +23,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute,useFocusEffect } from "@react-navigation/native";
 import CommunityComponent from "./CommunityComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ACTIVE_TAB_GREEN_COLOR } from "./WhatsappMainScreen";
@@ -49,6 +49,7 @@ const Chats = ({
   findSelectedArchved,
   handleChatsMaking,
   isEnabled,
+  setcurrentTabIndex
 }) => {
   const navigation = useNavigation();
   const animation = useRef(new Animated.Value(0)).current;
@@ -118,57 +119,61 @@ const Chats = ({
     }
   }, [opensearchBar]);
 
+  useFocusEffect(() => {
+    setcurrentTabIndex(1)
+  })
+
   const ArchivedBar = () => {
-    return <TouchableNativeFeedback
-    background={TouchableNativeFeedback.Ripple(
-      INACTIVE_TAB_WHITE_COLOR,
-      false
-    )}
-    onPress={() =>
-      navigation.navigate("Archived", {
-        archived,
-        setchats,
-        setarchived,
-      })
-    }
-  >
-    <View
-      style={{
-        height: 50,
-        flexDirection: "row",
-        gap: 20,
-        paddingLeft: 30,
-        borderBottomColor: TAB_BACKGROUND_COLOR,
-        borderTopColor: TAB_BACKGROUND_COLOR,
-        borderBottomWidth: 1,
-        alignItems: "center",
-        borderTopWidth:1
-      }}
-    >
-      <View
-        style={{ justifyContent: "center", alignItems: "center" }}
+    return (
+      <TouchableNativeFeedback
+        background={TouchableNativeFeedback.Ripple(
+          INACTIVE_TAB_WHITE_COLOR,
+          false
+        )}
+        onPress={() =>
+          navigation.navigate("Archived", {
+            archived,
+            setchats,
+            setarchived,
+          })
+        }
       >
-        <Ionicons
-          name="archive-outline"
-          size={21}
-          color={CHAT_DATA_STATUS_COLOR}
-        />
-      </View>
-      <View>
-        <Text
+        <View
           style={{
-            color: TITLE_COLOR,
-            fontSize: 18,
-            marginLeft: 20,
-            fontWeight: "bold",
+            height: 50,
+            flexDirection: "row",
+            gap: 20,
+            paddingLeft: 30,
+            borderBottomColor: TAB_BACKGROUND_COLOR,
+            borderTopColor: TAB_BACKGROUND_COLOR,
+            borderBottomWidth: 1,
+            alignItems: "center",
+            borderTopWidth: 1,
           }}
         >
-          Archived
-        </Text>
-      </View>
-    </View>
-  </TouchableNativeFeedback>
-  }
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Ionicons
+              name="archive-outline"
+              size={21}
+              color={CHAT_DATA_STATUS_COLOR}
+            />
+          </View>
+          <View>
+            <Text
+              style={{
+                color: TITLE_COLOR,
+                fontSize: 18,
+                marginLeft: 20,
+                fontWeight: "bold",
+              }}
+            >
+              Archived
+            </Text>
+          </View>
+        </View>
+      </TouchableNativeFeedback>
+    );
+  };
 
   return (
     <View
@@ -180,13 +185,23 @@ const Chats = ({
     >
       {chats.length !== 0 ? (
         <View style={{ backgroundColor: CHAT_BACKROUND_COLOR }}>
-          {isEnabled ? <View>
-          {archived.length !== 0 ? (
-              <ArchivedBar/>
-          ) : null}
-          </View> : null}
           <FlatList
             data={chats}
+            // contentContainerStyle={{paddingBottom:50}}
+            ListHeaderComponent={() => {
+              if (isEnabled) {
+                return (
+                  <View>{archived.length !== 0 ? <ArchivedBar /> : null}</View>
+                );
+              }
+            }}
+            ListFooterComponent={() => {
+              if (!isEnabled) {
+                return (
+                  <View>{archived.length !== 0 ? <ArchivedBar /> : null}</View>
+                );
+              }
+            }}
             keyExtractor={(chat) => chat.key}
             ItemSeparatorComponent={() => {
               return (
@@ -304,11 +319,6 @@ const Chats = ({
               return <Chat {...itemData} />;
             }}
           />
-          {!isEnabled ? <View>
-          {archived.length !== 0 ? (
-              <ArchivedBar/>
-          ) : null}
-          </View> : null}
         </View>
       ) : (
         <View style={{ width: "100%", height: "100%" }}>
