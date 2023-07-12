@@ -1,4 +1,12 @@
-import { Text, View, StyleSheet, Share, Modal, Pressable } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Share,
+  Modal,
+  Pressable,
+  Button,
+} from "react-native";
 import {
   CallReusableComponent,
   NormalChatComponent,
@@ -17,30 +25,35 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useState, useEffect } from "react";
 import * as Clipboard from "expo-clipboard";
 import Checkbox from "expo-checkbox";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const CallDetails = ({ route }) => {
   const { callChats } = route.params;
 
-  const [dropdownitems, setdropdownitems] = useState([
-    { label: callChats.name, value: callChats.name },
-  ]);
+  const [dropdownitems, setdropdownitems] = useState([]);
+
+  const [items, setItems] = useState(dropdownitems);
 
   useEffect(() => {
-    alert(JSON.stringify(dropdownitems))
-    setdropdownitems((prev) => [...prev, dropdownitems]);
+    const updatedDropdownItems = callChats.map((chat) => {
+      return {
+        value: chat.name,
+        label: chat.name,
+      };
+    });
+    setdropdownitems(updatedDropdownItems);
+    setItems(updatedDropdownItems);
   }, [callChats]);
 
   const [open, setOpen] = useState(false);
 
-  const [value, setValue] = useState("spain");
+  const [value, setValue] = useState(callChats[0]?.name);
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const [Video, setVideo] = useState(true);
 
   const [Voice, setVoice] = useState(false);
-
-  const [items, setItems] = useState(dropdownitems);
 
   function generatePassword() {
     let length = 22,
@@ -206,10 +219,11 @@ const CallDetails = ({ route }) => {
               color: TITLE_COLOR,
               margin: 10,
             }}
+            textStyle={{ fontSize: 20 }}
           />
         </View>
       </View>
-      <View style={styles.bottomContentContainer}>
+      <View style={[styles.bottomContentContainer, { zIndex: 1000 }]}>
         <CallReusableComponent
           Children={() => {
             return (
@@ -248,6 +262,18 @@ const CallDetails = ({ route }) => {
             onShare();
           }}
         />
+      </View>
+      <View style={[styles.buttonContainer]}>
+        <TouchableOpacity>
+          <View style={{width:"80%",backgroundColor:ACTIVE_TAB_GREEN_COLOR,alignSelf:"center",
+        justifyContent:"center",
+        alignItems:"center",
+        padding:10,
+        borderRadius:20,
+        }}>
+            <Text style={{color:TITLE_COLOR,fontSize:15}}>Make Call</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -342,6 +368,13 @@ const styles = StyleSheet.create({
   firstCheckboxesContainer: {
     marginTop: 20,
   },
+  buttonContainer:{
+    alignSelf:"flex-end",position:"absolute",
+    bottom:20,
+    left:0,
+    right:0,
+    justifyContent:"center",
+  }
 });
 
 export default CallDetails;
