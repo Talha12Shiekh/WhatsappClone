@@ -20,7 +20,7 @@ const CALLS_BUTTON = [
   },
 ];
 
-const Calls = ({ setcurrentTabIndex, navigation }) => {
+const Calls = ({ callChats,setcurrentTabIndex, navigation }) => {
   useFocusEffect(() => {
     setcurrentTabIndex(3);
   });
@@ -49,7 +49,7 @@ const Calls = ({ setcurrentTabIndex, navigation }) => {
             RightPlaceRenderThing: () => null,
             NotshowChatMakingDate: false,
             onPress: () => {
-              navigation.navigate("CallDetails");
+              navigation.navigate("CallDetails",{callChats});
             },
           };
           return <Chat {...itemData} />;

@@ -36,6 +36,9 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const [archived, setarchived] = useState([]);
 
+  const [callChats,setcallChats] = useState([]);
+
+
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
     let updatedchats = await JSON.parse(asyncChats);
@@ -94,8 +97,16 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           muted: false,
           readed: false,
         };
+        const callInformation = {
+          name,
+          key: Date.now().toString(),
+          label:name,
+          value:name,
+          picture:photo
+        };
         setchats((chts) => [...chts, ChatInformation]);
         setFileredChats((chts) => [...chts, ChatInformation]);
+        setcallChats((chts) => [...chts, callInformation]);
         storeChats();
       }
     },
@@ -255,7 +266,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Calls" }}
         >
           {(props) => {
-            return <Calls {...props} setcurrentTabIndex={setcurrentTabIndex}/>
+            return <Calls {...props} callChats={callChats} setcurrentTabIndex={setcurrentTabIndex}/>
           }}
         </Tab.Screen>
       </Tab.Navigator>
