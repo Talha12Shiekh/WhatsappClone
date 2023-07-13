@@ -30,6 +30,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const CallDetails = ({ route, navigation }) => {
   const { callChats, setcalls } = route.params;
 
+  const [dropdownitems, setdropdownitems] = useState([]);
+
   const [items, setItems] = useState(dropdownitems);
 
   useEffect(() => {
@@ -39,6 +41,7 @@ const CallDetails = ({ route, navigation }) => {
         label: chat.name,
       };
     });
+    setdropdownitems(updatedDropdownItems);
     setItems(updatedDropdownItems);
   }, [callChats]);
 
