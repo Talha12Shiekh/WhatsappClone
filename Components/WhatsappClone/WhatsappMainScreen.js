@@ -34,6 +34,8 @@ export const MENU_BACKGROUND_COLOR = "#233239";
 const WhatsappMainScreen = ({ isEnabled }) => {
   const [chats, setchats] = useState([]);
 
+  const [calls, setcalls] = useState([]);
+
   const [archived, setarchived] = useState([]);
 
   const [callChats,setcallChats] = useState([]);
@@ -266,7 +268,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Calls" }}
         >
           {(props) => {
-            return <Calls {...props} callChats={callChats} setcurrentTabIndex={setcurrentTabIndex}/>
+            return <Calls {...props} calls={calls} setcalls={setcalls} callChats={callChats} setcurrentTabIndex={setcurrentTabIndex}/>
           }}
         </Tab.Screen>
       </Tab.Navigator>

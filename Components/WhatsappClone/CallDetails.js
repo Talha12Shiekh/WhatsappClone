@@ -20,17 +20,15 @@ import {
   CHAT_DATA_STATUS_COLOR,
 } from "./WhatsappMainScreen";
 import { ChatGreenLeftComponent } from "./RippleButton";
-import { Feather, MaterialIcons, Entypo } from "@expo/vector-icons";
+import { Feather , MaterialIcons, Entypo } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useState, useEffect } from "react";
 import * as Clipboard from "expo-clipboard";
 import Checkbox from "expo-checkbox";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const CallDetails = ({ route }) => {
-  const { callChats } = route.params;
-
-  const [dropdownitems, setdropdownitems] = useState([]);
+const CallDetails = ({ route, navigation }) => {
+  const { callChats, setcalls } = route.params;
 
   const [items, setItems] = useState(dropdownitems);
 
@@ -41,11 +39,12 @@ const CallDetails = ({ route }) => {
         label: chat.name,
       };
     });
-    setdropdownitems(updatedDropdownItems);
     setItems(updatedDropdownItems);
   }, [callChats]);
 
   const [open, setOpen] = useState(false);
+
+  const [selectedItems, setselectedItems] = useState(null);
 
   const [value, setValue] = useState(callChats[0]?.name);
 
@@ -54,6 +53,35 @@ const CallDetails = ({ route }) => {
   const [Video, setVideo] = useState(true);
 
   const [Voice, setVoice] = useState(false);
+
+  const time = new Date();
+
+  const date = time.getDate();
+
+  const month = time.getMonth();
+
+  const year = time.getFullYear();
+
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const timeofcall = new Date();
+  const hour = timeofcall.getHours() > 12 ? timeofcall.getHours() - 12 : timeofcall.getHours();
+  const miutes =
+    timeofcall.getMinutes() > 9 ? timeofcall.getMinutes() : "0" + timeofcall.getMinutes();
+  const am_pm = timeofcall.getHours() >= 12 ? "PM" : "AM";
 
   function generatePassword() {
     let length = 22,
@@ -93,6 +121,22 @@ const CallDetails = ({ route }) => {
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const handleMakeCall = () => {
+    let photo = callChats.find((chat) => chat.name == selectedItems);
+    const callObject = {
+      name: selectedItems,
+      about: `${date} ${months[month]},${hour}:${miutes} ${am_pm.toLowerCase()}`,
+      key: Date.now().toString(),
+      date,
+      month,
+      year,
+      photo: photo.picture,
+      video: Video,
+    };
+    setcalls((prev) => [...prev, callObject]);
+    navigation.goBack();
   };
 
   return (
@@ -204,23 +248,28 @@ const CallDetails = ({ route }) => {
         </View>
         <View>
           <Text style={styles.dropDowntext}>To :</Text>
-          <DropDownPicker
-            open={open}
-            items={items}
-            setOpen={setOpen}
-            setItems={setItems}
-            theme="DARK"
-            value={value}
-            setValue={setValue}
-            zIndex={5000}
-            zIndexInverse={3000}
-            labelStyle={{
-              fontSize: 25,
-              color: TITLE_COLOR,
-              margin: 10,
-            }}
-            textStyle={{ fontSize: 20 }}
-          />
+          <View style={{ zIndex: 999999999999 }}>
+            <DropDownPicker
+              open={open}
+              items={items}
+              setOpen={setOpen}
+              setItems={setItems}
+              theme="DARK"
+              value={value}
+              setValue={setValue}
+              zIndex={5000}
+              zIndexInverse={3000}
+              onSelectItem={(item) => {
+                setselectedItems(item.value);
+              }}
+              labelStyle={{
+                fontSize: 25,
+                color: TITLE_COLOR,
+                margin: 10,
+              }}
+              textStyle={{ fontSize: 20 }}
+            />
+          </View>
         </View>
       </View>
       <View style={[styles.bottomContentContainer, { zIndex: 1000 }]}>
@@ -264,14 +313,21 @@ const CallDetails = ({ route }) => {
         />
       </View>
       <View style={[styles.buttonContainer]}>
-        <TouchableOpacity>
-          <View style={{width:"80%",backgroundColor:ACTIVE_TAB_GREEN_COLOR,alignSelf:"center",
-        justifyContent:"center",
-        alignItems:"center",
-        padding:10,
-        borderRadius:20,
-        }}>
-            <Text style={{color:TITLE_COLOR,fontSize:15}}>Make Call</Text>
+        <TouchableOpacity onPress={handleMakeCall}>
+          <View
+            style={{
+              width: "80%",
+              backgroundColor: ACTIVE_TAB_GREEN_COLOR,
+              alignSelf: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 10,
+              borderRadius: 20,
+            }}
+          >
+            <Text style={{ color: TITLE_COLOR, fontSize: 15 }}>
+              Create Call
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -368,13 +424,14 @@ const styles = StyleSheet.create({
   firstCheckboxesContainer: {
     marginTop: 20,
   },
-  buttonContainer:{
-    alignSelf:"flex-end",position:"absolute",
-    bottom:20,
-    left:0,
-    right:0,
-    justifyContent:"center",
-  }
+  buttonContainer: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    justifyContent: "center",
+  },
 });
 
 export default CallDetails;
