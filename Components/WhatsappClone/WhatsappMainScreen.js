@@ -28,6 +28,7 @@ export const ARCHIVED_STORAGE_KEY = "archived_items";
 export const CHAT_SELECTION_BACKGROUND = "#182329";
 export const BADGE_BACKGROUND_COLOR = "#27343d";
 export const MENU_BACKGROUND_COLOR = "#233239";
+export const CALLS_STORAGE_KEY = "call_items"
 
 
 
@@ -45,6 +46,13 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
     let updatedchats = await JSON.parse(asyncChats);
     setchats(updatedchats);
+    storeCallChats()
+  };
+
+  const getCallChats = async () => {
+    let asyncCallChats = await AsyncStorage.getItem(CALLS_STORAGE_KEY);
+    let updatedCallchats = await JSON.parse(asyncCallChats);
+    setcallChats(updatedCallchats);
   };
 
   const getArchivedChats = async () => {
@@ -56,6 +64,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   useEffect(() => {
     getChats();
     getArchivedChats();
+    getCallChats()
   }, [])
   
 
@@ -80,6 +89,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     await AsyncStorage.setItem(ARCHIVED_STORAGE_KEY, JSON.stringify(archived));
   };
 
+  const storeCallChats = async () => {
+    await AsyncStorage.setItem(CALLS_STORAGE_KEY, JSON.stringify(callChats));
+  };
+
   const handleChatsMaking = useCallback(
     (name, number, about, photo) => {
       if (name.length == "" && number.length == "") {
@@ -94,6 +107,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           month,
           year,
           photo,
+          type:"chat",
           selected: false,
           pinned: false,
           muted: false,
@@ -104,7 +118,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           key: Date.now().toString(),
           label:name,
           value:name,
-          picture:photo
+          photo,
         };
         setchats((chts) => [...chts, ChatInformation]);
         setFileredChats((chts) => [...chts, ChatInformation]);
@@ -117,7 +131,12 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   useEffect(() => {
     storeChats();
+    storeCallChats()
   }, [chats]);
+
+  useEffect(() => {
+    storeCallChats()
+  }, [callChats]);
 
   useEffect(() => {
     storeArchivedChats();
@@ -167,6 +186,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         currentTabIndex={currentTabIndex}
         setactiveRoute={setactiveRoute}
         activeRoute={activeRoute}
+        storeChats={storeChats}
+        callChats={callChats}
       />
       <Tab.Navigator
         initialRouteName="Chats"
@@ -260,7 +281,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Status" }}
         >
           {(props) => {
-            return <Status {...props} setcurrentTabIndex={setcurrentTabIndex}/>
+            return <Status {...props} />
           }}
         </Tab.Screen>
         <Tab.Screen
@@ -268,7 +289,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Calls" }}
         >
           {(props) => {
-            return <Calls {...props} calls={calls} setcalls={setcalls} callChats={callChats} setcurrentTabIndex={setcurrentTabIndex}/>
+            return <Calls {...props} calls={calls} setcalls={setcalls} callChats={callChats}/>
           }}
         </Tab.Screen>
       </Tab.Navigator>

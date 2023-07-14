@@ -16,6 +16,7 @@ import AllContacts from "./Components/WhatsappClone/AllContacts";
 import Archived from "./Components/WhatsappClone/Archived";
 import Camera from "./Components/WhatsappClone/Camera";
 import CallDetails from "./Components/WhatsappClone/CallDetails";
+
 import {
   View,
   Image,
@@ -27,11 +28,11 @@ import {
 } from "react-native";
 import { useCallback } from "react";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { NormalChatComponent } from "./Components/WhatsappClone/RippleButton";
 import { useState } from "react";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
+
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -80,6 +81,12 @@ export default function App() {
 
     const [isscanned, setisscanned] = useState(false);
 
+    const date = new Date();
+    const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+    const miutes =
+      date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes();
+    const am_pm = date.getHours() >= 12 ? "PM" : "AM";
+
     return (
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
         <View style={{ backgroundColor: CHAT_BACKROUND_COLOR, flex: 2 }}>
@@ -124,15 +131,39 @@ export default function App() {
                   false
                 )}
               >
-                <NormalChatComponent
-                  showText={true}
-                  LeftComponent={() => {
-                    return <Image
+                <View
+                  style={{
+                    width: "100%",
+                    height: 80,
+                    marginTop: 10,
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <View
+                    style={{ justifyContent: "center", alignItems: "center" }}
+                  >
+                    <Image
                       source={require("./Components/WhatsappClone/Images/chrome.png")}
                       style={{ aspectRatio: 1, height: 50 }}
                     />
-                  }}
-                />
+                  </View>
+                  <View style={{ marginLeft: 15 }}>
+                    <Text
+                      style={{
+                        color: TITLE_COLOR,
+                        marginBottom: 4,
+                        fontSize: 15,
+                        fontWeight: 400,
+                      }}
+                    >
+                      Goggle Chrome (Windows)
+                    </Text>
+                    <Text style={{ color: CHAT_DATA_STATUS_COLOR }}>
+                      Last active today at {hour}:{miutes} {am_pm}
+                    </Text>
+                  </View>
+                </View>
               </TouchableNativeFeedback>
             </View>
           )}

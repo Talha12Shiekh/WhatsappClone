@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import {
   CallReusableComponent,
-  NormalChatComponent,
   showToast,
 } from "./RippleButton";
 import {
@@ -20,7 +19,7 @@ import {
   CHAT_DATA_STATUS_COLOR,
 } from "./WhatsappMainScreen";
 import { ChatGreenLeftComponent } from "./RippleButton";
-import { Feather , MaterialIcons, Entypo } from "@expo/vector-icons";
+import { Feather, MaterialIcons, Entypo } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useState, useEffect } from "react";
 import * as Clipboard from "expo-clipboard";
@@ -30,18 +29,17 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const CallDetails = ({ route, navigation }) => {
   const { callChats, setcalls } = route.params;
 
-  const [dropdownitems, setdropdownitems] = useState([]);
 
-  const [items, setItems] = useState(dropdownitems);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const updatedDropdownItems = callChats.map((chat) => {
+    let newChats  = [...callChats]
+    const updatedDropdownItems = newChats.map((chat) => {
       return {
         value: chat.name,
         label: chat.name,
       };
     });
-    setdropdownitems(updatedDropdownItems);
     setItems(updatedDropdownItems);
   }, [callChats]);
 
@@ -49,7 +47,7 @@ const CallDetails = ({ route, navigation }) => {
 
   const [selectedItems, setselectedItems] = useState(null);
 
-  const [value, setValue] = useState(callChats[0]?.name);
+  const [value, setValue] = useState(callChats[0]?.value);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -65,25 +63,15 @@ const CallDetails = ({ route, navigation }) => {
 
   const year = time.getFullYear();
 
-  let months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
   const timeofcall = new Date();
-  const hour = timeofcall.getHours() > 12 ? timeofcall.getHours() - 12 : timeofcall.getHours();
-  const miutes =
-    timeofcall.getMinutes() > 9 ? timeofcall.getMinutes() : "0" + timeofcall.getMinutes();
+  const hour =
+    timeofcall.getHours() > 12
+      ? timeofcall.getHours() - 12
+      : timeofcall.getHours();
+  const minutes =
+    timeofcall.getMinutes() > 9
+      ? timeofcall.getMinutes()
+      : "0" + timeofcall.getMinutes();
   const am_pm = timeofcall.getHours() >= 12 ? "PM" : "AM";
 
   function generatePassword() {
@@ -98,6 +86,8 @@ const CallDetails = ({ route, navigation }) => {
     return retVal;
   }
   const passwordString = generatePassword();
+
+  const arrowRandom = Math.floor(Math.random() * 1);
 
   const [text, settext] = useState(
     `https://call.whatsapp.com/video/${passwordString}`
@@ -127,16 +117,21 @@ const CallDetails = ({ route, navigation }) => {
   };
 
   const handleMakeCall = () => {
-    let photo = callChats.find((chat) => chat.name == selectedItems);
+    let photoObject = callChats.find((chat) => chat.name == selectedItems);
     const callObject = {
-      name: selectedItems,
-      about: `${date} ${months[month]},${hour}:${miutes} ${am_pm.toLowerCase()}`,
+      name: selectedItems ? selectedItems : callChats[0]?.value,
+      about: "",
       key: Date.now().toString(),
       date,
       month,
       year,
-      photo: photo.picture,
+      photo:photoObject?.photo,
       video: Video,
+      type: "call",
+      hour,
+      minutes,
+      am_pm,
+      arrowColor:arrowRandom == 0 ? true : false,
     };
     setcalls((prev) => [...prev, callObject]);
     navigation.goBack();
@@ -234,20 +229,19 @@ const CallDetails = ({ route, navigation }) => {
             it with people you trust.
           </Text>
         </View>
-        <View style={styles.callLinkContainer}>
-          <NormalChatComponent
-            LeftComponent={() => {
-              return (
-                <View style={{ marginBottom: 10 }}>
-                  <ChatGreenLeftComponent>
-                    <Feather name="video" size={23} color={TITLE_COLOR} />
-                  </ChatGreenLeftComponent>
-                </View>
-              );
-            }}
-            showText={false}
-            text={text}
-          />
+        <View style={{flexDirection:"row"}}>
+          <View style={{ marginBottom: 10 }}>
+            <ChatGreenLeftComponent>
+              <Feather name="video" size={23} color={TITLE_COLOR} />
+            </ChatGreenLeftComponent>
+          </View>
+          <View style={{justifyContent:"center",alignItems:"center"}}>
+          <TouchableOpacity>
+            <View style={{ marginLeft: 15 }}>
+              <Text style={{ color: "lightblue", fontSize: 15 }}>{text}</Text>
+            </View>
+          </TouchableOpacity>
+          </View>
         </View>
         <View>
           <Text style={styles.dropDowntext}>To :</Text>
@@ -275,7 +269,7 @@ const CallDetails = ({ route, navigation }) => {
           </View>
         </View>
       </View>
-      <View style={[styles.bottomContentContainer, { zIndex: 1000 }]}>
+      <View style={[styles.bottomContentContainer, { zIndex: -1 }]}>
         <CallReusableComponent
           Children={() => {
             return (

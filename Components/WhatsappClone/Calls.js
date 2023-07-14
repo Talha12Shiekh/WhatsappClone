@@ -28,6 +28,7 @@ const CALLS_BUTTON = [
     about: "Share a link for your Whatsapp call",
     key: 1,
     photo: "https://source.unsplash.com/random/900×700/?cool",
+    type:"chat"
   },
 ];
 
@@ -35,12 +36,8 @@ const Calls = ({
   calls,
   setcalls,
   callChats,
-  setcurrentTabIndex,
   navigation,
 }) => {
-  useFocusEffect(() => {
-    setcurrentTabIndex(3);
-  });
   return (
     <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
       <FlatList

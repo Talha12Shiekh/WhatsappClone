@@ -3,10 +3,8 @@ import React from 'react';
 import { useNavigation, useRoute,useFocusEffect } from "@react-navigation/native";
 
 
-const Status = ({setcurrentTabIndex}) => {
-  useFocusEffect(() => {
-    setcurrentTabIndex(2)
-  })
+const Status = () => {
+  
   return (
     <View>
       <Text>Status</Text>

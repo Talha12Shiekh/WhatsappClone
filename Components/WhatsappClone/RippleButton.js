@@ -147,55 +147,6 @@ export const navbarAnimation = (openanim) => {
   }).start();
 };
 
-export const NormalChatComponent = ({ showText, LeftComponent,text }) => {
-
-  const date = new Date();
-  const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-  const miutes =
-    date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes();
-  const am_pm = date.getHours() >= 12 ? "PM" : "AM";
-
-  return (
-    <View
-      style={{
-        width: "100%",
-        height: 80,
-        marginTop: 10,
-        alignItems: "center",
-        flexDirection: "row",
-      }}
-    >
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <LeftComponent />
-      </View>
-      {showText ? (
-        <View style={{ marginLeft: 15 }}>
-          <Text
-            style={{
-              color: TITLE_COLOR,
-              marginBottom: 4,
-              fontSize: 15,
-              fontWeight: 400,
-            }}
-          >
-            Goggle Chrome (Windows)
-          </Text>
-          <Text style={{ color: CHAT_DATA_STATUS_COLOR }}>
-            Last active today at {hour}:{miutes} {am_pm}
-          </Text>
-        </View>
-      ) : (
-        <TouchableOpacity>
-          <View style={{ marginLeft: 15 }}>
-            <Text style={{ color: "lightblue", fontSize: 15 }}>
-                {text}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-};
 
 export const ChatGreenLeftComponent = ({ children }) => {
   return (

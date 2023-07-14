@@ -50,7 +50,9 @@ const WhatsAppNavbar = ({
   handleChatsMaking,
   currentTabIndex,
   setactiveRoute,
-  activeRoute
+  activeRoute,
+  storeChats,
+  callChats
 }) => {
 
    // *! DATA OF THE BADGES IN THE NAVBAR
@@ -68,7 +70,7 @@ const WhatsAppNavbar = ({
 
   const navigation = useNavigation();
 
-  let screens = ["Community", "Chats", "Status", "Calls"];
+  let screens = ["Community", "Chats"];
 
   useFocusEffect(() => {
     setactiveRoute(screens[currentTabIndex]);
@@ -304,6 +306,7 @@ const WhatsAppNavbar = ({
 
   const handleDeleteChat = useCallback(() => {
     let newchats = [...chats];
+
     const deletedChats = newchats.filter((chat) => {
       if (chat.selected) {
         return;
@@ -327,6 +330,7 @@ const WhatsAppNavbar = ({
           onPress: () => {
             setchats(deletedChats);
             setFileredChats(deletedChats);
+            storeChats()
           },
         },
       ],
