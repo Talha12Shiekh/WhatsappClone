@@ -50,6 +50,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   };
 
   const getCallChats = async () => {
+    await AsyncStorage.clear()
     let asyncCallChats = await AsyncStorage.getItem(CALLS_STORAGE_KEY);
     let updatedCallchats = await JSON.parse(asyncCallChats);
     setcallChats(updatedCallchats);
@@ -188,6 +189,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         activeRoute={activeRoute}
         storeChats={storeChats}
         callChats={callChats}
+        setcallChats={setcallChats}
+        storeCallChats={storeCallChats}
       />
       <Tab.Navigator
         initialRouteName="Chats"

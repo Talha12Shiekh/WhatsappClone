@@ -255,7 +255,10 @@ const CallDetails = ({ route, navigation }) => {
               value={value}
               setValue={setValue}
               zIndex={5000}
+              searchable={true}
               zIndexInverse={3000}
+              listMode="MODAL"
+              max={10}
               onSelectItem={(item) => {
                 setselectedItems(item.value);
               }}

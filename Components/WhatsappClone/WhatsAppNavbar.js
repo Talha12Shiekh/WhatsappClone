@@ -52,10 +52,11 @@ const WhatsAppNavbar = ({
   setactiveRoute,
   activeRoute,
   storeChats,
-  callChats
+  callChats,
+  setcallChats,
+  storeCallChats,
 }) => {
-
-   // *! DATA OF THE BADGES IN THE NAVBAR
+  // *! DATA OF THE BADGES IN THE NAVBAR
 
   const badgesData = [
     { badgeText: "Unread", badgeIcons: "mark-chat-unread", size: 22, key: 1 },
@@ -76,7 +77,6 @@ const WhatsAppNavbar = ({
     setactiveRoute(screens[currentTabIndex]);
   });
 
-  
   const SelectChatMenuAnimation = useRef(new Animated.Value(0)).current;
 
   const selectedNavbarAnimation = useRef(new Animated.Value(0)).current;
@@ -89,66 +89,79 @@ const WhatsAppNavbar = ({
 
   const [value, setValue] = useState("");
 
-  const [MenuData,setMenuData] = useState();
+  const [MenuData, setMenuData] = useState();
 
-  const [readed,setreaded] = useState(false);
+  const [readed, setreaded] = useState(false);
 
-  const [isAllselected,setisAllselected] = useState(false);
+  const [isAllselected, setisAllselected] = useState(false);
 
   // *! DATA OF THE MENU OF THE CHAT WHEN WE SELECT IT
 
   const SelectedChatMenuData = [
     { text: "Add chat shortcut", onPress: () => {}, key: 1 },
     { text: "View contact", onPress: () => {}, key: 2 },
-    { text: `Mark as ${readed ? "read" : "Unread"}`, onPress: () => {
-      let newChats = [...chats];
-     const readedChats = newChats.map(chat => {
-      if(chat.selected){
-        setreaded(!readed);
-        return {
-          ...chat,
-          readed:!chat.readed
-        }
-      }
-      return chat;
-     });
-     setchats(readedChats)
-    }, key: 3 },
-   !isAllselected ? { text: "Select all", onPress: () => {
-      const newChats = [...chats];
-      const selectedAllChats = newChats.map(chat => {
-        setisAllselected(true);
-        if(chat){
-          return {
-            ...chat,
-            selected:true
+    {
+      text: `Mark as ${readed ? "read" : "Unread"}`,
+      onPress: () => {
+        let newChats = [...chats];
+        const readedChats = newChats.map((chat) => {
+          if (chat.selected) {
+            setreaded(!readed);
+            return {
+              ...chat,
+              readed: !chat.readed,
+            };
           }
+          return chat;
+        });
+        setchats(readedChats);
+      },
+      key: 3,
+    },
+    !isAllselected
+      ? {
+          text: "Select all",
+          onPress: () => {
+            const newChats = [...chats];
+            const selectedAllChats = newChats.map((chat) => {
+              setisAllselected(true);
+              if (chat) {
+                return {
+                  ...chat,
+                  selected: true,
+                };
+              }
+            });
+            setchats(selectedAllChats);
+          },
+          key: 4,
         }
-      })
-      setchats(selectedAllChats);
-    }, key: 4 } : { text: "UnSelect all", onPress: () => {
-      const newChats = [...chats];
-      const selectedAllChats = newChats.map(chat => {
-        setisAllselected(false);
-        if(chat){
-          return {
-            ...chat,
-            selected:false
-          }
-        }
-      })
-      setchats(selectedAllChats);
-    }, key: 5 }
+      : {
+          text: "UnSelect all",
+          onPress: () => {
+            const newChats = [...chats];
+            const selectedAllChats = newChats.map((chat) => {
+              setisAllselected(false);
+              if (chat) {
+                return {
+                  ...chat,
+                  selected: false,
+                };
+              }
+            });
+            setchats(selectedAllChats);
+          },
+          key: 5,
+        },
   ];
 
   // *! FUNCTION TO NAVIGATE TO PROFILE
 
   function navigateToProfile() {
-    navigation.navigate("Profile",{handleChatsMaking});
+    navigation.navigate("Profile", { handleChatsMaking });
   }
 
   // *! USE EFFECT FOR SELECTINNG THE CHAT AND MAKING THE NAVBAR OPENING ANIMATION
-
 
   useEffect(() => {
     if (selected) {
@@ -170,7 +183,7 @@ const WhatsAppNavbar = ({
 
   const handleOpenSearchBar = () => {
     setopensearchBar(!opensearchBar);
-    inputRef.current.focus()
+    inputRef.current.focus();
   };
 
   const searchNavbarInterpolation = searchNavbarAnimation.interpolate({
@@ -186,32 +199,30 @@ const WhatsAppNavbar = ({
 
   const handlePinChat = useCallback(() => {
     let newchats = [...chats];
-    let pinnedchats = newchats.filter(chat => chat.pinned);
-    if(pinnedchats.length < 3){
+    let pinnedchats = newchats.filter((chat) => chat.pinned);
+    if (pinnedchats.length < 3) {
+      const selectedChats = newchats.map((chat) => {
+        if (chat.selected) {
+          return {
+            ...chat,
+            pinned: !chat.pinned,
+          };
+        }
+        return chat;
+      });
 
-    const selectedChats = newchats.map((chat) => {
-      if (chat.selected) {
-        return {
-          ...chat,
-          pinned: !chat.pinned,
-        };
-      }
-      return chat;
-    });
+      const pinnedChats = selectedChats.filter((chat) => chat.pinned);
+      const unpinnedChats = selectedChats.filter((chat) => !chat.pinned);
 
-    const pinnedChats = selectedChats.filter(chat => chat.pinned);
-    const unpinnedChats = selectedChats.filter(chat => !chat.pinned);
+      const newSelectedChats = [...pinnedChats, ...unpinnedChats];
 
-    const newSelectedChats = [...pinnedChats, ...unpinnedChats];
+      setchats(newSelectedChats);
+      setFileredChats(newSelectedChats);
 
-    setchats(newSelectedChats);
-    setFileredChats(newSelectedChats);
-
-    showToast("Pinned chat");
-  }else{
-    showToast("You can not pin more than 3 chats");
-  }
-
+      showToast("Pinned chat");
+    } else {
+      showToast("You can not pin more than 3 chats");
+    }
   }, [setchats, chats, setFileredChats]);
 
   // *! FUNCTION TO SHOW THE MENU
@@ -306,12 +317,19 @@ const WhatsAppNavbar = ({
 
   const handleDeleteChat = useCallback(() => {
     let newchats = [...chats];
+    let callNewChats = [...callChats];
 
     const deletedChats = newchats.filter((chat) => {
       if (chat.selected) {
         return;
       }
       return chat;
+    });
+
+    const deletedChatNames = deletedChats.map((chat) => chat.name);
+
+    const callUpdatedChats = callNewChats.filter((chat) => {
+      return deletedChatNames.includes(chat.name);
     });
 
     Alert.alert(
@@ -330,7 +348,8 @@ const WhatsAppNavbar = ({
           onPress: () => {
             setchats(deletedChats);
             setFileredChats(deletedChats);
-            storeChats()
+            setcallChats(callUpdatedChats);
+            storeCallChats();
           },
         },
       ],
@@ -338,7 +357,7 @@ const WhatsAppNavbar = ({
     );
 
     showToast("Chat deleted");
-  }, [chats, setchats, setFileredChats]);
+  }, [chats, setchats, setFileredChats, callChats]);
 
   // *! FUNCTION TO OPEN THE SELECTEDCHAT MENU
 
@@ -353,13 +372,10 @@ const WhatsAppNavbar = ({
   // *! FUNCTION TO CHANGE THE DATA OF THE MENU
 
   useEffect(() => {
-    
     if (activeRoute == "Community") {
       const UpDatedData = [{ text: "Settings", onPress: () => {}, key: 10 }];
       setMenuData(UpDatedData);
-
     } else {
-
       const UpDatedData = [
         {
           text: "New Group",
@@ -512,9 +528,15 @@ const WhatsAppNavbar = ({
           <RippleButton onPress={() => navigation.navigate("Camera")}>
             <Camera name="camera" color={INACTIVE_TAB_WHITE_COLOR} size={18} />
           </RippleButton>
-          {activeRoute == "Community" ? null : <RippleButton onPress={handleOpenSearchBar}>
-            <Search name="search" color={INACTIVE_TAB_WHITE_COLOR} size={18} />
-          </RippleButton>}
+          {activeRoute == "Community" ? null : (
+            <RippleButton onPress={handleOpenSearchBar}>
+              <Search
+                name="search"
+                color={INACTIVE_TAB_WHITE_COLOR}
+                size={18}
+              />
+            </RippleButton>
+          )}
           <RippleButton onPress={handleShowMenu}>
             <SimpleLineIcons
               name="options-vertical"

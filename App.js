@@ -25,6 +25,7 @@ import {
   Switch,
   FlatList,
   TouchableNativeFeedback,
+  LogBox,
 } from "react-native";
 import { useCallback } from "react";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
@@ -32,6 +33,8 @@ import { useState } from "react";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
+
+LogBox.ignoreLogs(["Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle."])
 
 
 export default function App() {
