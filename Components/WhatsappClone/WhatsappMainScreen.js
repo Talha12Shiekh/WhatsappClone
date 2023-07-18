@@ -59,7 +59,11 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   const getCalls = async () => {
     let asyncCalls = await AsyncStorage.getItem(CALLS_KEY);
     let updatedCalls = await JSON.parse(asyncCalls);
-    setcalls(updatedCalls);
+    if(updatedCalls !== null){
+      setcalls(updatedCalls);
+    }else{
+      setcalls([])
+    }
   };
 
   const getArchivedChats = async () => {

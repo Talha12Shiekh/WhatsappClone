@@ -30,12 +30,14 @@ const CallDetails = ({ route, navigation }) => {
 
   const [callsNames, setCallsNames] = useState([]);
 
+
   useEffect(() => {
-    const CallNames = calls.map((call) => call.name);
-    let callsNamesObject = CallNames.reduce(
+    const CallsObject = calls?.map((call) => call.name.split("(")[0].trim());
+    let CallNames = new Set(CallsObject);
+    let callsNamesObject = [...CallNames].reduce(
       (ac, it) => ({
         ...ac,
-        [it]: 0,
+        [it]:  1,
       }),
       {}
     );
@@ -156,28 +158,17 @@ const CallDetails = ({ route, navigation }) => {
 
     if (Object.keys(callsNames).includes(callObject.name)) {
       increaseCallsCounter(callObject.name);
-      // let newCalls = [...calls];
-      // let findedCalls = newCalls.map((call) => {
-      //   if (call.name.includes(callObject.name)) {
-      //     return {
-      //       ...call,
-      //       name: call.name + ` (${callsNames[callObject.name]})`,
-      //     };
-      //   }
-      //   return call;
-      // });
-      // setcalls(findedCalls);
-      setcalls((prevCalls) => {
-        return prevCalls.map(call => {
-          if(call.name.includes(callObject.name)){
-            return {
-              ...call,
-              name : call.name + ` (${callsNames[callObject.name]})`
-            }
-          }
-          return call;
-        })
-      })
+      let newCalls = [...calls];
+      let findedCalls = newCalls.map((call) => {
+        if (call.name.includes(callObject.name)) {
+          return {
+            ...call,
+            name: call.name + ` (${callsNames[callObject.name]})`,
+          };
+        }
+        return call;
+      });
+      setcalls(findedCalls);
     }else {
       setcalls((prev) => [...prev, callObject]);
     }
