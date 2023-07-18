@@ -63,7 +63,7 @@ const Calls = ({
             RightPlaceRenderThing: () => null,
             NotshowChatMakingDate: false,
             onPress: () => {
-              navigation.navigate("CallDetails", { callChats, setcalls });
+              navigation.navigate("CallDetails", { callChats, setcalls,calls });
             },
           };
           return <Chat {...itemData} />;

@@ -7,10 +7,7 @@ import {
   Pressable,
   Button,
 } from "react-native";
-import {
-  CallReusableComponent,
-  showToast,
-} from "./RippleButton";
+import { CallReusableComponent, showToast } from "./RippleButton";
 import {
   TAB_BACKGROUND_COLOR,
   CHAT_BACKROUND_COLOR,
@@ -27,13 +24,26 @@ import Checkbox from "expo-checkbox";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const CallDetails = ({ route, navigation }) => {
-  const { callChats, setcalls } = route.params;
-
+  const { callChats, setcalls, calls } = route.params;
 
   const [items, setItems] = useState([]);
 
+  const [callsNames, setCallsNames] = useState([]);
+
   useEffect(() => {
-    let newChats  = [...callChats]
+    const CallNames = calls.map((call) => call.name);
+    let callsNamesObject = CallNames.reduce(
+      (ac, it) => ({
+        ...ac,
+        [it]: 0,
+      }),
+      {}
+    );
+    setCallsNames(callsNamesObject);
+  }, [calls]);
+
+  useEffect(() => {
+    let newChats = [...callChats];
     const updatedDropdownItems = newChats.map((chat) => {
       return {
         value: chat.name,
@@ -93,6 +103,15 @@ const CallDetails = ({ route, navigation }) => {
     `https://call.whatsapp.com/video/${passwordString}`
   );
 
+  const increaseCallsCounter = (type) => {
+    setCallsNames((prev) => {
+      return {
+        ...prev,
+        [type]: callsNames[type] + 1,
+      };
+    });
+  };
+
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(text);
   };
@@ -120,20 +139,48 @@ const CallDetails = ({ route, navigation }) => {
     let photoObject = callChats.find((chat) => chat.name == selectedItems);
     const callObject = {
       name: selectedItems ? selectedItems : callChats[0]?.value,
-      about: "",
+      about: photoObject?.about,
       key: Date.now().toString(),
       date,
       month,
       year,
-      photo:photoObject?.photo,
+      photo: photoObject?.photo,
       video: Video,
       type: "call",
       hour,
       minutes,
       am_pm,
-      arrowColor:arrowRandom == 0 ? true : false,
+      number: photoObject?.number,
+      arrowColor: arrowRandom == 0 ? true : false,
     };
-    setcalls((prev) => [...prev, callObject]);
+
+    if (Object.keys(callsNames).includes(callObject.name)) {
+      increaseCallsCounter(callObject.name);
+      // let newCalls = [...calls];
+      // let findedCalls = newCalls.map((call) => {
+      //   if (call.name.includes(callObject.name)) {
+      //     return {
+      //       ...call,
+      //       name: call.name + ` (${callsNames[callObject.name]})`,
+      //     };
+      //   }
+      //   return call;
+      // });
+      // setcalls(findedCalls);
+      setcalls((prevCalls) => {
+        return prevCalls.map(call => {
+          if(call.name.includes(callObject.name)){
+            return {
+              ...call,
+              name : call.name + ` (${callsNames[callObject.name]})`
+            }
+          }
+          return call;
+        })
+      })
+    }else {
+      setcalls((prev) => [...prev, callObject]);
+    }
     navigation.goBack();
   };
 
@@ -229,18 +276,18 @@ const CallDetails = ({ route, navigation }) => {
             it with people you trust.
           </Text>
         </View>
-        <View style={{flexDirection:"row"}}>
+        <View style={{ flexDirection: "row" }}>
           <View style={{ marginBottom: 10 }}>
             <ChatGreenLeftComponent>
               <Feather name="video" size={23} color={TITLE_COLOR} />
             </ChatGreenLeftComponent>
           </View>
-          <View style={{justifyContent:"center",alignItems:"center"}}>
-          <TouchableOpacity>
-            <View style={{ marginLeft: 15 }}>
-              <Text style={{ color: "lightblue", fontSize: 15 }}>{text}</Text>
-            </View>
-          </TouchableOpacity>
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <TouchableOpacity>
+              <View style={{ marginLeft: 15 }}>
+                <Text style={{ color: "lightblue", fontSize: 15 }}>{text}</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
         <View>

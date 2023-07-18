@@ -55,6 +55,8 @@ const WhatsAppNavbar = ({
   callChats,
   setcallChats,
   storeCallChats,
+  calls,
+  setcalls
 }) => {
   // *! DATA OF THE BADGES IN THE NAVBAR
 
@@ -318,6 +320,7 @@ const WhatsAppNavbar = ({
   const handleDeleteChat = useCallback(() => {
     let newchats = [...chats];
     let callNewChats = [...callChats];
+    let newCalls = [...calls];
 
     const deletedChats = newchats.filter((chat) => {
       if (chat.selected) {
@@ -331,6 +334,17 @@ const WhatsAppNavbar = ({
     const callUpdatedChats = callNewChats.filter((chat) => {
       return deletedChatNames.includes(chat.name);
     });
+
+    const callsDeletedChats = newCalls.map(call => {
+      if(!deletedChatNames.includes(call.name)){
+        return {
+          ...call,
+          name:call.number,
+        }
+      }
+      return call;
+    })
+
 
     Alert.alert(
       `Delete ${selectedChats.length > 1 ? selectedChats.length : "this"} Chat${
@@ -349,6 +363,7 @@ const WhatsAppNavbar = ({
             setchats(deletedChats);
             setFileredChats(deletedChats);
             setcallChats(callUpdatedChats);
+            setcalls(callsDeletedChats)
             storeCallChats();
           },
         },
@@ -357,7 +372,7 @@ const WhatsAppNavbar = ({
     );
 
     showToast("Chat deleted");
-  }, [chats, setchats, setFileredChats, callChats]);
+  }, [chats, setchats, setFileredChats, callChats,calls]);
 
   // *! FUNCTION TO OPEN THE SELECTEDCHAT MENU
 

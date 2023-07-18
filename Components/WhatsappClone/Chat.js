@@ -73,14 +73,27 @@ const Chat = (item) => {
         </Text>
       );
     } else if (item.type == "call") {
-      const {date,month,hour,minutes,am_pm} = item;
+      const { date, month, hour, minutes, am_pm } = item;
       return (
-        <View style={{flexDirection:"row"}}>
-          <View style={{transform:[{translateY:5}]}}>
-          <Feather name="arrow-down-left" size={24} color={item.arrowColor ? ACTIVE_TAB_GREEN_COLOR :"red"} />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ transform: [{ translateY: 5 }] }}>
+            <Feather
+              name="arrow-down-left"
+              size={24}
+              color={item.arrowColor ? ACTIVE_TAB_GREEN_COLOR : "red"}
+            />
           </View>
           <View>
-          <Text style={{color:CHAT_DATA_STATUS_COLOR,marginTop:5,marginLeft:15,fontSize:15}}>{date} {months[month]} , {hour}:{minutes} {am_pm.toLowerCase()}</Text>
+            <Text
+              style={{
+                color: CHAT_DATA_STATUS_COLOR,
+                marginTop: 5,
+                marginLeft: 15,
+                fontSize: 15,
+              }}
+            >
+              {date} {months[month]} , {hour}:{minutes} {am_pm.toLowerCase()}
+            </Text>
           </View>
         </View>
       );
