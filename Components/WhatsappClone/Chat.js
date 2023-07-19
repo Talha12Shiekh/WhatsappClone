@@ -63,16 +63,9 @@ const Chat = (item) => {
     "December",
   ];
 
+
   function initDescription() {
-    if (item.type == "chat") {
-      return (
-        <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-          {item.about.length > aboutlimit.length
-            ? item.about.slice(0, aboutlimit.length - 1) + "..."
-            : item.about}
-        </Text>
-      );
-    } else if (item.type == "call") {
+    if (item.type == "call") {
       const { date, month, hour, minutes, am_pm } = item;
       return (
         <View style={{ flexDirection: "row" }}>
@@ -96,6 +89,14 @@ const Chat = (item) => {
             </Text>
           </View>
         </View>
+      );
+    } else {
+      return (
+        <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+          {item.about.length > aboutlimit.length
+            ? item.about.slice(0, aboutlimit.length - 1) + "..."
+            : item.about}
+        </Text>
       );
     }
   }
@@ -139,8 +140,8 @@ const Chat = (item) => {
           <View>
             <View style={[styles.textContainer, { flex: 1 }]}>
               <View style={{ width: "60%" }}>
-                <Text style={[styles.title, { color: TITLE_COLOR }]}>
-                  {item.name.length > 18 ? item.name.slice(0, 19) : item.name}
+                <Text style={[styles.title, { color: TITLE_COLOR,fontWeight:item.type == "call" ? "normal" : "bold" }]}>
+                  {item.name?.length > 18 ? item.name.slice(0, 19) : item.name} {item?.count > 0 ? `(${item.count})` : null}
                 </Text>
               </View>
               <View style={{ width: "30%", marginRight: 10 }}>

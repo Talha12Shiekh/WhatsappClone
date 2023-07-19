@@ -21,28 +21,15 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useState, useEffect } from "react";
 import * as Clipboard from "expo-clipboard";
 import Checkbox from "expo-checkbox";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity, TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const CallDetails = ({ route, navigation }) => {
   const { callChats, setcalls, calls } = route.params;
 
   const [items, setItems] = useState([]);
 
-  const [callsNames, setCallsNames] = useState([]);
 
-
-  useEffect(() => {
-    const CallsObject = calls?.map((call) => call.name.split("(")[0].trim());
-    let CallNames = new Set(CallsObject);
-    let callsNamesObject = [...CallNames].reduce(
-      (ac, it) => ({
-        ...ac,
-        [it]:  1,
-      }),
-      {}
-    );
-    setCallsNames(callsNamesObject);
-  }, [calls]);
+//https://dl.google.com/android/repository/sys-img/google_apis_playstore/x86_64-33_r07.zip
 
   useEffect(() => {
     let newChats = [...callChats];
@@ -99,20 +86,11 @@ const CallDetails = ({ route, navigation }) => {
   }
   const passwordString = generatePassword();
 
-  const arrowRandom = Math.floor(Math.random() * 1);
+  const arrowRandom = Math.floor(Math.random() * 2);
 
   const [text, settext] = useState(
     `https://call.whatsapp.com/video/${passwordString}`
   );
-
-  const increaseCallsCounter = (type) => {
-    setCallsNames((prev) => {
-      return {
-        ...prev,
-        [type]: callsNames[type] + 1,
-      };
-    });
-  };
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(text);
@@ -154,25 +132,28 @@ const CallDetails = ({ route, navigation }) => {
       am_pm,
       number: photoObject?.number,
       arrowColor: arrowRandom == 0 ? true : false,
+      count : 0
     };
 
-    if (Object.keys(callsNames).includes(callObject.name)) {
-      increaseCallsCounter(callObject.name);
+    let callsNames = calls.map(call => call.name);
+
+    if(callsNames.includes(callObject.name)){
       let newCalls = [...calls];
-      let findedCalls = newCalls.map((call) => {
-        if (call.name.includes(callObject.name)) {
+      let updatedCalls = newCalls.map(cll => {
+        if(callsNames.includes(cll.name)){
           return {
-            ...call,
-            name: call.name + ` (${callsNames[callObject.name]})`,
-          };
+            ...cll,
+            count : cll.count + 1
+          }
         }
-        return call;
+        return cll;
       });
-      setcalls(findedCalls);
-    }else {
+      setcalls(updatedCalls)
+    }else{
       setcalls((prev) => [...prev, callObject]);
     }
     navigation.goBack();
+
   };
 
   return (
@@ -406,6 +387,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,.4)",
+    zIndex:-1
   },
   modalView: {
     backgroundColor: TAB_BACKGROUND_COLOR,
@@ -420,6 +402,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: "80%",
     height: "20%",
+    zIndex:99999999999999
   },
   modalText: {
     color: TITLE_COLOR,
