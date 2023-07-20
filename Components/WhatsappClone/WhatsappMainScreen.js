@@ -92,6 +92,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const year = time.getFullYear();
 
+  const hours = time.getHours();
+
   const storeChats = async () => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
   };
@@ -121,6 +123,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           date,
           month,
           year,
+          hours,
           photo,
           type:"chat",
           selected: false,

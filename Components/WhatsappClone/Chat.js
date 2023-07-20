@@ -63,7 +63,6 @@ const Chat = (item) => {
     "December",
   ];
 
-
   function initDescription() {
     if (item.type == "call") {
       const { date, month, hour, minutes, am_pm } = item;
@@ -83,6 +82,7 @@ const Chat = (item) => {
                 marginTop: 5,
                 marginLeft: 15,
                 fontSize: 15,
+                fontWeight:"normal"
               }}
             >
               {date} {months[month]} , {hour}:{minutes} {am_pm.toLowerCase()}
@@ -100,6 +100,24 @@ const Chat = (item) => {
       );
     }
   }
+
+  const RenderTime = () => {
+    let today = new Date().getHours();
+    let DayOfChatMaking = item.hours;
+    let difference = today - DayOfChatMaking;
+    if (difference < 24) {
+      return <Text> Today </Text>
+    } else if (difference > 24 && difference < 48) {
+      return <Text>Yesterday</Text>;
+    } else {
+      return (
+        <Text>
+          {item.date < 10 ? "0" + item.date : item.date}/
+          {item.month < 10 ? "0" + item.month : item.month}/{item.year}
+        </Text>
+      );
+    }
+  };
 
   return (
     <>
@@ -140,8 +158,17 @@ const Chat = (item) => {
           <View>
             <View style={[styles.textContainer, { flex: 1 }]}>
               <View style={{ width: "60%" }}>
-                <Text style={[styles.title, { color: TITLE_COLOR,fontWeight:item.type == "call" ? "normal" : "bold" }]}>
-                  {item.name?.length > 18 ? item.name.slice(0, 19) : item.name} {item?.count > 0 ? `(${item.count})` : null}
+                <Text
+                  style={[
+                    styles.title,
+                    {
+                      color: TITLE_COLOR,
+                      fontWeight: item.type == "call" ? "normal" : "bold",
+                    },
+                  ]}
+                >
+                  {item.name?.length > 18 ? item.name.slice(0, 19) : item.name}{" "}
+                  {item?.count > 0 ? `(${item.count})` : null}
                 </Text>
               </View>
               <View style={{ width: "30%", marginRight: 10 }}>
@@ -149,9 +176,7 @@ const Chat = (item) => {
                   <Text
                     style={[styles.time, { color: CHAT_DATA_STATUS_COLOR }]}
                   >
-                    {item.date < 10 ? "0" + item.date : item.date}/
-                    {item.month < 10 ? "0" + item.month : item.month}/
-                    {item.year}
+                    <RenderTime />
                   </Text>
                 )}
               </View>
@@ -199,5 +224,7 @@ const styles = StyleSheet.create({
   time: {
     fontWeight: "500",
     fontSize: 12,
+    textAlign:"right",
+    marginRight:20,
   },
 });
