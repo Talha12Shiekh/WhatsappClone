@@ -136,6 +136,9 @@ const Calls = ({
               RightPlaceRenderThing: () => {
                 return (
                   <TouchableNativeFeedback
+                  onPress={() => {
+                    navigation.navigate("CallScreen",{item})
+                  }}
                     background={TouchableNativeFeedback.Ripple(
                       TAB_PRESS_ACTIVE_WHITE_COLOR,
                       true,

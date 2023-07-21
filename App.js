@@ -33,6 +33,7 @@ import { useState } from "react";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
+import CallScreen from "./Components/WhatsappClone/CallScreen";
 
 LogBox.ignoreLogs(["Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.","YellowBox has been replaced with LogBox. Please call LogBox.ignoreLogs() instead."])
 
@@ -296,6 +297,13 @@ export default function App() {
             options={{
               title: "Create call link",
               headerTintColor: CHAT_DATA_STATUS_COLOR,
+            }}
+          />
+          <Stack.Screen
+            name="CallScreen"
+            component={CallScreen}
+            options={{
+              headerShown:false
             }}
           />
         </Stack.Group>

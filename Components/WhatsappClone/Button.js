@@ -20,5 +20,8 @@ const styles = StyleSheet.create({
         padding: 10,
         elevation: 2,
         marginTop: 10,
+        justifyContent:"center",
+        alignItems:"center",
+        alignSelf:"center"
       },
 });

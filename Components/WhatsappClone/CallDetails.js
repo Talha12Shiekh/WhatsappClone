@@ -21,15 +21,18 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useState, useEffect } from "react";
 import * as Clipboard from "expo-clipboard";
 import Checkbox from "expo-checkbox";
-import { TouchableOpacity, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
+import CallButton from "./Button";
 
 const CallDetails = ({ route, navigation }) => {
   const { callChats, setcalls, calls } = route.params;
 
   const [items, setItems] = useState([]);
 
-
-//https://dl.google.com/android/repository/sys-img/google_apis_playstore/x86_64-33_r07.zip
+  //https://dl.google.com/android/repository/sys-img/google_apis_playstore/x86_64-33_r07.zip
 
   useEffect(() => {
     let newChats = [...callChats];
@@ -132,28 +135,27 @@ const CallDetails = ({ route, navigation }) => {
       am_pm,
       number: photoObject?.number,
       arrowColor: arrowRandom == 0 ? true : false,
-      count : 0
+      count: 0,
     };
 
-    let callsNames = calls.map(call => call.name);
+    let callsNames = calls.map((call) => call.name);
 
-    if(callsNames.includes(callObject.name)){
+    if (callsNames.includes(callObject.name)) {
       let newCalls = [...calls];
-      let updatedCalls = newCalls.map(cll => {
-        if(callsNames.includes(cll.name)){
+      let updatedCalls = newCalls.map((cll) => {
+        if (callsNames.includes(cll.name)) {
           return {
             ...cll,
-            count : cll.count + 1
-          }
+            count: cll.count + 1,
+          };
         }
         return cll;
       });
-      setcalls(updatedCalls)
-    }else{
+      setcalls(updatedCalls);
+    } else {
       setcalls((prev) => [...prev, callObject]);
     }
     navigation.goBack();
-
   };
 
   return (
@@ -332,23 +334,13 @@ const CallDetails = ({ route, navigation }) => {
         />
       </View>
       <View style={[styles.buttonContainer]}>
-        <TouchableOpacity onPress={handleMakeCall}>
-          <View
-            style={{
-              width: "80%",
-              backgroundColor: ACTIVE_TAB_GREEN_COLOR,
-              alignSelf: "center",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: 10,
-              borderRadius: 20,
-            }}
-          >
-            <Text style={{ color: TITLE_COLOR, fontSize: 15 }}>
-              Create Call
-            </Text>
-          </View>
-        </TouchableOpacity>
+        <CallButton
+          color={ACTIVE_TAB_GREEN_COLOR}
+          onPress={handleMakeCall}
+          width="80%"
+        >
+          <Text style={{ color: TITLE_COLOR, fontSize: 15 }}>Create Call</Text>
+        </CallButton>
       </View>
     </View>
   );
@@ -387,7 +379,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,.4)",
-    zIndex:-1
+    zIndex: -1,
   },
   modalView: {
     backgroundColor: TAB_BACKGROUND_COLOR,
@@ -402,7 +394,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: "80%",
     height: "20%",
-    zIndex:99999999999999
+    zIndex: 99999999999999,
   },
   modalText: {
     color: TITLE_COLOR,
