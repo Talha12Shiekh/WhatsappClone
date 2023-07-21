@@ -4,6 +4,7 @@ import {
   Text,
   TouchableNativeFeedback,
   View,
+  useWindowDimensions
 } from "react-native";
 import React, { useState } from "react";
 import {
@@ -16,6 +17,14 @@ import {
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
 import UpperArrow from "react-native-vector-icons/MaterialIcons";
+import { PanGestureHandler} from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  useAnimatedGestureHandler,
+  withSpring,
+} from 'react-native-reanimated';
+import { Camera, CameraType } from "expo-camera";
 import {
   MaterialCommunityIcons,
   Ionicons,
@@ -29,8 +38,15 @@ import { ImageBackground } from "react-native";
 
 const CallScreen = ({ route, navigation }) => {
   const { item } = route.params;
+  const {height} = useWindowDimensions()
   const ICONS_BACKGROUND_COLOR = CALLS_ICONS_COLOR;
   const ICONS_SIZE = 25;
+
+  const translateY = useSharedValue(320);
+
+
+  const [type, setType] = useState(CameraType.front);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const [iconsToggle, setIconsToggle] = useState({
     volume: false,
@@ -38,6 +54,43 @@ const CallScreen = ({ route, navigation }) => {
     microphone: false,
     backCamera: false,
   });
+
+  const MAX_TRANSLATE_Y = 320;
+  const MIN_TRANSLATE_Y = -((height / 3) - 320);
+
+  const onDrag = useAnimatedGestureHandler({
+    onStart: (event, context) => {
+      context.translateY = translateY.value;
+    },
+    onActive: (event, context) => {
+      // Apply the boundary on the translateY value
+      translateY.value = Math.max(
+        Math.min(event.translationY + context.translateY, MAX_TRANSLATE_Y),
+        MIN_TRANSLATE_Y
+      );
+    },
+  });
+
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: translateY.value,
+        },
+      ],
+    };
+  });
+  
+
+  React.useEffect(() => {
+    requestPermission()
+  },[])
+
+  function toggleCameraType() {
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
+  }
 
   const IconsContainer = ({ children, colorToggle, onPress }) => {
     return (
@@ -58,14 +111,31 @@ const CallScreen = ({ route, navigation }) => {
     );
   };
 
+  const Container = ({ children }) => {
+    if (item.video) {
+      return (
+          <View style={styles.container}>
+            <Camera style={styles.camera} type={type}>
+            {children}
+            </Camera>
+            </View>
+      );
+    } else {
+      return (
+        <ImageBackground
+          source={{
+            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUum9R2FFBSGNK2fm-8iEQEMwmhT5ad2fPyXEoYk38x5Xcu7Y_qoP2v3z1hg4JE7GZaCY&usqp=CAU",
+          }}
+          style={styles.container}
+        >
+          {children}
+        </ImageBackground>
+      );
+    }
+  };
+
   return (
-    <ImageBackground
-      source={{
-        uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSVaF8hThpNd_nQ0LCmDpQgPUwQLhIynWkR82wubROOjh302WAd2WfYIOJzUFZZSvRh0M&usqp=CAU",
-      }}
-      blurRadius={3}
-      style={styles.container}
-    >
+    <Container>
       <View style={styles.callUpperContent}>
         <View style={styles.encrypted}>
           <FontAwesome
@@ -79,13 +149,13 @@ const CallScreen = ({ route, navigation }) => {
           </Text>
         </View>
         <View style={styles.imageContainer}>
-          <Image
+          {!item.video && <Image
             resizeMode="contain"
             source={
               item.photo ? { uri: item.photo } : require("./Images/profile.png")
             }
             style={styles.callsPhoto}
-          />
+          /> }
         </View>
         <View style={styles.imageContainer}>
           <Text style={[styles.text, { fontSize: 30 }]}>{item.name}</Text>
@@ -94,7 +164,8 @@ const CallScreen = ({ route, navigation }) => {
           </Text>
         </View>
       </View>
-      <View style={styles.bottomSheet}>
+      <PanGestureHandler onGestureEvent={onDrag}>
+      <Animated.View style={[styles.bottomSheet,containerStyle]}>
         <View style={[styles.upperArrow, styles.center]}>
           <UpperArrow
             name="arrow-back-ios"
@@ -134,6 +205,7 @@ const CallScreen = ({ route, navigation }) => {
                     backCamera: !prev.backCamera,
                   };
                 });
+                toggleCameraType()
               }}
             >
               <MaterialCommunityIcons
@@ -200,8 +272,9 @@ const CallScreen = ({ route, navigation }) => {
             </View>
           </TouchableOpacity>
         </View>
-      </View>
-    </ImageBackground>
+      </Animated.View>
+      </PanGestureHandler>
+    </Container>
   );
 };
 
@@ -267,4 +340,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: TITLE_COLOR,
   },
+  camera:{
+    flex:1
+  }
 });
