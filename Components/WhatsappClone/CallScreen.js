@@ -35,6 +35,7 @@ import {
 import { RippleButton } from "./RippleButton";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ImageBackground } from "react-native";
+import { Audio } from 'expo-av';
 
 const CallScreen = ({ route, navigation }) => {
   const { item } = route.params;
@@ -261,7 +262,7 @@ const CallScreen = ({ route, navigation }) => {
               }
             />
           </IconsContainer>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableNativeFeedback onPress={() => navigation.goBack()}>
             <View style={[styles.callEnd, styles.center]}>
               <MaterialIcons
                 name="call-end"
@@ -270,7 +271,7 @@ const CallScreen = ({ route, navigation }) => {
                 style={{ zIndex: 9999999999999 }}
               />
             </View>
-          </TouchableOpacity>
+          </TouchableNativeFeedback>
         </View>
       </Animated.View>
       </PanGestureHandler>

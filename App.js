@@ -16,6 +16,9 @@ import AllContacts from "./Components/WhatsappClone/AllContacts";
 import Archived from "./Components/WhatsappClone/Archived";
 import Camera from "./Components/WhatsappClone/Camera";
 import CallDetails from "./Components/WhatsappClone/CallDetails";
+import CallInfo from "./Components/WhatsappClone/CallInfo";
+import { MaterialIcons } from "@expo/vector-icons";
+import { RippleButton } from "./Components/WhatsappClone/RippleButton";
 
 import {
   View,
@@ -35,8 +38,10 @@ import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
 import CallScreen from "./Components/WhatsappClone/CallScreen";
 
-LogBox.ignoreLogs(["Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.","YellowBox has been replaced with LogBox. Please call LogBox.ignoreLogs() instead."])
-
+LogBox.ignoreLogs([
+  "Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",
+  "YellowBox has been replaced with LogBox. Please call LogBox.ignoreLogs() instead.",
+]);
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -303,7 +308,38 @@ export default function App() {
             name="CallScreen"
             component={CallScreen}
             options={{
-              headerShown:false
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CallInfo"
+            component={CallInfo}
+            options={{
+              title: "Call Info",
+              headerRight: () => {
+                return (
+                  <View style={{ flexDirection: "row" }}>
+                    <View>
+                      <RippleButton>
+                        <MaterialIcons
+                          name="message"
+                          size={24}
+                          color={TITLE_COLOR}
+                        />
+                      </RippleButton>
+                    </View>
+                    <View>
+                      <RippleButton>
+                        <SimpleLineIcons
+                          name="options-vertical"
+                          color={TITLE_COLOR}
+                          size={24}
+                        />
+                      </RippleButton>
+                    </View>
+                  </View>
+                );
+              },
             }}
           />
         </Stack.Group>

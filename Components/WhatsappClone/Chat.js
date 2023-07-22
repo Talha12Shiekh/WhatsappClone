@@ -26,6 +26,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
+  months
 } from "./WhatsappMainScreen";
 import {
   ModelComponent,
@@ -48,20 +49,6 @@ const Chat = (item) => {
     setmodalName(name);
   }
 
-  let months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
 
   function initDescription() {
     if (item.type == "call") {
@@ -82,7 +69,7 @@ const Chat = (item) => {
                 marginTop: 5,
                 marginLeft: 15,
                 fontSize: 15,
-                fontWeight:"normal"
+                fontWeight: "normal",
               }}
             >
               {date} {months[month]} , {hour}:{minutes} {am_pm.toLowerCase()}
@@ -93,7 +80,7 @@ const Chat = (item) => {
     } else {
       return (
         <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-          {item.about.length > aboutlimit.length
+          {item.about?.length > aboutlimit.length
             ? item.about.slice(0, aboutlimit.length - 1) + "..."
             : item.about}
         </Text>
@@ -101,13 +88,47 @@ const Chat = (item) => {
     }
   }
 
+  function initTitle() {
+    if (item.type == "call") {
+      return (
+        <Text
+          style={[
+            styles.title,
+            {
+              color: TITLE_COLOR,
+              fontWeight: "normal",
+            },
+          ]}
+        >
+          {item.name?.length > 18 ? item.name.slice(0, 19) : item.name}{" "}
+          {item?.count > 0 ? `(${item.count})` : null}
+        </Text>
+      );
+    }else{
+      return (
+        <Text
+          style={[
+            styles.title,
+            {
+              color: TITLE_COLOR,
+              fontWeight: "bold",
+            },
+          ]}
+        >
+          {item.name?.length > 18 ? item.name.slice(0, 19) : item.name}
+        </Text>
+      );
+    }
+  }
+
   const RenderTime = () => {
     let today = new Date().getHours();
-    let DayOfChatMaking = item.hours;
-    let difference = today - DayOfChatMaking;
-    if (difference < 24) {
-      return <Text> Today </Text>
-    } else if (difference > 24 && difference < 48) {
+    let currentHours = today > 12 ? today - 12 : today;
+    let DayOfChatMaking = item.hours > 12 ? item.hours - 12 : item.hours;
+    let difference = currentHours - DayOfChatMaking;
+    if (difference >= 0 && difference < 24) {
+      return <Text> Today </Text>;
+    } else if (difference >= 24 && difference < 48) {
       return <Text>Yesterday</Text>;
     } else {
       return (
@@ -157,20 +178,7 @@ const Chat = (item) => {
           <LeftPlaceRenderThing handleOpenDpModel={handleOpenDpModel} />
           <View>
             <View style={[styles.textContainer, { flex: 1 }]}>
-              <View style={{ width: "60%" }}>
-                <Text
-                  style={[
-                    styles.title,
-                    {
-                      color: TITLE_COLOR,
-                      fontWeight: item.type == "call" ? "normal" : "bold",
-                    },
-                  ]}
-                >
-                  {item.name?.length > 18 ? item.name.slice(0, 19) : item.name}{" "}
-                  {item?.count > 0 ? `(${item.count})` : null}
-                </Text>
-              </View>
+              <View style={{ width: "60%" }}>{initTitle()}</View>
               <View style={{ width: "30%", marginRight: 10 }}>
                 {item.NotshowChatMakingDate && (
                   <Text
@@ -224,7 +232,7 @@ const styles = StyleSheet.create({
   time: {
     fontWeight: "500",
     fontSize: 12,
-    textAlign:"right",
-    marginRight:20,
+    textAlign: "right",
+    marginRight: 20,
   },
 });

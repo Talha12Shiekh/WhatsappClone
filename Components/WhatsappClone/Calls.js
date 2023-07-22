@@ -170,7 +170,9 @@ const Calls = ({
                 );
               },
               NotshowChatMakingDate: false,
-              onPress: () => {},
+              onPress: () => {
+                navigation.navigate("CallInfo",{item})
+              },
             };
             return <Chat {...itemData} />;
           }}

@@ -30,7 +30,21 @@ export const BADGE_BACKGROUND_COLOR = "#27343d";
 export const MENU_BACKGROUND_COLOR = "#233239";
 export const CALLS_STORAGE_KEY = "call_items";
 export const CALLS_KEY = "call_chats";
-export const CALLS_ICONS_COLOR = "#787f87"
+export const CALLS_ICONS_COLOR = "#787f87";
+export const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 
 
