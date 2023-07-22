@@ -89,7 +89,26 @@ const CallDetails = ({ route, navigation }) => {
   }
   const passwordString = generatePassword();
 
-  const arrowRandom = Math.floor(Math.random() * 2);
+  const [arrowRandom,setarrowRandom] = useState(0);
+
+  const [callStatus,setCallStatus] = useState("incoming")
+
+  useEffect(() => {
+    setarrowRandom(Math.floor(Math.random() * 3))
+  },[]);
+
+
+
+  useEffect(() => {
+    if(arrowRandom == 0){
+      setCallStatus("incoming")
+    }else if (arrowRandom == 1){
+      setCallStatus("outgoing")
+    }else {
+      setCallStatus("missed");
+    }
+  },[arrowRandom])
+  
 
   const [text, settext] = useState(
     `https://call.whatsapp.com/video/${passwordString}`
@@ -134,7 +153,7 @@ const CallDetails = ({ route, navigation }) => {
       minutes,
       am_pm,
       number: photoObject?.number,
-      arrowColor: arrowRandom == 0 ? true : false,
+      arrowColor: callStatus,
       count: 0,
     };
 

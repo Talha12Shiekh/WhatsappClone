@@ -16,7 +16,7 @@ import {
 import { RippleButton } from "./RippleButton";
 import Chat from "./Chat";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-const CallInfo = ({ navigation, route }) => {
+const CallInfo = ({ route }) => {
   const { item } = route.params;
   return (
     <>
@@ -107,6 +107,11 @@ const CallInfo = ({ navigation, route }) => {
         <Text style={{ color: CHAT_DATA_STATUS_COLOR ,marginLeft:90,marginTop:10}}>
           {item.date} {months[item.month]}
         </Text>
+        <View style={styles.callStatus}>
+            <View>
+                
+            </View>
+        </View>
       </View>
     </>
   );

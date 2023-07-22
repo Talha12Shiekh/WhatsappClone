@@ -124,10 +124,9 @@ const CallScreen = ({ route, navigation }) => {
     } else {
       return (
         <ImageBackground
-          source={{
-            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUum9R2FFBSGNK2fm-8iEQEMwmhT5ad2fPyXEoYk38x5Xcu7Y_qoP2v3z1hg4JE7GZaCY&usqp=CAU",
-          }}
-          style={styles.container}
+          source={{uri:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsYm_-QeIrbm6nog9g_k7tixcI3Q7ARmUKCQ&usqp=CAU"}}
+          style={[styles.container]}
+          resizeMode="cover"
         >
           {children}
         </ImageBackground>

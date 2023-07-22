@@ -26,7 +26,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
-  months
+  months,
 } from "./WhatsappMainScreen";
 import {
   ModelComponent,
@@ -47,8 +47,29 @@ const Chat = (item) => {
     setModalVisible(true);
     setmodalphoto(photo);
     setmodalName(name);
-  }
+  }  
 
+  function generateRandomArrow(arrow) {
+    if (arrow == "incoming") {
+      return (
+        <Feather
+          name="arrow-down-left"
+          size={24}
+          color={ACTIVE_TAB_GREEN_COLOR}
+        />
+      );
+    } else if (arrow == "outgoing") {
+      return (
+        <Feather
+          name="arrow-up-right"
+          size={24}
+          color={ACTIVE_TAB_GREEN_COLOR}
+        />
+      );
+    } else {
+      return <Feather name="arrow-down-left" size={24} color={"red"} />;
+    }
+  }
 
   function initDescription() {
     if (item.type == "call") {
@@ -56,11 +77,7 @@ const Chat = (item) => {
       return (
         <View style={{ flexDirection: "row" }}>
           <View style={{ transform: [{ translateY: 5 }] }}>
-            <Feather
-              name="arrow-down-left"
-              size={24}
-              color={item.arrowColor ? ACTIVE_TAB_GREEN_COLOR : "red"}
-            />
+            {generateRandomArrow(item.arrowColor)}
           </View>
           <View>
             <Text
@@ -104,7 +121,7 @@ const Chat = (item) => {
           {item?.count > 0 ? `(${item.count})` : null}
         </Text>
       );
-    }else{
+    } else {
       return (
         <Text
           style={[
