@@ -26,6 +26,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
+  generateRandomArrow,
   months,
 } from "./WhatsappMainScreen";
 import {
@@ -49,28 +50,7 @@ const Chat = (item) => {
     setmodalName(name);
   }  
 
-  function generateRandomArrow(arrow) {
-    if (arrow == "incoming") {
-      return (
-        <Feather
-          name="arrow-down-left"
-          size={24}
-          color={ACTIVE_TAB_GREEN_COLOR}
-        />
-      );
-    } else if (arrow == "outgoing") {
-      return (
-        <Feather
-          name="arrow-up-right"
-          size={24}
-          color={ACTIVE_TAB_GREEN_COLOR}
-        />
-      );
-    } else {
-      return <Feather name="arrow-down-left" size={24} color={"red"} />;
-    }
-  }
-
+  
   function initDescription() {
     if (item.type == "call") {
       const { date, month, hour, minutes, am_pm } = item;

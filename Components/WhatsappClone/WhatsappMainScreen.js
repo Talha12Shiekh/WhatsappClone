@@ -12,6 +12,7 @@ import People from "react-native-vector-icons/Ionicons";
 import CommunityComponent from "./CommunityComponent";
 import { useNavigation ,useFocusEffect} from "@react-navigation/native";
 import { showToast } from "./RippleButton";
+import { FontAwesome5, Ionicons, Feather } from "@expo/vector-icons";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -45,6 +46,29 @@ export const months = [
   "November",
   "December",
 ];
+
+export function generateRandomArrow(arrow) {
+  if (arrow == "incoming") {
+    return (
+      <Feather
+        name="arrow-down-left"
+        size={24}
+        color={ACTIVE_TAB_GREEN_COLOR}
+      />
+    );
+  } else if (arrow == "outgoing") {
+    return (
+      <Feather
+        name="arrow-up-right"
+        size={24}
+        color={ACTIVE_TAB_GREEN_COLOR}
+      />
+    );
+  } else {
+    return <Feather name="arrow-down-left" size={24} color={"red"} />;
+  }
+}
+
 
 
 
@@ -130,11 +154,14 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       if (name.length == "" && number.length == "") {
         showToast("You can not make an empty chat");
       } else {
+        let date = new Date()
+        let twoafter = new Date(date.getTime() + (2 * (24 * 60 * 60 * 1000)));
         const ChatInformation = {
           name,
           number,
           about,
           key: Date.now().toString(),
+          time:twoafter.getTime(),
           date,
           month,
           year,

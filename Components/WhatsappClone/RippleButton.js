@@ -24,8 +24,6 @@ import {
 } from "react-native-vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-
-
 export const center = {
   justifyContent: "center",
   alignItems: "center",
@@ -147,7 +145,6 @@ export const navbarAnimation = (openanim) => {
   }).start();
 };
 
-
 export const ChatGreenLeftComponent = ({ children }) => {
   return (
     <View style={{ ...center }}>
@@ -165,40 +162,42 @@ export const ChatGreenLeftComponent = ({ children }) => {
   );
 };
 
-export const CallReusableComponent = ({Children,text,onPress}) => {
+
+
+export const CallReusableComponent = ({ Children, text, onPress }) => {
   return (
     <TouchableNativeFeedback
-    onPress={onPress}
-    background={TouchableNativeFeedback.Ripple(
-      TAB_PRESS_ACTIVE_WHITE_COLOR,
-      false
-    )}
+      onPress={onPress}
+      background={TouchableNativeFeedback.Ripple(
+        TAB_PRESS_ACTIVE_WHITE_COLOR,
+        false
+      )}
     >
-    <View
-      style={{
-        height: 60,
-        flexDirection: "row",
-        gap: 20,
-        paddingLeft: 30,
-        alignItems: "center",
-        marginBottom:15,
-      }}
-    >
-      <View style={center}>
-        <Children/>
+      <View
+        style={{
+          height: 60,
+          flexDirection: "row",
+          gap: 20,
+          paddingLeft: 30,
+          alignItems: "center",
+          marginBottom: 15,
+        }}
+      >
+        <View style={center}>
+          <Children />
+        </View>
+        <View>
+          <Text
+            style={{
+              color: TITLE_COLOR,
+              fontSize: 18,
+              marginLeft: 20,
+            }}
+          >
+            {text}
+          </Text>
+        </View>
       </View>
-      <View>
-        <Text
-          style={{
-            color: TITLE_COLOR,
-            fontSize: 18,
-            marginLeft: 20,
-          }}
-        >
-          {text}
-        </Text>
-      </View>
-    </View>
     </TouchableNativeFeedback>
   );
 };
