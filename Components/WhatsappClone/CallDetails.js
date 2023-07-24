@@ -26,13 +26,12 @@ import {
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import CallButton from "./Button";
+import { Ionicons } from '@expo/vector-icons';
 
 const CallDetails = ({ route, navigation }) => {
   const { callChats, setcalls, calls } = route.params;
 
   const [items, setItems] = useState([]);
-
-  //https://dl.google.com/android/repository/sys-img/google_apis_playstore/x86_64-33_r07.zip
 
   useEffect(() => {
     let newChats = [...callChats];
@@ -89,30 +88,31 @@ const CallDetails = ({ route, navigation }) => {
   }
   const passwordString = generatePassword();
 
-  const [arrowRandom,setarrowRandom] = useState(0);
+  const [arrowRandom, setarrowRandom] = useState(0);
 
-  const [callStatus,setCallStatus] = useState("incoming")
-
-  useEffect(() => {
-    setarrowRandom(Math.floor(Math.random() * 3))
-  },[]);
-
-
+  const [callStatus, setCallStatus] = useState("incoming");
 
   useEffect(() => {
-    if(arrowRandom == 0){
-      setCallStatus("incoming")
-    }else if (arrowRandom == 1){
-      setCallStatus("outgoing")
-    }else {
+    setarrowRandom(Math.floor(Math.random() * 3));
+  }, []);
+
+  useEffect(() => {
+    if (arrowRandom == 0) {
+      setCallStatus("incoming");
+    } else if (arrowRandom == 1) {
+      setCallStatus("outgoing");
+    } else {
       setCallStatus("missed");
     }
-  },[arrowRandom])
-  
+  }, [arrowRandom]);
 
   const [text, settext] = useState(
     `https://call.whatsapp.com/video/${passwordString}`
   );
+
+  useEffect(() => {
+    settext(`https://call.whatsapp.com/${Video ? "video" : "voice"}/${passwordString}`)
+  },[Video])
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(text);
@@ -141,18 +141,18 @@ const CallDetails = ({ route, navigation }) => {
     let photoObject = callChats.find((chat) => chat.name == selectedItems);
     const callObject = {
       name: selectedItems ? selectedItems : callChats[0]?.value,
-      about: photoObject?.about,
+      about: selectedItems ? photoObject?.about : callChats[0]?.about,
       key: Date.now().toString(),
       date,
       month,
       year,
-      photo: photoObject?.photo,
+      photo: selectedItems ? photoObject?.photo : callChats[0]?.photo,
       video: Video,
       type: "call",
       hour,
       minutes,
       am_pm,
-      number: photoObject?.number,
+      number: selectedItems ? photoObject?.number : callChats[0]?.number,
       arrowColor: callStatus,
       count: 0,
     };
@@ -162,7 +162,7 @@ const CallDetails = ({ route, navigation }) => {
     if (callsNames.includes(callObject.name)) {
       let newCalls = [...calls];
       let updatedCalls = newCalls.map((cll) => {
-        if (callsNames.includes(cll.name)) {
+        if (callsNames.includes(cll.name)) { 
           return {
             ...cll,
             count: cll.count + 1,
@@ -174,7 +174,7 @@ const CallDetails = ({ route, navigation }) => {
     } else {
       setcalls((prev) => [...prev, callObject]);
     }
-    navigation.goBack();
+    navigation.navigate("Calls");
   };
 
   return (
@@ -272,7 +272,9 @@ const CallDetails = ({ route, navigation }) => {
         <View style={{ flexDirection: "row" }}>
           <View style={{ marginBottom: 10 }}>
             <ChatGreenLeftComponent>
-              <Feather name="video" size={23} color={TITLE_COLOR} />
+              {Video ? <Feather name="video" size={23} color={TITLE_COLOR} /> : 
+              <Ionicons name="call" size={23} color={TITLE_COLOR} />
+              }
             </ChatGreenLeftComponent>
           </View>
           <View style={{ justifyContent: "center", alignItems: "center" }}>

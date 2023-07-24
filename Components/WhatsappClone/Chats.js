@@ -187,7 +187,6 @@ const Chats = ({
         <View style={{ backgroundColor: CHAT_BACKROUND_COLOR }}>
           <FlatList
             data={chats}
-            // contentContainerStyle={{paddingBottom:50}}
             ListHeaderComponent={() => {
               if (isEnabled) {
                 return (

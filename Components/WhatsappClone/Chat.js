@@ -48,9 +48,8 @@ const Chat = (item) => {
     setModalVisible(true);
     setmodalphoto(photo);
     setmodalName(name);
-  }  
+  }
 
-  
   function initDescription() {
     if (item.type == "call") {
       const { date, month, hour, minutes, am_pm } = item;
@@ -94,6 +93,7 @@ const Chat = (item) => {
             {
               color: TITLE_COLOR,
               fontWeight: "normal",
+              fontSize:18
             },
           ]}
         >
@@ -118,25 +118,6 @@ const Chat = (item) => {
     }
   }
 
-  const RenderTime = () => {
-    let today = new Date().getHours();
-    let currentHours = today > 12 ? today - 12 : today;
-    let DayOfChatMaking = item.hours > 12 ? item.hours - 12 : item.hours;
-    let difference = currentHours - DayOfChatMaking;
-    if (difference >= 0 && difference < 24) {
-      return <Text> Today </Text>;
-    } else if (difference >= 24 && difference < 48) {
-      return <Text>Yesterday</Text>;
-    } else {
-      return (
-        <Text>
-          {item.date < 10 ? "0" + item.date : item.date}/
-          {item.month < 10 ? "0" + item.month : item.month}/{item.year}
-        </Text>
-      );
-    }
-  };
-
   return (
     <>
       <Modal
@@ -150,6 +131,7 @@ const Chat = (item) => {
         <ModelComponent
           name={modalName}
           photo={modalphoto}
+          item={item}
           onPress={() => setModalVisible(!modalVisible)}
         />
       </Modal>
@@ -176,12 +158,14 @@ const Chat = (item) => {
           <View>
             <View style={[styles.textContainer, { flex: 1 }]}>
               <View style={{ width: "60%" }}>{initTitle()}</View>
-              <View style={{ width: "30%", marginRight: 10 }}>
+              <View style={{ width: "32%" }}>
                 {item.NotshowChatMakingDate && (
                   <Text
                     style={[styles.time, { color: CHAT_DATA_STATUS_COLOR }]}
                   >
-                    <RenderTime />
+                    {item.date < 10 ? "0" + item.date : item.date}/
+                    {item.month < 10 ? "0" + item.month : item.month}/
+                    {item.year}
                   </Text>
                 )}
               </View>
@@ -229,7 +213,5 @@ const styles = StyleSheet.create({
   time: {
     fontWeight: "500",
     fontSize: 12,
-    textAlign: "right",
-    marginRight: 20,
   },
 });

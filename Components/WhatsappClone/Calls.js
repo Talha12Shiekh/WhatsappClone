@@ -37,7 +37,12 @@ const Calls = ({
   setcalls,
   callChats,
   navigation,
+  setcurrentTabIndex
 }) => {
+  useFocusEffect(() => {
+    setcurrentTabIndex(3)
+  })
+  
   return (
     <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
       <FlatList

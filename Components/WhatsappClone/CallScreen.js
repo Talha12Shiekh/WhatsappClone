@@ -1,5 +1,6 @@
 import {
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
@@ -7,7 +8,9 @@ import {
   useWindowDimensions,
 } from "react-native";
 import React, { useState } from "react";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import {
+  BADGE_BACKGROUND_COLOR,
   CALLS_ICONS_COLOR,
   CHAT_BACKROUND_COLOR,
   CHAT_DATA_STATUS_COLOR,
@@ -17,7 +20,7 @@ import {
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
 import UpperArrow from "react-native-vector-icons/MaterialIcons";
-import { PanGestureHandler } from "react-native-gesture-handler";
+import { FlatList, PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -36,15 +39,13 @@ import { RippleButton } from "./RippleButton";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ImageBackground } from "react-native";
 import { Audio } from "expo-av";
-
-
+import Chat from "./Chat";
 
 const CallScreen = ({ route, navigation }) => {
   const { item } = route.params;
   const { height } = useWindowDimensions();
   const ICONS_BACKGROUND_COLOR = CALLS_ICONS_COLOR;
   const ICONS_SIZE = 25;
-
   const [loaded, setloaded] = useState(false);
 
   const translateY = useSharedValue(320);
@@ -66,7 +67,6 @@ const CallScreen = ({ route, navigation }) => {
   navigation.addListener("blur", () => {
     setloaded(false);
   });
-
 
   const MAX_TRANSLATE_Y = 320;
   const MIN_TRANSLATE_Y = -(height / 3 - 320);
@@ -104,9 +104,46 @@ const CallScreen = ({ route, navigation }) => {
     );
   }
 
+  const CallChat = ({image, text, showDots, opacity,key }) => {
+    return (
+      <View style={[styles.ParticipantContainer, { opacity }]} key={key}>
+        <View style={[styles.participant]}>
+          <Image
+            resizeMode="contain"
+            style={[styles.participantImage,{
+              tintColor:showDots ? "" : TITLE_COLOR 
+            }]}
+            source={image}
+          />
+        </View>
+        <View style={styles.participantTextContainer}>
+          <Text style={styles.participantText}>{text}</Text>
+        </View>
+        {showDots && (
+          <View
+            style={{
+              position: "absolute",
+              right: 0,
+              justifyContent: "center",
+              alignItems: "center",
+              top: 20,
+              transform: [{ rotate: "90deg" }],
+            }}
+          >
+            <SimpleLineIcons
+              name="options-vertical"
+              color={TITLE_COLOR}
+              size={18}
+            />
+          </View>
+        )}
+      </View>
+    );
+  };
+
   const IconsContainer = ({ children, colorToggle, onPress }) => {
     return (
-      <TouchableNativeFeedback onPress={onPress}>
+      <Pressable onPress={onPress}>
         <View
           style={{
             width: 40,
@@ -119,7 +156,7 @@ const CallScreen = ({ route, navigation }) => {
         >
           {children}
         </View>
-      </TouchableNativeFeedback>
+      </Pressable>
     );
   };
 
@@ -127,9 +164,11 @@ const CallScreen = ({ route, navigation }) => {
     if (item.video) {
       return (
         <View style={styles.container}>
-          {loaded && <Camera style={styles.camera} type={type}>
-            {children}
-          </Camera>}
+          {loaded && (
+            <Camera style={styles.camera} type={type}>
+              {children}
+            </Camera>
+          )}
         </View>
       );
     } else {
@@ -191,7 +230,7 @@ const CallScreen = ({ route, navigation }) => {
               style={styles.arrow}
             />
           </View>
-          <View style={styles.CallIconsContainer}>
+          <View style={[styles.CallIconsContainer]}>
             {!item.video ? (
               <IconsContainer
                 colorToggle={iconsToggle.volume}
@@ -295,6 +334,34 @@ const CallScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
           </View>
+          <View
+            style={{
+              height: 0.5,
+              backgroundColor: CHAT_DATA_STATUS_COLOR,
+              marginTop: 30,
+            }}
+          />
+          <TouchableNativeFeedback>
+            <CallChat
+              text={"Add Participant"}
+              key={1}
+              image={require("./Images/participant.png")}
+              showDots={false}
+              opacity={1}
+            />
+          </TouchableNativeFeedback>
+
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <TouchableNativeFeedback>
+              <CallChat
+                image={item.photo ? { uri: item.photo } : require("./Images/profile.png")}
+                key={2}
+                text={item.name}
+                showDots={true}
+                opacity={0.5}
+              />
+            </TouchableNativeFeedback>
+          </View>
         </Animated.View>
       </PanGestureHandler>
     </Container>
@@ -365,5 +432,35 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  participantImage: {
+    height: 40,
+    width: 40,
+    borderRadius: 100,
+    resizeMode: "cover",
+  },
+  participantText: {
+    color: TITLE_COLOR,
+    fontSize: 17,
+  },
+  participantTextContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ParticipantContainer: {
+    width: "90%",
+    alignSelf: "center",
+    gap: 20,
+    marginTop: 15,
+    flexDirection: "row",
+    paddingVertical: 10,
+  },
+  participant: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 100,
+    backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR,
   },
 });

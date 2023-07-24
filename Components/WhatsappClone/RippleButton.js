@@ -42,10 +42,11 @@ export const RippleButton = ({ children, onPress }) => {
   );
 };
 
-export const PopupIconsRippleButton = ({ children }) => {
+export const PopupIconsRippleButton = ({ children,onPress }) => {
   return (
     <View style={{ borderRadius: 200, padding: 10 }}>
       <TouchableNativeFeedback
+      onPress={onPress}
         background={TouchableNativeFeedback.Ripple(
           TAB_PRESS_ACTIVE_WHITE_COLOR,
           true
@@ -61,8 +62,30 @@ export const showToast = (message) => {
   ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.CENTER);
 };
 
-export const ModelComponent = ({ name, photo, onPress }) => {
+export const ModelComponent = ({ name, photo, onPress ,item}) => {
   const navigation = useNavigation();
+
+  const [currentItem, setCurrentItem] = useState({
+    ...item,
+  });
+
+  const handleOpenCallScreen = () => {
+    setCurrentItem({
+      ...item,
+      video: true,
+    });
+    navigation.navigate("CallScreen", { item: currentItem });
+    onPress()
+  };
+
+  const handleOpenVideoScreen = () => {
+    setCurrentItem({
+      ...item,
+      video: false,
+    });
+    navigation.navigate("CallScreen", { item: currentItem });
+    onPress()
+  };
   return (
     <Pressable style={styles.centeredView} onPress={onPress}>
       <View style={[styles.modalView]}>
@@ -103,7 +126,7 @@ export const ModelComponent = ({ name, photo, onPress }) => {
             { backgroundColor: TAB_BACKGROUND_COLOR },
           ]}
         >
-          <PopupIconsRippleButton>
+          <PopupIconsRippleButton onPress={handleOpenCallScreen}>
             <Ionicons name="call" color={ACTIVE_TAB_GREEN_COLOR} size={23} />
           </PopupIconsRippleButton>
           <PopupIconsRippleButton>
@@ -116,7 +139,7 @@ export const ModelComponent = ({ name, photo, onPress }) => {
           <PopupIconsRippleButton>
             <Feather name="info" color={ACTIVE_TAB_GREEN_COLOR} size={23} />
           </PopupIconsRippleButton>
-          <PopupIconsRippleButton>
+          <PopupIconsRippleButton onPress={handleOpenVideoScreen}>
             <Ionicons
               name="videocam"
               color={ACTIVE_TAB_GREEN_COLOR}

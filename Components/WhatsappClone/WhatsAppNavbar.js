@@ -416,7 +416,6 @@ const WhatsAppNavbar = ({
         { text: "Starred Messages", onPress: () => {}, key: 4 },
         { text: "Settings", onPress: () => {}, key: 5 },
       ];
-
       setMenuData(UpDatedData);
     }
   }, [activeRoute]);

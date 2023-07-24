@@ -70,8 +70,6 @@ export function generateRandomArrow(arrow) {
 }
 
 
-
-
 const WhatsappMainScreen = ({ isEnabled }) => {
   const [chats, setchats] = useState([]);
 
@@ -85,14 +83,23 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
     let updatedchats = await JSON.parse(asyncChats);
-    setchats(updatedchats);
+    if(updatedchats !== null){
+      setchats(updatedchats);
+    }else {
+      setchats([])
+    }
+
     storeCallChats()
   };
 
   const getCallChats = async () => {
     let asyncCallChats = await AsyncStorage.getItem(CALLS_STORAGE_KEY);
     let updatedCallchats = await JSON.parse(asyncCallChats);
-    setcallChats(updatedCallchats);
+    if(updatedCallchats !== null){
+      setcallChats(updatedCallchats);
+    }else{
+      setcallChats([])
+    }
   };
 
   const getCalls = async () => {
@@ -108,7 +115,11 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   const getArchivedChats = async () => {
     let asyncArchivedChats = await AsyncStorage.getItem(ARCHIVED_STORAGE_KEY);
     let updatedArchivedchats = await JSON.parse(asyncArchivedChats);
-    setarchived(updatedArchivedchats);
+    if(updatedArchivedchats !== null){
+      setarchived(updatedArchivedchats);
+    }else {
+      setarchived([]);
+    }
   };
 
   useEffect(() => {
@@ -131,8 +142,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const year = time.getFullYear();
 
-  const hours = time.getHours();
-
   const storeChats = async () => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
   };
@@ -154,18 +163,14 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       if (name.length == "" && number.length == "") {
         showToast("You can not make an empty chat");
       } else {
-        let date = new Date()
-        let twoafter = new Date(date.getTime() + (2 * (24 * 60 * 60 * 1000)));
         const ChatInformation = {
           name,
           number,
           about,
           key: Date.now().toString(),
-          time:twoafter.getTime(),
           date,
           month,
           year,
-          hours,
           photo,
           type:"chat",
           selected: false,
@@ -354,7 +359,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Status" }}
         >
           {(props) => {
-            return <Status {...props} />
+            return <Status {...props} setcurrentTabIndex={setcurrentTabIndex}/>
           }}
         </Tab.Screen>
         <Tab.Screen
@@ -362,7 +367,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Calls" }}
         >
           {(props) => {
-            return <Calls {...props} calls={calls} setcalls={setcalls} callChats={callChats}/>
+            return <Calls {...props} calls={calls} setcalls={setcalls} setcurrentTabIndex={setcurrentTabIndex} callChats={callChats}/>
           }}
         </Tab.Screen>
       </Tab.Navigator>
