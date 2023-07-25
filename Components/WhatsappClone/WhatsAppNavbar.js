@@ -637,11 +637,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  menuContainer: {},
-  hide: {
-    transform: [{ scale: 0 }],
-  },
-  show: {
-    transform: [{ scale: 1 }],
-  },
 });

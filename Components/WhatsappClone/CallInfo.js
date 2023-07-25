@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   TouchableNativeFeedback,
+  Animated,
 } from "react-native";
 import {
   TAB_BACKGROUND_COLOR,
@@ -17,17 +18,129 @@ import {
   generateRandomArrow,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
 } from "./WhatsappMainScreen";
-import { RippleButton } from "./RippleButton";
+import { RippleButton, showToast } from "./RippleButton";
 import Chat from "./Chat";
-import { FontAwesome5, Ionicons, Feather } from "@expo/vector-icons";
+import {
+  FontAwesome5,
+  Ionicons,
+  Feather,
+  MaterialIcons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import Menu from "./Menu";
+import { useRef } from "react";
+import { Alert } from "react-native";
 const CallInfo = ({ route, navigation }) => {
-  const { item } = route.params;
+  const { item, calls, setcalls, chats, setchats } = route.params;
 
   const CallArray = Array.from({ length: item.count }).fill();
 
+  const selectedCallsAnimation = useRef(new Animated.Value(0)).current;
+
+  const [blocked, setblocked] = useState(false);
+
   const [currentItem, setCurrentItem] = useState({
     ...item,
+  });
+
+  const SelectedArchivedMenuData = [
+    {
+      text: "Remove from call log",
+      key: 1,
+      onPress: () => {
+        let newCalls = [...calls];
+        let findedCall = newCalls.find((cll) => cll.key == item.key);
+        let deletedCalls = newCalls.filter(
+          (call) => call.key !== findedCall.key
+        );
+        navigation.goBack();
+        setcalls(deletedCalls);
+      },
+    },
+    {
+      text: "Block",
+      key: 2,
+      onPress: () => {
+        let newCalls = [...calls];
+        let newChats = [...chats];
+        let findedCall = newCalls.find((cll) => cll.key == item.key);
+
+        if (findedCall !== undefined) {
+          let blockedChats = newChats.map((chat) => {
+            if (chat.name) {
+              if (chat.name == findedCall.name) {
+                return {
+                  ...chat,
+                  blocked: !chat.blocked,
+                };
+              }
+            } else if (chat.number) {
+              if (chat.number == findedCall.number) {
+                return {
+                  ...chat,
+                  blocked: !chat.blocked,
+                };
+              }
+            }
+            return chat;
+          });
+
+          Alert.alert(`Block ${findedCall.name}`, '', [
+            {
+              text: 'Cancel',
+              onPress: () => {},
+              style: 'cancel',
+            },
+            {text: 'Block', onPress: () => {
+              setchats(blockedChats);
+              showToast(`${findedCall.name} has been blocked`)
+            }},
+          ]);
+
+        }
+      },
+    },
+  ];
+
+  const handleOpenMenu = () => {
+    Animated.timing(selectedCallsAnimation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useFocusEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        return (
+          <>
+            <Menu
+              animation={selectedCallsAnimation}
+              menuData={SelectedArchivedMenuData}
+            />
+            <View style={{ flexDirection: "row" }}>
+              <View>
+                <RippleButton>
+                  <MaterialIcons name="message" size={24} color={TITLE_COLOR} />
+                </RippleButton>
+              </View>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <RippleButton onPress={handleOpenMenu}>
+                  <SimpleLineIcons
+                    name="options-vertical"
+                    color={TITLE_COLOR}
+                    size={18}
+                  />
+                </RippleButton>
+              </View>
+            </View>
+          </>
+        );
+      },
+    });
   });
 
   const handleOpenCallScreen = () => {
@@ -53,44 +166,55 @@ const CallInfo = ({ route, navigation }) => {
   const CallInfoComponent = (item) => {
     return (
       <TouchableNativeFeedback
-      background={TouchableNativeFeedback.Ripple(
-        TAB_PRESS_ACTIVE_WHITE_COLOR,
-        false
-      )}
+        background={TouchableNativeFeedback.Ripple(
+          TAB_PRESS_ACTIVE_WHITE_COLOR,
+          false
+        )}
       >
-      <View style={{ flexDirection: "row", width: "90%", alignSelf: "center",paddingVertical:10}}>
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {generateRandomArrow(item.arrowColor)}
-        </View>
-        <View style={{ marginLeft: 40 }}>
-          <Text style={{ color: TITLE_COLOR, fontSize: 17 }}>
-            {capitalizeFirstLetter(item.arrowColor)}
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 3,
-            }}
-          >
-            {!item.video ? (
-              <Ionicons name="call" size={12} color={CHAT_DATA_STATUS_COLOR} />
-            ) : (
-              <FontAwesome5
-                name="video"
-                size={12}
-                color={CHAT_DATA_STATUS_COLOR}
-              />
-            )}
-            <View>
-              <Text style={{ color: CHAT_DATA_STATUS_COLOR, marginLeft: 10 }}>
-                {item.hour}:{item.minutes} {item.hour >= 12 ? "am" : "pm"}
-              </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "90%",
+            alignSelf: "center",
+            paddingVertical: 10,
+          }}
+        >
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            {generateRandomArrow(item.arrowColor)}
+          </View>
+          <View style={{ marginLeft: 40 }}>
+            <Text style={{ color: TITLE_COLOR, fontSize: 17 }}>
+              {capitalizeFirstLetter(item.arrowColor)}
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 3,
+              }}
+            >
+              {!item.video ? (
+                <Ionicons
+                  name="call"
+                  size={12}
+                  color={CHAT_DATA_STATUS_COLOR}
+                />
+              ) : (
+                <FontAwesome5
+                  name="video"
+                  size={12}
+                  color={CHAT_DATA_STATUS_COLOR}
+                />
+              )}
+              <View>
+                <Text style={{ color: CHAT_DATA_STATUS_COLOR, marginLeft: 10 }}>
+                  {item.hour}:{item.minutes} {item.hour >= 12 ? "am" : "pm"}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
       </TouchableNativeFeedback>
     );
   };
@@ -191,8 +315,8 @@ const CallInfo = ({ route, navigation }) => {
         </Text>
         <View style={styles.callStatus}>
           {item.count > 0 ? (
-            CallArray.map((_,i) => {
-              return <CallInfoComponent key={i} {...item} />
+            CallArray.map((_, i) => {
+              return <CallInfoComponent key={i} {...item} />;
             })
           ) : (
             <CallInfoComponent {...item} />

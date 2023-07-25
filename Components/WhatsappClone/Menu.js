@@ -51,7 +51,7 @@ const Menu = ({ animation, menuData }) => {
         style={{
           width: 100,
           aspectRatio: 1,
-          backgroundColor: "rgba(0,0,0,.5)",
+          backgroundColor: "rgba(0,0,0,.1)",
           position: "absolute",
           zIndex: 99999,
           right: 0,
@@ -109,10 +109,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 200,
     zIndex: 2222222,
-    right: 0,
+    right: 10,
+    top:10,
   },
   menuItem: {
-    width: "100%",
-    padding: 13,
+    width: "120%",
+    padding: 15,
   },
 });

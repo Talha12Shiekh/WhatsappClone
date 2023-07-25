@@ -155,6 +155,8 @@ const CallDetails = ({ route, navigation }) => {
       number: selectedItems ? photoObject?.number : callChats[0]?.number,
       arrowColor: callStatus,
       count: 0,
+      selected:false,
+      blocked:false
     };
 
     let callsNames = calls.map((call) => call.name);

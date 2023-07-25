@@ -315,31 +315,7 @@ export default function App() {
             name="CallInfo"
             component={CallInfo}
             options={{
-              title: "Call Info",
-              headerRight: () => {
-                return (
-                  <View style={{ flexDirection: "row" }}>
-                    <View>
-                      <RippleButton>
-                        <MaterialIcons
-                          name="message"
-                          size={24}
-                          color={TITLE_COLOR}
-                        />
-                      </RippleButton>
-                    </View>
-                    <View>
-                      <RippleButton>
-                        <SimpleLineIcons
-                          name="options-vertical"
-                          color={TITLE_COLOR}
-                          size={24}
-                        />
-                      </RippleButton>
-                    </View>
-                  </View>
-                );
-              },
+              title: "Call Info",              
             }}
           />
         </Stack.Group>

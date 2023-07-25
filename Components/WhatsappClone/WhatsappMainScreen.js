@@ -177,6 +177,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           pinned: false,
           muted: false,
           readed: false,
+          blocked:false
         };
         const callInformation = {
           name,
@@ -277,6 +278,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             backgroundColor: ACTIVE_TAB_GREEN_COLOR,
             height: 4,
           },
+          
           tabBarLabelStyle: {
             textTransform: "none",
             fontWeight: "bold",
@@ -289,6 +291,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             flexDirection: "row-reverse",
             justifyContent: "center",
             alignItems: "center",
+            
           },
           tabBarIcon: ({ focused, color }) => {
             let iconName;
@@ -367,7 +370,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Calls" }}
         >
           {(props) => {
-            return <Calls {...props} calls={calls} setcalls={setcalls} setcurrentTabIndex={setcurrentTabIndex} callChats={callChats}/>
+            return <Calls {...props} calls={calls} setcalls={setcalls} setcurrentTabIndex={setcurrentTabIndex} chats={chats} setchats={setchats} callChats={callChats}/>
           }}
         </Tab.Screen>
       </Tab.Navigator>

@@ -341,7 +341,7 @@ const CallScreen = ({ route, navigation }) => {
               marginTop: 30,
             }}
           />
-          <TouchableNativeFeedback>
+          <TouchableNativeFeedback >
             <CallChat
               text={"Add Participant"}
               key={1}

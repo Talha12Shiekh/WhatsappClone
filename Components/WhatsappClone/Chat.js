@@ -76,9 +76,9 @@ const Chat = (item) => {
     } else {
       return (
         <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-          {item.about?.length > aboutlimit.length
+          {!item.blocked ? item.about?.length > aboutlimit.length
             ? item.about.slice(0, aboutlimit.length - 1) + "..."
-            : item.about}
+            : item.about : "You blocked this contact"}
         </Text>
       );
     }
