@@ -47,11 +47,38 @@ const CallScreen = ({ route, navigation }) => {
   const ICONS_BACKGROUND_COLOR = CALLS_ICONS_COLOR;
   const ICONS_SIZE = 25;
   const [loaded, setloaded] = useState(false);
+  const [sound, setSound] = React.useState();
+  const [isSpeaker, setisSpeaker] = useState(false);
+
+  React.useEffect(() => {
+    (async () => {
+      requestPermissionsOfAudio();
+      const { sound } = await Audio.Sound.createAsync(
+        require("./Images/ringing.mp3")
+      );
+      let newVolume = isSpeaker ? 1 : 0.1;
+      await sound.setVolumeAsync(newVolume);
+      setSound(sound);
+      await sound.playAsync();
+    })();
+  }, [isSpeaker]);
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   const translateY = useSharedValue(320);
 
   const [type, setType] = useState(CameraType.front);
+
   const [permission, requestPermission] = Camera.useCameraPermissions();
+
+  const [permissionResponse, requestPermissionsOfAudio] =
+    Audio.usePermissions();
 
   const [iconsToggle, setIconsToggle] = useState({
     volume: false,
@@ -104,15 +131,18 @@ const CallScreen = ({ route, navigation }) => {
     );
   }
 
-  const CallChat = ({image, text, showDots, opacity,key }) => {
+  const CallChat = ({ image, text, showDots, opacity, key }) => {
     return (
       <View style={[styles.ParticipantContainer, { opacity }]} key={key}>
         <View style={[styles.participant]}>
           <Image
             resizeMode="contain"
-            style={[styles.participantImage,{
-              tintColor:showDots ? "" : TITLE_COLOR 
-            }]}
+            style={[
+              styles.participantImage,
+              {
+                tintColor: showDots ? "" : TITLE_COLOR,
+              },
+            ]}
             source={image}
           />
         </View>
@@ -235,6 +265,7 @@ const CallScreen = ({ route, navigation }) => {
               <IconsContainer
                 colorToggle={iconsToggle.volume}
                 onPress={() => {
+                  setisSpeaker((v) => !v);
                   setIconsToggle((prev) => {
                     return {
                       ...prev,
@@ -341,7 +372,7 @@ const CallScreen = ({ route, navigation }) => {
               marginTop: 30,
             }}
           />
-          <TouchableNativeFeedback >
+          <TouchableNativeFeedback>
             <CallChat
               text={"Add Participant"}
               key={1}
@@ -354,7 +385,11 @@ const CallScreen = ({ route, navigation }) => {
           <View style={{ justifyContent: "center", alignItems: "center" }}>
             <TouchableNativeFeedback>
               <CallChat
-                image={item.photo ? { uri: item.photo } : require("./Images/profile.png")}
+                image={
+                  item.photo
+                    ? { uri: item.photo }
+                    : require("./Images/profile.png")
+                }
                 key={2}
                 text={item.name}
                 showDots={true}

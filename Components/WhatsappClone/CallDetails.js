@@ -33,12 +33,14 @@ const CallDetails = ({ route, navigation }) => {
 
   const [items, setItems] = useState([]);
 
+
   useEffect(() => {
     let newChats = [...callChats];
     const updatedDropdownItems = newChats.map((chat) => {
       return {
         value: chat.name,
         label: chat.name,
+        key:Date.now().toString()
       };
     });
     setItems(updatedDropdownItems);
@@ -292,6 +294,7 @@ const CallDetails = ({ route, navigation }) => {
           <View style={{ zIndex: 999999999999 }}>
             <DropDownPicker
               open={open}
+            
               items={items}
               setOpen={setOpen}
               setItems={setItems}

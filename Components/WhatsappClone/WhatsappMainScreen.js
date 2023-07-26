@@ -270,6 +270,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       />
       <Tab.Navigator
         initialRouteName="Chats"
+        style={{zIndex:-1}}
         screenOptions={({ route }) => ({
           tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
@@ -283,6 +284,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             textTransform: "none",
             fontWeight: "bold",
             fontSize: 15,
+            zIndex:-1
           },
           tabBarPressColor: TAB_PRESS_ACTIVE_WHITE_COLOR,
           tabBarPressOpacity: 1,
@@ -291,7 +293,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             flexDirection: "row-reverse",
             justifyContent: "center",
             alignItems: "center",
-            
+            zIndex:-1
           },
           tabBarIcon: ({ focused, color }) => {
             let iconName;

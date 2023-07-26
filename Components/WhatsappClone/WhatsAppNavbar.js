@@ -64,9 +64,9 @@ const WhatsAppNavbar = ({
     { badgeText: "Unread", badgeIcons: "mark-chat-unread", size: 22, key: 1 },
     { badgeText: "Photos", badgeIcons: "photo", size: 22, key: 2 },
     { badgeText: "Videos", badgeIcons: "videocam", size: 22, key: 3 },
-    { badgeText: "Links", badgeIcons: "insert-link", size: 25, key: 4 },
-    { badgeText: "GIFs", badgeIcons: "gif", size: 25, key: 5 },
-    { badgeText: "Audio", badgeIcons: "audiotrack", size: 25, key: 6 },
+    { badgeText: "Links", badgeIcons: "insert-link", size: 22, key: 4 },
+    { badgeText: "GIFs", badgeIcons: "gif", size: 27, key: 5 },
+    { badgeText: "Audio", badgeIcons: "audiotrack", size: 21, key: 6 },
     { badgeText: "Documents", badgeIcons: "contact-page", size: 20, key: 7 },
     { badgeText: "Polls", badgeIcons: "poll", size: 20, key: 8 },
   ];
@@ -420,9 +420,61 @@ const WhatsAppNavbar = ({
     }
   }, [activeRoute]);
 
+  const selectedCallNavbarAnimation = useRef(new Animated.Value(0)).current;
+
+  const selectedCalls = calls.filter(cll => cll.selected);
+
+  const isCallSelected = calls.some(cll => cll.selected);
+
+  useEffect(() => {
+    if(isCallSelected){
+      navbarAnimation(selectedCallNavbarAnimation)
+    }else {
+      ClosenavbarAnimation(selectedCallNavbarAnimation)
+    }
+  },[isCallSelected]);
+
+  const handleCallDelete = () => {
+    const newCalls = [...calls];
+    const deletedCalls = newCalls.filter(cll => !cll.selected);
+    setcalls(deletedCalls);
+  }
+  
+
   return (
     <>
       <StatusBar backgroundColor={TAB_BACKGROUND_COLOR} />
+
+      <Animated.View
+        style={[
+          styles.selectedCallNavbar,
+          {
+            backgroundColor: TAB_BACKGROUND_COLOR,
+            transform: [{ scaleX: selectedCallNavbarAnimation }],
+          },
+        ]}
+      >
+        <View style={styles.chatsCountContainer}>
+          <RippleButton
+          onPress={() => ClosenavbarAnimation(selectedCallNavbarAnimation)}
+          >
+            <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
+          </RippleButton>
+          <Text style={{ fontSize: 20, marginLeft: 15, color: TITLE_COLOR }}>
+            {selectedCalls.length}
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.iconContainer,
+            { justifyContent: "center", alignItems: "center" },
+          ]}
+        >
+          <RippleButton onPress={handleCallDelete}>
+            <MaterialIcons name="delete" size={21} color={TITLE_COLOR} />
+          </RippleButton>
+        </View>
+      </Animated.View>
 
       <Animated.View
         style={[
@@ -636,5 +688,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+  },
+  badgeIcon:{
+    flex:1,
+    justifyContent:"center",
+    alignItems:"center"
+  },
+  badgeText:{
+    flex:2
+  },
+  selectedCallNavbar: {
+    width: "100%",
+    height: "8%",
+    backgroundColor: "red",
+    position: "absolute",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    top: 0,
+    zIndex: 1111,
   },
 });

@@ -9,7 +9,7 @@ import {
   Animated,
   Modal,
 } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef,useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   TAB_BACKGROUND_COLOR,
@@ -47,7 +47,7 @@ const Calls = ({
   navigation,
   setcurrentTabIndex,
   chats,
-  setchats
+  setchats,
 }) => {
   useFocusEffect(() => {
     setcurrentTabIndex(3);
@@ -91,59 +91,10 @@ const Calls = ({
       setcalls(deselectedCalls);
     };
 
-    const selectedCalls = calls.filter(cll => cll.selected);
-
-    const selectedCallNavbarAnimation = useRef(new Animated.Value(0)).current;
-
-    const isCallSelected = calls.some(cll => cll.selected);
-
-    useEffect(() => {
-      if(isCallSelected){
-        navbarAnimation(selectedCallNavbarAnimation)
-      }else {
-        ClosenavbarAnimation(selectedCallNavbarAnimation)
-      }
-    },[isCallSelected]);
-
-    const handleCallDelete = () => {
-      const newCalls = [...calls];
-      const deletedCalls = newCalls.filter(cll => !cll.selected);
-      setcalls(deletedCalls);
-    }
-
   
   return (
     <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
-      <Animated.View
-        style={[
-          styles.selectedChatNavbar,
-          {
-            backgroundColor: TAB_BACKGROUND_COLOR,
-            transform: [{ scaleX: selectedCallNavbarAnimation }],
-          },
-        ]}
-      >
-        <View style={styles.chatsCountContainer}>
-          <RippleButton
-          onPress={() => ClosenavbarAnimation(selectedCallNavbarAnimation)}
-          >
-            <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
-          </RippleButton>
-          <Text style={{ fontSize: 20, marginLeft: 15, color: TITLE_COLOR }}>
-            {selectedCalls.length}
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.iconContainer,
-            { justifyContent: "center", alignItems: "center" },
-          ]}
-        >
-          <RippleButton onPress={handleCallDelete}>
-            <MaterialIcons name="delete" size={21} color={TITLE_COLOR} />
-          </RippleButton>
-        </View>
-      </Animated.View>
+      
       <FlatList
         data={CALLS_BUTTON}
         keyExtractor={(chat) => chat.key}
@@ -317,26 +268,7 @@ const Calls = ({
   );
 };
 
-const styles = StyleSheet.create({
-  selectedChatNavbar: {
-    width: "100%",
-    height: "8%",
-    backgroundColor: "red",
-    position: "absolute",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    top: 0,
-    zIndex: 999999999,
-  },
-  chatsCountContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  iconContainer: {
-    flexDirection: "row",
-    gap: 2,
-  },
-});
-
 export default Calls;
+
+
+// Completed at 7/26/2023

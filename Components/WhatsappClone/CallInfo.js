@@ -7,6 +7,7 @@ import {
   Text,
   TouchableNativeFeedback,
   Animated,
+  ScrollView
 } from "react-native";
 import {
   TAB_BACKGROUND_COLOR,
@@ -35,11 +36,9 @@ import { Alert } from "react-native";
 const CallInfo = ({ route, navigation }) => {
   const { item, calls, setcalls, chats, setchats } = route.params;
 
-  const CallArray = Array.from({ length: item.count }).fill();
+  const CallArray = Array.from({ length: item.count }).fill({key:Date.now().toString()});
 
   const selectedCallsAnimation = useRef(new Animated.Value(0)).current;
-
-  const [blocked, setblocked] = useState(false);
 
   const [currentItem, setCurrentItem] = useState({
     ...item,
@@ -60,12 +59,23 @@ const CallInfo = ({ route, navigation }) => {
       },
     },
     {
-      text: "Block",
+      text: !item.blocked ? "Block" : "Unblock",
       key: 2,
       onPress: () => {
         let newCalls = [...calls];
         let newChats = [...chats];
         let findedCall = newCalls.find((cll) => cll.key == item.key);
+        let blockedCalls = newCalls.map(call => {
+          if(call.key == item.key){
+            return {
+              ...call,
+              blocked:!call.blocked
+            }
+          }
+          return call
+        });
+
+        setcalls(blockedCalls)
 
         if (findedCall !== undefined) {
           let blockedChats = newChats.map((chat) => {
@@ -87,13 +97,13 @@ const CallInfo = ({ route, navigation }) => {
             return chat;
           });
 
-          Alert.alert(`Block ${findedCall.name}`, '', [
+          Alert.alert(`${item.blocked ? "Unblock" : "Block"} ${findedCall.name}`, '', [
             {
               text: 'Cancel',
               onPress: () => {},
               style: 'cancel',
             },
-            {text: 'Block', onPress: () => {
+            {text: `${item.blocked ? "Unblock" : "Block"}`, onPress: () => {
               setchats(blockedChats);
               showToast(`${findedCall.name} has been blocked`)
             }},
@@ -314,13 +324,15 @@ const CallInfo = ({ route, navigation }) => {
           {item.date} {months[item.month]}
         </Text>
         <View style={styles.callStatus}>
+          <ScrollView>
           {item.count > 0 ? (
             CallArray.map((_, i) => {
-              return <CallInfoComponent key={i} {...item} />;
+              return <CallInfoComponent key={_.key} {...item} />;
             })
           ) : (
             <CallInfoComponent {...item} />
           )}
+          </ScrollView>
         </View>
       </View>
     </>
