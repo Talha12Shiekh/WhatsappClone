@@ -56,7 +56,9 @@ const WhatsAppNavbar = ({
   setcallChats,
   storeCallChats,
   calls,
-  setcalls
+  setcalls,
+  setcallFilterChats,
+  callFilterChats
 }) => {
   // *! DATA OF THE BADGES IN THE NAVBAR
 
@@ -73,17 +75,20 @@ const WhatsAppNavbar = ({
 
   const navigation = useNavigation();
 
-  let screens = ["Community", "Chats"];
+  let screens = ["Community", "Chats","Status","Calls"];
 
   useFocusEffect(() => {
     setactiveRoute(screens[currentTabIndex]);
   });
+
 
   const SelectChatMenuAnimation = useRef(new Animated.Value(0)).current;
 
   const selectedNavbarAnimation = useRef(new Animated.Value(0)).current;
 
   const searchNavbarAnimation = useRef(new Animated.Value(0)).current;
+
+  const [showBadges,setShowBadges] = useState(true);
 
   const MenuAnimation = useRef(new Animated.Value(0)).current;
 
@@ -287,9 +292,9 @@ const WhatsAppNavbar = ({
   // *! FUNCTION TO FILTER THE CHAT
 
   const handleFilterChats = useCallback(
-    (vlue) => {
+    (vlue,route) => {
       setValue(vlue);
-
+      if(route == "Chats"){
       if (vlue == "") {
         setchats(FileredChats);
       } else {
@@ -303,8 +308,23 @@ const WhatsAppNavbar = ({
           setchats(FileredChats);
         }
       }
+    }else if(route == "Calls"){
+      if(vlue == ""){
+        setcalls(callFilterChats)
+      }else {
+        const FilteredCallItems = calls.filter((call) => {
+          return call.name.toLowerCase().includes(vlue.toLowerCase());
+        });
+
+        if (FilteredCallItems.length > 0) {
+          setcalls(FilteredCallItems);
+        } else {
+          setcalls(callFilterChats);
+        } 
+      }
+    }
     },
-    [setchats, chats]
+    [setchats, chats,calls,callFilterChats,FileredChats]
   );
 
   // *! FUNCTION TO GET THE SELECTED CHAT NUMBER
@@ -390,7 +410,7 @@ const WhatsAppNavbar = ({
     if (activeRoute == "Community") {
       const UpDatedData = [{ text: "Settings", onPress: () => {}, key: 10 }];
       setMenuData(UpDatedData);
-    } else {
+    }else {
       const UpDatedData = [
         {
           text: "New Group",
@@ -420,11 +440,15 @@ const WhatsAppNavbar = ({
     }
   }, [activeRoute]);
 
+
   const selectedCallNavbarAnimation = useRef(new Animated.Value(0)).current;
+
 
   const selectedCalls = calls.filter(cll => cll.selected);
 
   const isCallSelected = calls.some(cll => cll.selected);
+
+ 
 
   useEffect(() => {
     if(isCallSelected){
@@ -434,10 +458,21 @@ const WhatsAppNavbar = ({
     }
   },[isCallSelected]);
 
+  useEffect(() => {
+    if(activeRoute == "Chats"){
+      setShowBadges(true)
+    }else{
+      setShowBadges(false)
+    }
+  },[activeRoute])
+
+
+
   const handleCallDelete = () => {
     const newCalls = [...calls];
     const deletedCalls = newCalls.filter(cll => !cll.selected);
     setcalls(deletedCalls);
+    setcallFilterChats(deletedCalls);
   }
   
 
@@ -479,7 +514,7 @@ const WhatsAppNavbar = ({
       <Animated.View
         style={[
           styles.searchNavbarContainer,
-          { backgroundColor: TAB_BACKGROUND_COLOR },
+          { backgroundColor: TAB_BACKGROUND_COLOR,height:showBadges ? 210 : 60,overflow:"hidden" },
           searchNavbarStyles,
         ]}
       >
@@ -496,7 +531,7 @@ const WhatsAppNavbar = ({
             placeholder="Search..."
             placeholderTextColor={CHAT_DATA_STATUS_COLOR}
             value={value}
-            onChangeText={handleFilterChats}
+            onChangeText={(vlue) => handleFilterChats(vlue,activeRoute)}
             ref={inputRef}
           />
         </View>

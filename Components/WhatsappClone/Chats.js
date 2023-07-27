@@ -42,11 +42,8 @@ const Chats = ({
   chats,
   setchats,
   opensearchBar,
-  FileredChats,
-  setFileredChats,
   archived,
   setarchived,
-  findSelectedArchved,
   handleChatsMaking,
   isEnabled,
   setcurrentTabIndex

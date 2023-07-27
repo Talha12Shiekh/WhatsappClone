@@ -48,6 +48,7 @@ const Calls = ({
   setcurrentTabIndex,
   chats,
   setchats,
+  setcallFilterChats
 }) => {
   useFocusEffect(() => {
     setcurrentTabIndex(3);
@@ -75,6 +76,7 @@ const Calls = ({
       return cll
     });
     setcalls(SelectedCalls)
+    setcallFilterChats(SelectedCalls)
   }
 
     const findItemstoDeSelect = (key) => {
@@ -89,6 +91,7 @@ const Calls = ({
         return call;
       });
       setcalls(deselectedCalls);
+      setcallFilterChats(deselectedCalls);
     };
 
   
@@ -122,6 +125,7 @@ const Calls = ({
                 callChats,
                 setcalls,
                 calls,
+                setcallFilterChats
               });
             },
           };

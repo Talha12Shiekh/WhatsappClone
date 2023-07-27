@@ -32,6 +32,8 @@ export const MENU_BACKGROUND_COLOR = "#233239";
 export const CALLS_STORAGE_KEY = "call_items";
 export const CALLS_KEY = "call_chats";
 export const CALLS_ICONS_COLOR = "#787f87";
+export const FILTER_STORAGE_KEY = "filter_items";
+export const FILTER_CALLS_STORAGE_KEY = "filter_calls";
 export const months = [
   "January",
   "February",
@@ -79,6 +81,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const [callChats,setcallChats] = useState([]);
 
+  const [callFilterChats,setcallFilterChats] = useState([]);
 
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
@@ -112,6 +115,16 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     }
   };
 
+  const getFilterChats = async () => {
+    let asyncfilterChats = await AsyncStorage.getItem(FILTER_STORAGE_KEY);
+    let updatedFilterChats = await JSON.parse(asyncfilterChats);
+    if(updatedFilterChats !== null){
+      setFileredChats(updatedFilterChats);
+    }else{
+      setFileredChats([])
+    }
+  };
+
   const getArchivedChats = async () => {
     let asyncArchivedChats = await AsyncStorage.getItem(ARCHIVED_STORAGE_KEY);
     let updatedArchivedchats = await JSON.parse(asyncArchivedChats);
@@ -121,12 +134,24 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       setarchived([]);
     }
   };
+  
+  const getFilterCalls = async () => {
+    let asyncFilterCalls = await AsyncStorage.getItem(FILTER_CALLS_STORAGE_KEY);
+    let updatedFilterCalls = await JSON.parse(asyncFilterCalls);
+    if(updatedFilterCalls !== null){
+      storeFilterCalls(updatedFilterCalls);
+    }else {
+      storeFilterCalls([]);
+    }
+  };
 
   useEffect(() => {
     getChats();
     getArchivedChats();
     getCallChats();
-    getCalls()
+    getCalls();
+    getFilterChats();
+    getFilterCalls()
   }, [])
   
 
@@ -146,6 +171,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
   };
 
+  const storeFilterChats = async () => {
+    await AsyncStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(FileredChats));
+  };
+
   const storeArchivedChats = async () => {
     await AsyncStorage.setItem(ARCHIVED_STORAGE_KEY, JSON.stringify(archived));
   };
@@ -156,6 +185,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const storeCalls = async () => {
     await AsyncStorage.setItem(CALLS_KEY, JSON.stringify(calls));
+  };
+
+  const storeFilterCalls = async () => {
+    await AsyncStorage.setItem(FILTER_CALLS_STORAGE_KEY, JSON.stringify(callFilterChats));
   };
 
   const handleChatsMaking = useCallback(
@@ -191,8 +224,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         setchats((chts) => [...chts, ChatInformation]);
         setFileredChats((chts) => [...chts, ChatInformation]);
         setcallChats((chts) => [...chts, callInformation]);
+        setcallFilterChats((chts) => [...chts, callInformation]);
         storeChats();
-        storeCalls()
+        storeCalls();
+        storeFilterChats()
       }
     },
     [chats]
@@ -200,17 +235,20 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   useEffect(() => {
     storeChats();
-    storeCallChats()
+    storeCallChats();
+    storeFilterChats()
   }, [chats]);
 
   useEffect(() => {
-    storeCalls()
+    storeCalls();
+    storeFilterCalls()
   }, [calls])
   
 
   useEffect(() => {
     storeCallChats();
-    storeCalls()
+    storeCalls();
+    storeFilterCalls()
   }, [callChats]);
 
   useEffect(() => {
@@ -263,6 +301,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         activeRoute={activeRoute}
         storeChats={storeChats}
         callChats={callChats}
+        callFilterChats={callFilterChats}
+        setcallFilterChats={setcallFilterChats}
         setcallChats={setcallChats}
         storeCallChats={storeCallChats}
         calls={calls}
@@ -270,7 +310,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       />
       <Tab.Navigator
         initialRouteName="Chats"
-        style={{zIndex:-1}}
         screenOptions={({ route }) => ({
           tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
@@ -284,7 +323,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             textTransform: "none",
             fontWeight: "bold",
             fontSize: 15,
-            zIndex:-1
           },
           tabBarPressColor: TAB_PRESS_ACTIVE_WHITE_COLOR,
           tabBarPressOpacity: 1,
@@ -372,7 +410,9 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           options={{ tabBarLabel: "Calls" }}
         >
           {(props) => {
-            return <Calls {...props} calls={calls} setcalls={setcalls} setcurrentTabIndex={setcurrentTabIndex} chats={chats} setchats={setchats} callChats={callChats}/>
+            return <Calls {...props} calls={calls} setcalls={setcalls} setcurrentTabIndex={setcurrentTabIndex} chats={chats} setchats={setchats} callChats={callChats}
+            setcallFilterChats={setcallFilterChats}
+            />
           }}
         </Tab.Screen>
       </Tab.Navigator>

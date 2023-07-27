@@ -29,9 +29,10 @@ import CallButton from "./Button";
 import { Ionicons } from '@expo/vector-icons';
 
 const CallDetails = ({ route, navigation }) => {
-  const { callChats, setcalls, calls } = route.params;
+  const { callChats, setcalls, calls,setcallFilterChats } = route.params;
 
   const [items, setItems] = useState([]);
+
 
 
   useEffect(() => {
@@ -165,18 +166,16 @@ const CallDetails = ({ route, navigation }) => {
 
     if (callsNames.includes(callObject.name)) {
       let newCalls = [...calls];
-      let updatedCalls = newCalls.map((cll) => {
-        if (callsNames.includes(cll.name)) { 
-          return {
-            ...cll,
-            count: cll.count + 1,
-          };
-        }
-        return cll;
-      });
-      setcalls(updatedCalls);
+      let findedCall = newCalls.find(call => call.name == callObject.name);
+      
+      if(findedCall){
+       
+        findedCall.count += 1;
+        setcalls([...calls]);        
+      }
     } else {
       setcalls((prev) => [...prev, callObject]);
+      setcallFilterChats((prev) => [...prev, callObject]);
     }
     navigation.navigate("Calls");
   };
