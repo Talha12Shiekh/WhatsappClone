@@ -227,10 +227,11 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         setcallFilterChats((chts) => [...chts, callInformation]);
         storeChats();
         storeCalls();
-        storeFilterChats()
+        storeFilterChats();
+        storeFilterCalls()
       }
     },
-    [chats]
+    [chats,calls,callFilterChats,FileredChats]
   );
 
   useEffect(() => {
@@ -421,3 +422,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 };
 
 export default WhatsappMainScreen;
+
+// change the alerts 
+// fix the search bar of both calls screen and chats screen
+// try using useEffect(() => {},[]) to set currentTabIndex insted of useFocusEffect

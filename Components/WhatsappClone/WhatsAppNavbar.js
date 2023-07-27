@@ -385,13 +385,13 @@ const WhatsAppNavbar = ({
             setcallChats(callUpdatedChats);
             setcalls(callsDeletedChats)
             storeCallChats();
+            showToast("Chat deleted");
           },
         },
       ],
       { cancelable: true }
     );
 
-    showToast("Chat deleted");
   }, [chats, setchats, setFileredChats, callChats,calls]);
 
   // *! FUNCTION TO OPEN THE SELECTEDCHAT MENU
