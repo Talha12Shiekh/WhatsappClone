@@ -302,11 +302,11 @@ const WhatsAppNavbar = ({
           return chat.name.toLowerCase().includes(vlue.toLowerCase());
         });
 
-        if (FilteredItems.length > 0) {
+        // if (FilteredItems.length > 0) {
           setchats(FilteredItems);
-        } else {
-          setchats(FileredChats);
-        }
+        // } else {
+        //   setchats(FileredChats);
+        // }
       }
     }else if(route == "Calls"){
       if(vlue == ""){
@@ -316,11 +316,11 @@ const WhatsAppNavbar = ({
           return call.name.toLowerCase().includes(vlue.toLowerCase());
         });
 
-        if (FilteredCallItems.length > 0) {
+        // if (FilteredCallItems.length > 0) {
           setcalls(FilteredCallItems);
-        } else {
-          setcalls(callFilterChats);
-        } 
+        // } else {
+        //   setcalls(callFilterChats);
+        // } 
       }
     }
     },

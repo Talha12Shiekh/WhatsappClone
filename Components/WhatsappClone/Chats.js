@@ -9,6 +9,7 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AntDesign, Ionicons } from "react-native-vector-icons";
@@ -23,7 +24,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
-import { useNavigation, useRoute,useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useRoute,useFocusEffect, useIsFocused } from "@react-navigation/native";
 import CommunityComponent from "./CommunityComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ACTIVE_TAB_GREEN_COLOR } from "./WhatsappMainScreen";
@@ -116,9 +117,14 @@ const Chats = ({
     }
   }, [opensearchBar]);
 
-  useFocusEffect(() => {
-    setcurrentTabIndex(1)
-  })
+  const isFocused = useIsFocused()
+
+  useEffect(() => {
+    if(isFocused){
+      setcurrentTabIndex(1);
+    }
+  },[isFocused])
+  
 
   const ArchivedBar = () => {
     return (
@@ -173,7 +179,7 @@ const Chats = ({
   };
 
   return (
-    <View
+    <KeyboardAvoidingView
       style={{
         flex: 1,
         backgroundColor: CHAT_BACKROUND_COLOR,
@@ -339,7 +345,7 @@ const Chats = ({
         chats={chats}
         handleChatsMaking={handleChatsMaking}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

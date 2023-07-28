@@ -8,9 +8,10 @@ import {
   TouchableNativeFeedback,
   Animated,
   Modal,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect, useRef,useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import {
   TAB_BACKGROUND_COLOR,
   CHAT_BACKROUND_COLOR,
@@ -50,9 +51,13 @@ const Calls = ({
   setchats,
   setcallFilterChats
 }) => {
-  useFocusEffect(() => {
-    setcurrentTabIndex(3);
-  });
+  const isFocused = useIsFocused()
+
+  useEffect(() => {
+    if(isFocused){
+      setcurrentTabIndex(3);
+    }
+  },[isFocused])
 
   const checkedAnimaton = useRef(new Animated.Value(0)).current;
 
@@ -96,7 +101,7 @@ const Calls = ({
 
   
   return (
-    <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
       
       <FlatList
         data={CALLS_BUTTON}
@@ -268,7 +273,7 @@ const Calls = ({
           }}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

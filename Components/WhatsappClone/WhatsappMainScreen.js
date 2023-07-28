@@ -10,7 +10,7 @@ import WhatsAppNavbar from "./WhatsAppNavbar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import People from "react-native-vector-icons/Ionicons";
 import CommunityComponent from "./CommunityComponent";
-import { useNavigation ,useFocusEffect} from "@react-navigation/native";
+import { useNavigation ,useFocusEffect, useIsFocused} from "@react-navigation/native";
 import { showToast } from "./RippleButton";
 import { FontAwesome5, Ionicons, Feather } from "@expo/vector-icons";
 
@@ -88,8 +88,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     let updatedchats = await JSON.parse(asyncChats);
     if(updatedchats !== null){
       setchats(updatedchats);
+      setFileredChats(updatedchats)
     }else {
-      setchats([])
+      setchats([]);
+      setFileredChats([])
     }
 
     storeCallChats()
@@ -110,8 +112,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     let updatedCalls = await JSON.parse(asyncCalls);
     if(updatedCalls !== null){
       setcalls(updatedCalls);
+      setcallFilterChats(updatedCalls)
     }else{
       setcalls([])
+      setcallFilterChats([])
     }
   };
 
@@ -224,11 +228,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         setchats((chts) => [...chts, ChatInformation]);
         setFileredChats((chts) => [...chts, ChatInformation]);
         setcallChats((chts) => [...chts, callInformation]);
-        setcallFilterChats((chts) => [...chts, callInformation]);
         storeChats();
         storeCalls();
-        storeFilterChats();
-        storeFilterCalls()
       }
     },
     [chats,calls,callFilterChats,FileredChats]
@@ -249,7 +250,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   useEffect(() => {
     storeCallChats();
     storeCalls();
-    storeFilterCalls()
   }, [callChats]);
 
   useEffect(() => {
@@ -259,9 +259,17 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   const Community = ({setcurrentTabIndex}) => {
     const navigation = useNavigation();
 
-    useFocusEffect(() => {
-      setcurrentTabIndex(0);
-    })
+    // useFocusEffect(() => {
+    //   setcurrentTabIndex(0);
+    // })
+
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+      if(isFocused){
+        setcurrentTabIndex(0);
+      }
+    },[isFocused])
 
     return (
       <View style={{ flex: 1 }}>
@@ -311,6 +319,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       />
       <Tab.Navigator
         initialRouteName="Chats"
+        onStateChange={(state) => console.log("talha shiekh")}
         screenOptions={({ route }) => ({
           tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
@@ -353,6 +362,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       >
         <Tab.Screen
           name={"Community"}
+         
           options={{
             tabBarIcon: ({ focused }) => {
               return (

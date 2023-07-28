@@ -1,12 +1,18 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react';
-import { useNavigation, useRoute,useFocusEffect } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+import { useEffect } from 'react';
 
 
-const Status = ({setcurrentTabIndex}) => {
-  useFocusEffect(() => {
-    setcurrentTabIndex(2)
-  })
+const Status = ({setcurrentTabIndex,navigation}) => {
+  const isFocused = useIsFocused()
+
+    useEffect(() => {
+      if(isFocused){
+        setcurrentTabIndex(2);
+      }
+    },[isFocused])
+
   return (
     <View>
       <Text>Status</Text>

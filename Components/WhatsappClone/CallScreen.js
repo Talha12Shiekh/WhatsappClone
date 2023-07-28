@@ -373,6 +373,7 @@ const CallScreen = ({ route, navigation }) => {
             }}
           />
           <TouchableNativeFeedback>
+            <View style={{ height:80 }}>
             <CallChat
               text={"Add Participant"}
               key={1}
@@ -380,10 +381,10 @@ const CallScreen = ({ route, navigation }) => {
               showDots={false}
               opacity={1}
             />
+            </View>
           </TouchableNativeFeedback>
 
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <TouchableNativeFeedback>
+            <TouchableOpacity>
               <CallChat
                 image={
                   item.photo
@@ -395,8 +396,7 @@ const CallScreen = ({ route, navigation }) => {
                 showDots={true}
                 opacity={0.5}
               />
-            </TouchableNativeFeedback>
-          </View>
+            </TouchableOpacity>
         </Animated.View>
       </PanGestureHandler>
     </Container>
