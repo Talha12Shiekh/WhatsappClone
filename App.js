@@ -19,6 +19,7 @@ import CallDetails from "./Components/WhatsappClone/CallDetails";
 import CallInfo from "./Components/WhatsappClone/CallInfo";
 import { MaterialIcons } from "@expo/vector-icons";
 import { RippleButton } from "./Components/WhatsappClone/RippleButton";
+import Settings from "./Components/WhatsappClone/Settings";
 
 import {
   View,
@@ -317,6 +318,10 @@ export default function App() {
             options={{
               title: "Call Info",              
             }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={Settings}
           />
         </Stack.Group>
       </Stack.Navigator>

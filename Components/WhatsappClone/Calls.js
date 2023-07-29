@@ -36,7 +36,7 @@ const CALLS_BUTTON = [
     number: "",
     about: "Share a link for your Whatsapp call",
     key: 1,
-    photo: "https://source.unsplash.com/random/900×700/?cool",
+    photo: "",
     type: "chat",
   },
 ];
@@ -60,6 +60,8 @@ const Calls = ({
   },[isFocused])
 
   const checkedAnimaton = useRef(new Animated.Value(0)).current;
+
+  const [repeatedDates,setRepatedDates] = useState([]);
 
   const makeTickAnmation = () => {
     Animated.spring(checkedAnimaton, {
@@ -130,7 +132,8 @@ const Calls = ({
                 callChats,
                 setcalls,
                 calls,
-                setcallFilterChats
+                setcallFilterChats,
+                setRepatedDates
               });
             },
           };
@@ -262,7 +265,7 @@ const Calls = ({
                 if(item.selected){
                   findItemstoDeSelect(item.key)
                 }else {
-                  navigation.navigate("CallInfo", { item,calls,setcalls,chats,setchats });
+                  navigation.navigate("CallInfo", { item,calls,setcalls,chats,setchats,repeatedDates });
                 }
               },
               onLongPress: () => {

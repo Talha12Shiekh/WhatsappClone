@@ -26,14 +26,13 @@ import {
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import CallButton from "./Button";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 
 const CallDetails = ({ route, navigation }) => {
-  const { callChats, setcalls, calls,setcallFilterChats } = route.params;
+  const { callChats, setcalls, calls, setcallFilterChats, setRepatedDates } =
+    route.params;
 
   const [items, setItems] = useState([]);
-
-
 
   useEffect(() => {
     let newChats = [...callChats];
@@ -41,7 +40,7 @@ const CallDetails = ({ route, navigation }) => {
       return {
         value: chat.name,
         label: chat.name,
-        key:Date.now().toString()
+        key: Date.now().toString(),
       };
     });
     setItems(updatedDropdownItems);
@@ -114,8 +113,10 @@ const CallDetails = ({ route, navigation }) => {
   );
 
   useEffect(() => {
-    settext(`https://call.whatsapp.com/${Video ? "video" : "voice"}/${passwordString}`)
-  },[Video])
+    settext(
+      `https://call.whatsapp.com/${Video ? "video" : "voice"}/${passwordString}`
+    );
+  }, [Video]);
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(text);
@@ -158,20 +159,31 @@ const CallDetails = ({ route, navigation }) => {
       number: selectedItems ? photoObject?.number : callChats[0]?.number,
       arrowColor: callStatus,
       count: 0,
-      selected:false,
-      blocked:false
+      selected: false,
+      blocked: false,
     };
 
     let callsNames = calls.map((call) => call.name);
 
     if (callsNames.includes(callObject.name)) {
       let newCalls = [...calls];
-      let findedCall = newCalls.find(call => call.name == callObject.name);
-      
-      if(findedCall){
-       
+      let findedCall = newCalls.find((call) => call.name == callObject.name);
+      setRepatedDates((prev) => [
+        ...prev,
+        {
+          key:Date.now().toString(),
+          video:Video,
+          type: "call",
+          hour,
+          minutes,
+          am_pm,
+          arrowColor: findedCall.arrowColor,
+          count: 0,
+        },
+      ]);
+      if (findedCall) {
         findedCall.count += 1;
-        setcalls([...calls]);        
+        setcalls([...calls]);
       }
     } else {
       setcalls((prev) => [...prev, callObject]);
@@ -275,9 +287,11 @@ const CallDetails = ({ route, navigation }) => {
         <View style={{ flexDirection: "row" }}>
           <View style={{ marginBottom: 10 }}>
             <ChatGreenLeftComponent>
-              {Video ? <Feather name="video" size={23} color={TITLE_COLOR} /> : 
-              <Ionicons name="call" size={23} color={TITLE_COLOR} />
-              }
+              {Video ? (
+                <Feather name="video" size={23} color={TITLE_COLOR} />
+              ) : (
+                <Ionicons name="call" size={23} color={TITLE_COLOR} />
+              )}
             </ChatGreenLeftComponent>
           </View>
           <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -293,7 +307,6 @@ const CallDetails = ({ route, navigation }) => {
           <View style={{ zIndex: 999999999999 }}>
             <DropDownPicker
               open={open}
-            
               items={items}
               setOpen={setOpen}
               setItems={setItems}

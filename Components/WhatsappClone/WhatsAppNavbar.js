@@ -77,9 +77,9 @@ const WhatsAppNavbar = ({
 
   let screens = ["Community", "Chats","Status","Calls"];
 
-  useFocusEffect(() => {
+  useEffect(() => {
     setactiveRoute(screens[currentTabIndex]);
-  });
+  },[currentTabIndex])
 
 
   const SelectChatMenuAnimation = useRef(new Animated.Value(0)).current;
@@ -101,6 +101,8 @@ const WhatsAppNavbar = ({
   const [readed, setreaded] = useState(false);
 
   const [isAllselected, setisAllselected] = useState(false);
+
+  // const [edited,setedited] = useState(false)
 
   // *! DATA OF THE MENU OF THE CHAT WHEN WE SELECT IT
 
@@ -408,7 +410,9 @@ const WhatsAppNavbar = ({
 
   useEffect(() => {
     if (activeRoute == "Community") {
-      const UpDatedData = [{ text: "Settings", onPress: () => {}, key: 10 }];
+      const UpDatedData = [{ text: "Settings", onPress: () => {
+        navigation.navigate("Settings",{handleChatsMaking,chats})
+      }, key: 10 }];
       setMenuData(UpDatedData);
     }else {
       const UpDatedData = [
@@ -434,7 +438,9 @@ const WhatsAppNavbar = ({
           key: 3,
         },
         { text: "Starred Messages", onPress: () => {}, key: 4 },
-        { text: "Settings", onPress: () => {}, key: 5 },
+        { text: "Settings", onPress: () => {
+          navigation.navigate("Settings",{handleChatsMaking,chats})
+        }, key: 5 },
       ];
       setMenuData(UpDatedData);
     }

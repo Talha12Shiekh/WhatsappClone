@@ -7,7 +7,7 @@ import {
   Text,
   TouchableNativeFeedback,
   Animated,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import {
   TAB_BACKGROUND_COLOR,
@@ -34,9 +34,23 @@ import Menu from "./Menu";
 import { useRef } from "react";
 import { Alert } from "react-native";
 const CallInfo = ({ route, navigation }) => {
-  const { item, calls, setcalls, chats, setchats } = route.params;
+  const { item, calls, setcalls, chats, setchats, repeatedDates } =
+    route.params;
 
-  const CallArray = Array.from({ length: item.count }).fill({key:Date.now().toString()});
+  const CallArray = repeatedDates
+    .map((element, index) => {
+      return {
+        key: Date.now().toString(),
+        video: element.video,
+        type: "call",
+        hour: element.hour,
+        minutes: element.minutes,
+        am_pm: element.am_pm,
+        arrowColor: element.arrowColor,
+      };
+    })
+    .reverse()
+    .slice(0, item.count);
 
   const selectedCallsAnimation = useRef(new Animated.Value(0)).current;
 
@@ -65,17 +79,17 @@ const CallInfo = ({ route, navigation }) => {
         let newCalls = [...calls];
         let newChats = [...chats];
         let findedCall = newCalls.find((cll) => cll.key == item.key);
-        let blockedCalls = newCalls.map(call => {
-          if(call.key == item.key){
+        let blockedCalls = newCalls.map((call) => {
+          if (call.key == item.key) {
             return {
               ...call,
-              blocked:!call.blocked
-            }
+              blocked: !call.blocked,
+            };
           }
-          return call
+          return call;
         });
 
-        setcalls(blockedCalls)
+        setcalls(blockedCalls);
 
         if (findedCall !== undefined) {
           let blockedChats = newChats.map((chat) => {
@@ -97,18 +111,24 @@ const CallInfo = ({ route, navigation }) => {
             return chat;
           });
 
-          Alert.alert(`${item.blocked ? "Unblock" : "Block"} ${findedCall.name}`, '', [
-            {
-              text: 'Cancel',
-              onPress: () => {},
-              style: 'cancel',
-            },
-            {text: `${item.blocked ? "Unblock" : "Block"}`, onPress: () => {
-              setchats(blockedChats);
-              showToast(`${findedCall.name} has been blocked`)
-            }},
-          ]);
-
+          Alert.alert(
+            `${item.blocked ? "Unblock" : "Block"} ${findedCall.name}`,
+            "",
+            [
+              {
+                text: "Cancel",
+                onPress: () => {},
+                style: "cancel",
+              },
+              {
+                text: `${item.blocked ? "Unblock" : "Block"}`,
+                onPress: () => {
+                  setchats(blockedChats);
+                  showToast(`${findedCall.name} has been blocked`);
+                },
+              },
+            ]
+          );
         }
       },
     },
@@ -323,17 +343,19 @@ const CallInfo = ({ route, navigation }) => {
         >
           {item.date} {months[item.month]}
         </Text>
-        <View style={styles.callStatus}>
-          <ScrollView>
-          {item.count > 0 ? (
-            CallArray.map((_, i) => {
-              return <CallInfoComponent key={_.key} {...item} />;
-            })
-          ) : (
-            <CallInfoComponent {...item} />
-          )}
-          </ScrollView>
-        </View>
+        <ScrollView>
+          <View style={styles.callStatus}>
+            <View style={{ flex: 1 }}>
+              {item.count > 0 ? (
+                CallArray.map((item) => {
+                  return <CallInfoComponent key={item.key} {...item} />;
+                })
+              ) : (
+                <CallInfoComponent {...item} />
+              )}
+            </View>
+          </View>
+        </ScrollView>
       </View>
     </>
   );

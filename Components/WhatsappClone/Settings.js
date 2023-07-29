@@ -10,19 +10,26 @@ import { FlatList } from "react-native";
 import { Image } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-const Settings = ({ route ,navigation,settingsChats}) => {
-  const { handleChatsMaking } = route.params;
+const Settings = ({ route ,navigation }) => {
+  const { handleChatsMaking ,chats } = route.params;
 
+  const findtItemsToEdit = (id) => {
+    let editedChats = [...chats];
+    const findedChattoEdit = editedChats.find(chat => chat.key == id);
+    navigation.navigate("Profile",{handleChatsMaking,findedChattoEdit,edited:true});
+  }
 
-  const findItemstoEdit = (key) => {
-    const findedChat = settingsChats.find(chat => chat.key == key);
-    navigation.navigate("Profile",{handleChatsMaking,findedChat,editing:true})
-  } 
+  useEffect(() => {
+    navigation.setParams({
+      chats:chats,
+    });
+  },[navigation])
+  
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={settingsChats}
+        data={chats}
         keyExtractor={(chat) => chat.key}
         ItemSeparatorComponent={() => {
           return (
@@ -68,7 +75,7 @@ const Settings = ({ route ,navigation,settingsChats}) => {
             RightPlaceRenderThing: () => {
               return (
                 <View style={{ marginTop: -30 }}>
-                  <TouchableOpacity onPress={() => findItemstoEdit(item.key)}>
+                  <TouchableOpacity onPress={() => findtItemsToEdit(item.key)}>
                     <View style={styles.rightThing}>
                       <AntDesign
                         name="edit"
@@ -97,6 +104,6 @@ const styles = StyleSheet.create({
     backgroundColor: CHAT_BACKROUND_COLOR,
   },
   rightThing: {
-    marginRight: 40,
+    transform:[{translateX:-25}]
   },
 });

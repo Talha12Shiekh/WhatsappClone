@@ -10,7 +10,11 @@ import WhatsAppNavbar from "./WhatsAppNavbar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import People from "react-native-vector-icons/Ionicons";
 import CommunityComponent from "./CommunityComponent";
-import { useNavigation ,useFocusEffect, useIsFocused} from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+  useIsFocused,
+} from "@react-navigation/native";
 import { showToast } from "./RippleButton";
 import { FontAwesome5, Ionicons, Feather } from "@expo/vector-icons";
 
@@ -60,17 +64,12 @@ export function generateRandomArrow(arrow) {
     );
   } else if (arrow == "outgoing") {
     return (
-      <Feather
-        name="arrow-up-right"
-        size={24}
-        color={ACTIVE_TAB_GREEN_COLOR}
-      />
+      <Feather name="arrow-up-right" size={24} color={ACTIVE_TAB_GREEN_COLOR} />
     );
   } else {
     return <Feather name="arrow-down-left" size={24} color={"red"} />;
   }
 }
-
 
 const WhatsappMainScreen = ({ isEnabled }) => {
   const [chats, setchats] = useState([]);
@@ -79,72 +78,72 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const [archived, setarchived] = useState([]);
 
-  const [callChats,setcallChats] = useState([]);
+  const [callChats, setcallChats] = useState([]);
 
-  const [callFilterChats,setcallFilterChats] = useState([]);
+  const [callFilterChats, setcallFilterChats] = useState([]);
 
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
     let updatedchats = await JSON.parse(asyncChats);
-    if(updatedchats !== null){
+    if (updatedchats !== null) {
       setchats(updatedchats);
-      setFileredChats(updatedchats)
-    }else {
+      setFileredChats(updatedchats);
+    } else {
       setchats([]);
-      setFileredChats([])
+      setFileredChats([]);
     }
 
-    storeCallChats()
+    storeCallChats();
   };
 
   const getCallChats = async () => {
     let asyncCallChats = await AsyncStorage.getItem(CALLS_STORAGE_KEY);
     let updatedCallchats = await JSON.parse(asyncCallChats);
-    if(updatedCallchats !== null){
+    if (updatedCallchats !== null) {
       setcallChats(updatedCallchats);
-    }else{
-      setcallChats([])
+    } else {
+      setcallChats([]);
     }
   };
 
   const getCalls = async () => {
     let asyncCalls = await AsyncStorage.getItem(CALLS_KEY);
     let updatedCalls = await JSON.parse(asyncCalls);
-    if(updatedCalls !== null){
+    if (updatedCalls !== null) {
       setcalls(updatedCalls);
-      setcallFilterChats(updatedCalls)
-    }else{
-      setcalls([])
-      setcallFilterChats([])
+      setcallFilterChats(updatedCalls);
+    } else {
+      setcalls([]);
+      setcallFilterChats([]);
     }
   };
 
   const getFilterChats = async () => {
     let asyncfilterChats = await AsyncStorage.getItem(FILTER_STORAGE_KEY);
     let updatedFilterChats = await JSON.parse(asyncfilterChats);
-    if(updatedFilterChats !== null){
+    if (updatedFilterChats !== null) {
       setFileredChats(updatedFilterChats);
-    }else{
-      setFileredChats([])
+    } else {
+      setFileredChats([]);
     }
   };
 
   const getArchivedChats = async () => {
     let asyncArchivedChats = await AsyncStorage.getItem(ARCHIVED_STORAGE_KEY);
     let updatedArchivedchats = await JSON.parse(asyncArchivedChats);
-    if(updatedArchivedchats !== null){
+    if (updatedArchivedchats !== null) {
       setarchived(updatedArchivedchats);
-    }else {
+    } else {
       setarchived([]);
     }
   };
-  
+
   const getFilterCalls = async () => {
     let asyncFilterCalls = await AsyncStorage.getItem(FILTER_CALLS_STORAGE_KEY);
     let updatedFilterCalls = await JSON.parse(asyncFilterCalls);
-    if(updatedFilterCalls !== null){
+    if (updatedFilterCalls !== null) {
       storeFilterCalls(updatedFilterCalls);
-    }else {
+    } else {
       storeFilterCalls([]);
     }
   };
@@ -155,9 +154,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     getCallChats();
     getCalls();
     getFilterChats();
-    getFilterCalls()
-  }, [])
-  
+    getFilterCalls();
+  }, []);
 
   const [FileredChats, setFileredChats] = useState([]);
 
@@ -176,7 +174,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   };
 
   const storeFilterChats = async () => {
-    await AsyncStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(FileredChats));
+    await AsyncStorage.setItem(
+      FILTER_STORAGE_KEY,
+      JSON.stringify(FileredChats)
+    );
   };
 
   const storeArchivedChats = async () => {
@@ -192,11 +193,14 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   };
 
   const storeFilterCalls = async () => {
-    await AsyncStorage.setItem(FILTER_CALLS_STORAGE_KEY, JSON.stringify(callFilterChats));
+    await AsyncStorage.setItem(
+      FILTER_CALLS_STORAGE_KEY,
+      JSON.stringify(callFilterChats)
+    );
   };
 
   const handleChatsMaking = useCallback(
-    (name, number, about, photo) => {
+    (name, number, about, photo, edited, editedKey) => {
       if (name.length == "" && number.length == "") {
         showToast("You can not make an empty chat");
       } else {
@@ -209,43 +213,68 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           month,
           year,
           photo,
-          type:"chat",
+          type: "chat",
           selected: false,
           pinned: false,
           muted: false,
           readed: false,
-          blocked:false
+          blocked: false,
         };
         const callInformation = {
           name,
           key: Date.now().toString(),
-          label:name,
-          value:name,
+          label: name,
+          value: name,
           photo,
           about,
           number,
         };
-        setchats((chts) => [...chts, ChatInformation]);
-        setFileredChats((chts) => [...chts, ChatInformation]);
+        if (!edited) {
+          setchats((chts) => [...chts, ChatInformation]);
+          setFileredChats((chts) => [...chts, ChatInformation]);
+        } else {
+          let newChats = [...chats];
+          const ChatToEdit = newChats.findIndex(
+            (chat) => chat.key == editedKey
+          );
+          newChats[ChatToEdit] = {
+            name,
+            number,
+            about,
+            key: newChats[ChatToEdit].key,
+            date:newChats[ChatToEdit].date,
+            month:newChats[ChatToEdit].month,
+            year:newChats[ChatToEdit].year,
+            photo,
+            type: "chat",
+            selected: false,
+            pinned: false,
+            muted: false,
+            readed: false,
+            blocked: false,
+          };
+          setchats(newChats);
+          showToast("Chat edited successfully !")
+          edited = false;
+        }
         setcallChats((chts) => [...chts, callInformation]);
         storeChats();
         storeCalls();
       }
     },
-    [chats,calls,callFilterChats,FileredChats]
+    [chats, calls, callFilterChats, FileredChats]
   );
 
   useEffect(() => {
     storeChats();
     storeCallChats();
-    storeFilterChats()
+    storeFilterChats();
   }, [chats]);
 
   useEffect(() => {
     storeCalls();
-    storeFilterCalls()
-  }, [calls])
-  
+    storeFilterCalls();
+  }, [calls]);
 
   useEffect(() => {
     storeCallChats();
@@ -256,20 +285,16 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     storeArchivedChats();
   }, [archived]);
 
-  const Community = ({setcurrentTabIndex}) => {
+  const Community = ({ setcurrentTabIndex }) => {
     const navigation = useNavigation();
 
-    // useFocusEffect(() => {
-    //   setcurrentTabIndex(0);
-    // })
-
-    const isFocused = useIsFocused()
+    const isFocused = useIsFocused();
 
     useEffect(() => {
-      if(isFocused){
+      if (isFocused) {
         setcurrentTabIndex(0);
       }
-    },[isFocused])
+    }, [isFocused]);
 
     return (
       <View style={{ flex: 1 }}>
@@ -328,7 +353,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             backgroundColor: ACTIVE_TAB_GREEN_COLOR,
             height: 4,
           },
-          
+
           tabBarLabelStyle: {
             textTransform: "none",
             fontWeight: "bold",
@@ -341,7 +366,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             flexDirection: "row-reverse",
             justifyContent: "center",
             alignItems: "center",
-            zIndex:-1
+            zIndex: -1,
           },
           tabBarIcon: ({ focused, color }) => {
             let iconName;
@@ -362,7 +387,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       >
         <Tab.Screen
           name={"Community"}
-         
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -381,7 +405,9 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           }}
         >
           {(props) => {
-            return <Community {...props} setcurrentTabIndex={setcurrentTabIndex}/>
+            return (
+              <Community {...props} setcurrentTabIndex={setcurrentTabIndex} />
+            );
           }}
         </Tab.Screen>
         <Tab.Screen
@@ -408,22 +434,27 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             );
           }}
         </Tab.Screen>
-        <Tab.Screen
-          name="Status"
-          options={{ tabBarLabel: "Status" }}
-        >
+        <Tab.Screen name="Status" options={{ tabBarLabel: "Status" }}>
           {(props) => {
-            return <Status {...props} setcurrentTabIndex={setcurrentTabIndex}/>
+            return (
+              <Status {...props} setcurrentTabIndex={setcurrentTabIndex} />
+            );
           }}
         </Tab.Screen>
-        <Tab.Screen
-          name="Calls"
-          options={{ tabBarLabel: "Calls" }}
-        >
+        <Tab.Screen name="Calls" options={{ tabBarLabel: "Calls" }}>
           {(props) => {
-            return <Calls {...props} calls={calls} setcalls={setcalls} setcurrentTabIndex={setcurrentTabIndex} chats={chats} setchats={setchats} callChats={callChats}
-            setcallFilterChats={setcallFilterChats}
-            />
+            return (
+              <Calls
+                {...props}
+                calls={calls}
+                setcalls={setcalls}
+                setcurrentTabIndex={setcurrentTabIndex}
+                chats={chats}
+                setchats={setchats}
+                callChats={callChats}
+                setcallFilterChats={setcallFilterChats}
+              />
+            );
           }}
         </Tab.Screen>
       </Tab.Navigator>
@@ -433,6 +464,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
 export default WhatsappMainScreen;
 
-// change the alerts 
+// change the alerts
 // fix the search bar of both calls screen and chats screen
 // try using useEffect(() => {},[]) to set currentTabIndex insted of useFocusEffect

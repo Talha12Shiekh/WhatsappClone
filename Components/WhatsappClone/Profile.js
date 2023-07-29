@@ -24,8 +24,9 @@ import { Feather, Ionicons } from "react-native-vector-icons";
 import Button from "./Button";
 
 const Profile = ({ route, navigation }) => {
-  const { handleChatsMaking } = route.params;
+  const { handleChatsMaking,findedChattoEdit,edited } = route.params;
 
+  
   const [chatinformation, setchatinformation] = useState({
     name: "",
     number: "",
@@ -33,9 +34,25 @@ const Profile = ({ route, navigation }) => {
     photo: "",
   });
 
+  useEffect(() => {
+    if(edited){
+      setchatinformation({
+        name: findedChattoEdit.name,
+        number: findedChattoEdit.number,
+        about: findedChattoEdit.about,
+        photo: findedChattoEdit.photo,
+      })
+    }
+  },[edited])
+
+
   const handleSubmitModel = () => {
     const { name, number, about, photo } = chatinformation;
-    handleChatsMaking(name, number, about, photo);
+    if(edited){
+      handleChatsMaking(name, number, about, photo,edited,findedChattoEdit.key);
+    }else{
+      handleChatsMaking(name, number, about, photo);
+    }
 
     setchatinformation({
       name: "",
@@ -45,8 +62,7 @@ const Profile = ({ route, navigation }) => {
     });
     if ((name, about,number)) {
       navigation.navigate("Chats");
-    } else {
-    }
+    } 
   };
 
   const handleChangeInputs = (name, value) => {
@@ -212,7 +228,7 @@ const Profile = ({ route, navigation }) => {
               onPress={handleSubmitModel}
               width="100%"
             >
-              <Text style={styles.textStyle}>Make Chat</Text>
+              <Text style={styles.textStyle}>{edited ? "Edit" : "Make"} Chat</Text>
             </Button>
           </View>
         </ScrollView>
