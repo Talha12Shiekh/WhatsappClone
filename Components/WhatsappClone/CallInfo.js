@@ -38,7 +38,7 @@ const CallInfo = ({ route, navigation }) => {
     route.params;
 
   const CallArray = repeatedDates
-    .map((element, index) => {
+    .map((element) => {
       return {
         key: Date.now().toString(),
         video: element.video,
