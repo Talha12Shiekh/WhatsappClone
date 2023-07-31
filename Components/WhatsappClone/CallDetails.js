@@ -29,14 +29,17 @@ import CallButton from "./Button";
 import { Ionicons } from "@expo/vector-icons";
 
 const CallDetails = ({ route, navigation }) => {
-  const { callChats, setcalls, calls, setcallFilterChats, setRepatedDates } =
+  const { callChats, setcalls, calls, setcallFilterChats, setRepatedDates ,chats} =
     route.params;
 
   const [items, setItems] = useState([]);
 
+  let chatsNames = chats.map(chat => chat.name)
+
   useEffect(() => {
     let newChats = [...callChats];
-    const updatedDropdownItems = newChats.map((chat) => {
+    let newArr = newChats.filter(call => chatsNames.includes(call.name));
+    const updatedDropdownItems = newArr.map((chat) => {
       return {
         value: chat.name,
         label: chat.name,

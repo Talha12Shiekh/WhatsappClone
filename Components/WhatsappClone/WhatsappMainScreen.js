@@ -234,9 +234,11 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           setFileredChats((chts) => [...chts, ChatInformation]);
         } else {
           let newChats = [...chats];
+          let newCalls = [...calls];
           const ChatToEdit = newChats.findIndex(
             (chat) => chat.key == editedKey
           );
+          const CallToEdit = newCalls.find(call => call.name == newChats[ChatToEdit].name);
           newChats[ChatToEdit] = {
             name,
             number,
@@ -253,7 +255,11 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             readed: false,
             blocked: false,
           };
+          if(CallToEdit){
+            CallToEdit.name = name;
+          }
           setchats(newChats);
+          setcalls([...calls]);
           showToast("Chat edited successfully !")
           edited = false;
         }

@@ -133,7 +133,8 @@ const Calls = ({
                 setcalls,
                 calls,
                 setcallFilterChats,
-                setRepatedDates
+                setRepatedDates,
+                chats
               });
             },
           };
