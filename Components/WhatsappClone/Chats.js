@@ -312,7 +312,11 @@ const Chats = ({
                 },
                 NotshowChatMakingDate: true,
                 onPress: () => {
-                  findItemstoDeSelect(item.key);
+                  if(item.selected){
+                    findItemstoDeSelect(item.key);
+                  }else{
+                    navigation.navigate("MessagesScreen",{item})
+                  }
                 },
                 onLongPress: () => {
                   findItemstoSelect(item.key);

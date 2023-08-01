@@ -38,6 +38,8 @@ export const CALLS_KEY = "call_chats";
 export const CALLS_ICONS_COLOR = "#787f87";
 export const FILTER_STORAGE_KEY = "filter_items";
 export const FILTER_CALLS_STORAGE_KEY = "filter_calls";
+export const MESSAGE_BACKGROUND_COLOR = "#1f2c34";
+export const EMOJI_BACKGROUND_COLOR = "#86949d";
 export const months = [
   "January",
   "February",
@@ -470,6 +472,3 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
 export default WhatsappMainScreen;
 
-// change the alerts
-// fix the search bar of both calls screen and chats screen
-// try using useEffect(() => {},[]) to set currentTabIndex insted of useFocusEffect

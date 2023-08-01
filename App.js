@@ -17,6 +17,7 @@ import Archived from "./Components/WhatsappClone/Archived";
 import Camera from "./Components/WhatsappClone/Camera";
 import CallDetails from "./Components/WhatsappClone/CallDetails";
 import CallInfo from "./Components/WhatsappClone/CallInfo";
+import MessagesScreen from "./Components/WhatsappClone/MessagesScreen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { RippleButton } from "./Components/WhatsappClone/RippleButton";
 import Settings from "./Components/WhatsappClone/Settings";
@@ -322,6 +323,10 @@ export default function App() {
           <Stack.Screen
             name="Settings"
             component={Settings}
+          />
+          <Stack.Screen
+            name="MessagesScreen"
+            component={MessagesScreen}
           />
         </Stack.Group>
       </Stack.Navigator>
