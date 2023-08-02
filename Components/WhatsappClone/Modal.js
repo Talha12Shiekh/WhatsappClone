@@ -1,18 +1,38 @@
-import { View, Image,Pressable,StyleSheet,Text,TouchableNativeFeedback } from "react-native";
+import {
+  View,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+} from "react-native";
 import React from "react";
 import { SharedElement } from "react-navigation-shared-element";
-import { ACTIVE_TAB_GREEN_COLOR, TAB_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR, TITLE_COLOR } from "./WhatsappMainScreen";
-import { PopupIconsRippleButton, showToast,ModelComponent } from "./RippleButton";
+import {
+  ACTIVE_TAB_GREEN_COLOR,
+  TAB_BACKGROUND_COLOR,
+  TAB_PRESS_ACTIVE_WHITE_COLOR,
+  TITLE_COLOR,
+} from "./WhatsappMainScreen";
+import {
+  PopupIconsRippleButton,
+  showToast,
+  ModelComponent,
+} from "./RippleButton";
 
-const Modal = ({ route ,navigation}) => {
+const Modal = ({ route, navigation }) => {
   const { item } = route.params;
-  if(!item.photo){
-    return showToast("Profile photo does not exists")
-  }else{
+  if (!item.photo) {
+    return showToast("Profile photo does not exists");
+  } else {
     return (
-      <Pressable style={{ flex:1 }} onPress={() => navigation.goBack()}>
+      <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
         <View>
-          <ModelComponent name={item.name} photo={item.photo} onPress={() => {}}/>
+          <ModelComponent
+            name={item.name}
+            photo={item.photo}
+            onPress={() => {}}
+          />
         </View>
       </Pressable>
     );
@@ -22,7 +42,7 @@ const Modal = ({ route ,navigation}) => {
 const styles = StyleSheet.create({
   centeredView: {
     flexDirection: "row",
-    flex:1,
+    flex: 1,
   },
   modalView: {
     margin: 20,
@@ -50,10 +70,10 @@ const styles = StyleSheet.create({
   iconsContainer: {
     width: "100%",
     height: "17%",
-    flexDirection:"row",
-    justifyContent:"space-around",
-    alignItems:"center"
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
-})
+});
 
 export default Modal;

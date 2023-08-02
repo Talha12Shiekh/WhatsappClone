@@ -17,6 +17,7 @@ import {
   Ionicons,
 } from "react-native-vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import EmojiPicker from "rn-emoji-keyboard";
 import {
   MaterialIcons,
   FontAwesome5,
@@ -33,31 +34,103 @@ import {
   BADGE_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
-  CHAT_BACKROUND_COLOR,
+  MENU_BACKGROUND_COLOR,
   MESSAGE_BACKGROUND_COLOR,
-  EMOJI_BACKGROUND_COLOR
+  EMOJI_BACKGROUND_COLOR,
 } from "./WhatsappMainScreen";
+import { useRef, useState } from "react";
+import Menu from "./Menu";
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
 
   const ICONS_SIZE = 22;
 
-  const MessagesRippleButton = ({ children,onPress,...rest }) => {
+  const [currentItem, setCurrentItem] = useState({
+    ...item,
+  });
+
+  const handleOpenCallScreen = () => {
+    setCurrentItem({
+      ...item,
+      video: true,
+    });
+    navigation.navigate("CallScreen", { item: currentItem });
+  };
+
+  const handleOpenVideoScreen = () => {
+    setCurrentItem({
+      ...item,
+      video: false,
+    });
+    navigation.navigate("CallScreen", { item: currentItem });
+  };
+
+  const [value, setvalue] = useState("");
+
+  const [paddingRight, setpaddingRight] = useState(100);
+
+  const ClipandCameraAnimation = useRef(new Animated.Value(0)).current;
+
+  const sendButtonAnimation = useRef(new Animated.Value(0)).current;
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
+
+  const MenuAnimation = useRef(new Animated.Value(0)).current;
+
+  const MessagesMenuData = [
+    { text: "View contact", onPress: () => {}, key: 1 },
+    { text: "Media, links, and docs", onPress: () => {}, key: 2 },
+    { text: "Search", onPress: () => {}, key: 3 },
+    { text: "Mute notifications", onPress: () => {}, key: 4 },
+    { text: "Dissappearing messages", onPress: () => {}, key: 5 },
+    { text: "Wallpaper", onPress: () => {}, key: 6 },
+    {
+      text: "More                                    >",
+      onPress: () => {},
+      key: 7,
+    },
+  ];
+
+  const AnimatedFunction = (animation, toValue, duration) => {
+    return Animated.timing(animation, {
+      toValue,
+      duration,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleChangeText = (vlue) => {
+    setvalue(vlue);
+
+    if (vlue !== "") {
+      AnimatedFunction(ClipandCameraAnimation, 50, 300);
+      AnimatedFunction(sendButtonAnimation, 1, 300);
+      setpaddingRight(50);
+    } else {
+      AnimatedFunction(ClipandCameraAnimation, 0, 300);
+      AnimatedFunction(sendButtonAnimation, 0, 300);
+      setpaddingRight(100);
+    }
+  };
+
+  const MessagesRippleButton = ({ children, onPress, ...rest }) => {
     return (
-        <View style={{ padding: 10, borderRadius: 100}} {...rest}>
-      <TouchableNativeFeedback
-      onPress={onPress}
-        background={TouchableNativeFeedback.Ripple(
-          TAB_PRESS_ACTIVE_WHITE_COLOR,
-          true,
-          500
-        )}
-      >
-        <View style={{justifyContent:"center",alignItems:"center"}}>
-        {children}
-        </View>
-      </TouchableNativeFeedback>
+      <View style={{ padding: 10, borderRadius: 100 }} {...rest}>
+        <TouchableNativeFeedback
+          onPress={onPress}
+          background={TouchableNativeFeedback.Ripple(
+            TAB_PRESS_ACTIVE_WHITE_COLOR,
+            true,
+            500
+          )}
+        >
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            {children}
+          </View>
+        </TouchableNativeFeedback>
       </View>
     );
   };
@@ -136,10 +209,10 @@ const MessagesScreen = ({ navigation, route }) => {
                   </Text>
                 </View>
               </TouchableNativeFeedback>
-              {/* <Menu
-                animation={archiveChatMenuAnimation}
-                menuData={ArchivedMenuData}
-              /> */}
+              <Menu
+                animation={messagesMenuAnimation}
+                menuData={MessagesMenuData}
+              />
               <View
                 style={{
                   position: "absolute",
@@ -149,19 +222,16 @@ const MessagesScreen = ({ navigation, route }) => {
                   top: 5,
                 }}
               >
-                <RippleButton>
+                <RippleButton onPress={handleOpenCallScreen}>
                   <FontAwesome5 name="video" size={20} color={TITLE_COLOR} />
                 </RippleButton>
-                <RippleButton>
+                <RippleButton onPress={handleOpenVideoScreen}>
                   <MaterialIcons name="call" size={22} color={TITLE_COLOR} />
                 </RippleButton>
                 <RippleButton
-                //   onPress={() => Animated.timing(archiveChatMenuAnimation,{
-                //     toValue:1,
-                //     duration:1000,
-                //     useNativeDriver:true
-                //   }).start()
-                // }
+                  onPress={() =>
+                    AnimatedFunction(messagesMenuAnimation, 1, 1000)
+                  }
                 >
                   <SimpleLineIcons
                     name="options-vertical"
@@ -250,6 +320,14 @@ const MessagesScreen = ({ navigation, route }) => {
       source={{ uri: item.photo }}
       style={{ flex: 1 }}
     >
+      <Animated.View style={[styles.messagesMenu,{transform:[{scaleY:MenuAnimation}]}]}></Animated.View>
+      <EmojiPicker
+        open={isOpen}
+        onEmojiSelected={(emojiObject) => {
+          setvalue((prev) => prev + emojiObject.emoji);
+        }}
+        onClose={() => setIsOpen(false)}
+      />
       <View style={{ flex: 12 }}>
         <Text>Messages</Text>
       </View>
@@ -257,38 +335,86 @@ const MessagesScreen = ({ navigation, route }) => {
         behavior="height"
         style={{ flex: 1, justifyContent: "center", flexDirection: "row" }}
       >
-        <View style={styles.inputContainer}>
-          <View style={styles.emoji}>
-            <MessagesRippleButton>
-            <Fontisto name="smiley" size={24} color={EMOJI_BACKGROUND_COLOR} />
-          </MessagesRippleButton>
+        <View style={[styles.inputContainer, { overflow: "hidden" }]}>
+          <View style={[styles.emoji, { alignSelf: "flex-end" }]}>
+            <MessagesRippleButton
+              onPress={() => {
+                setIsOpen((o) => !o);
+              }}
+            >
+              <Fontisto
+                name="smiley"
+                size={20}
+                color={EMOJI_BACKGROUND_COLOR}
+              />
+            </MessagesRippleButton>
           </View>
-          <TextInput
-            placeholderTextColor={EMOJI_BACKGROUND_COLOR}
-            placeholder="Messages"
-            style={styles.input}
-            multiline
-          />
-          <View style={styles.camera_and_clip}>
-          <MessagesRippleButton>
-            <Entypo
-              name="attachment"
-              size={24}
-              color={EMOJI_BACKGROUND_COLOR}
+          <View>
+            <TextInput
+              placeholderTextColor={EMOJI_BACKGROUND_COLOR}
+              placeholder="Messages"
+              style={[styles.input, { paddingRight: paddingRight }]}
+              multiline
+              value={value}
+              onChangeText={handleChangeText}
             />
-            </MessagesRippleButton>
-            <MessagesRippleButton>
-            <Feather name="camera" size={24} color={EMOJI_BACKGROUND_COLOR} />
-            </MessagesRippleButton>
           </View>
+          <Animated.View
+            style={[
+              styles.camera_and_clip,
+              { transform: [{ translateX: ClipandCameraAnimation }] },
+            ]}
+          >
+            <MessagesRippleButton onPress={() => AnimatedFunction(MenuAnimation,1,800)}>
+              <Entypo
+                name="attachment"
+                size={20}
+                color={EMOJI_BACKGROUND_COLOR}
+              />
+            </MessagesRippleButton>
+            <MessagesRippleButton onPress={() => navigation.navigate("Camera")}>
+              <Feather name="camera" size={20} color={EMOJI_BACKGROUND_COLOR} />
+            </MessagesRippleButton>
+          </Animated.View>
         </View>
         <TouchableOpacity>
           <View style={styles.sendButton}>
-            <MaterialIcons
-              name="keyboard-voice"
-              size={25}
-              color={TITLE_COLOR}
-            />
+            <Animated.View
+              style={{
+                position: "absolute",
+                zIndex: 99999,
+                transform: [
+                  {
+                    scale: sendButtonAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 0],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <MaterialIcons
+                name="keyboard-voice"
+                size={25}
+                color={TITLE_COLOR}
+              />
+            </Animated.View>
+            <Animated.View
+              style={{
+                position: "absolute",
+                zIndex: -1,
+                transform: [
+                  {
+                    scale: sendButtonAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 1],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <Ionicons name="send" size={24} color={TITLE_COLOR} />
+            </Animated.View>
           </View>
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -307,7 +433,6 @@ const styles = StyleSheet.create({
   selectedChatNavbar: {
     width: "100%",
     height: 60,
-    backgroundColor: "red",
     position: "absolute",
     zIndex: 2222,
     flexDirection: "row",
@@ -352,17 +477,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // marginLeft: 10,
     flex: 1,
-    position:"absolute"
-    ,left:0,
-    alignSelf:"center",
-    zIndex:999999
+    position: "absolute",
+    left: 0,
+    alignSelf: "center",
+    zIndex: 999999,
   },
   input: {
     flex: 5,
     color: TITLE_COLOR,
     fontSize: 18,
     paddingLeft: 50,
-    paddingRight:100
   },
   camera_and_clip: {
     flex: 1,
@@ -370,11 +494,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     paddingRight: 10,
-    // backgroundColor:"red",
     gap: 10,
-    position:"absolute",
-    right:0,
-    top:2
+    position: "absolute",
+    right: 0,
+    top: 2,
+    bottom: 0,
+  },
+  messagesMenu: {
+    position: "absolute",
+    width: 350,
+    height: 300,
+    backgroundColor: MENU_BACKGROUND_COLOR,
+    bottom:56,
+    alignSelf:"center",
+    borderRadius:10
   },
 });
 

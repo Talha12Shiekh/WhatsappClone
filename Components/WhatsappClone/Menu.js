@@ -107,7 +107,7 @@ export default Menu;
 const styles = StyleSheet.create({
   menuContainer: {
     position: "absolute",
-    width: 200,
+    width: 250,
     zIndex: 2222222,
     right: 10,
     top:10,
