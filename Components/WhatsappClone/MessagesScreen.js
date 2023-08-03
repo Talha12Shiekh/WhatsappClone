@@ -27,6 +27,7 @@ import {
   FontAwesome,
   Fontisto,
   Entypo,
+  Foundation,
 } from "@expo/vector-icons";
 import {
   TAB_BACKGROUND_COLOR,
@@ -42,6 +43,8 @@ import {
 } from "./WhatsappMainScreen";
 import { useRef, useState } from "react";
 import Menu from "./Menu";
+import { TouchableWithoutFeedback } from "react-native";
+import { FlatList } from "react-native";
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
@@ -78,11 +81,15 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [MenuOpen,setMenuOpen] = useState(false);
+  const [MenuOpen, setMenuOpen] = useState(false);
 
   const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
 
   const MenuAnimation = useRef(new Animated.Value(0)).current;
+
+  const handleSendMessages = () => {
+    if (value == "") return;
+  };
 
   const MessagesMenuData = [
     { text: "View contact", onPress: () => {}, key: 1 },
@@ -96,6 +103,10 @@ const MessagesScreen = ({ navigation, route }) => {
       onPress: () => {},
       key: 7,
     },
+  ];
+
+  const messages = [
+    { message: "Hello how are you", answer: "I am fine", key: 1 },
   ];
 
   const AnimatedFunction = (animation, toValue, duration) => {
@@ -126,9 +137,9 @@ const MessagesScreen = ({ navigation, route }) => {
       toValue,
       duration: 500,
       useNativeDriver: true,
-    }).start(({finished}) => {
-      if(finished){
-        setMenuOpen(opn => !opn);
+    }).start(({ finished }) => {
+      if (finished) {
+        setMenuOpen((opn) => !opn);
       }
     });
   };
@@ -337,51 +348,97 @@ const MessagesScreen = ({ navigation, route }) => {
       source={{ uri: item.photo }}
       style={{ flex: 1 }}
     >
+      {/* <TouchableWithoutFeedback onPress={() => setMenuOpen(true)}>
+        <Animated.View
+          style={[
+            styles.messagesMenu,
+            {
+              zIndex: 222222222222222,
+              width: 50,
+              height: 50,
+              right: 0,
+              backgroundColor: "rgba(0,0,0,.1)",
+              transform: [
+                {
+                  scale: MenuAnimation.interpolate({
+                    inputRange:[0,1],
+                    outputRange:[0,30]
+                  })
+                },
+              ],
+            },
+          ]}
+        />
+      </TouchableWithoutFeedback> */}
       <Animated.View
         style={[
           styles.messagesMenu,
-          { transform: [{ scaleY: MenuAnimation }] },
+          { transform: [{ scaleY: MenuAnimation }], zIndex: 33333333333 },
         ]}
       >
-        <TouchableOpacity onPress={() => alert("talha shiekh")}>
-          <View style={{zIndex:999999999999}}>
-            <View style={[styles.menuButton,{backgroundColor:"#e91de99c"}]}></View>
+        <TouchableOpacity>
+          <View>
+            <View style={[styles.menuButton, { backgroundColor: "#e91de99c" }]}>
+              <Ionicons name="document" size={24} color={TITLE_COLOR} />
+            </View>
             <Text style={styles.menuText}>Document</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity >
+        <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton,{backgroundColor:"red"}]}></View>
+            <View style={[styles.menuButton, { backgroundColor: "red" }]}>
+              <FontAwesome name="camera" size={24} color={TITLE_COLOR} />
+            </View>
             <Text style={styles.menuText}>Camera</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton,{backgroundColor:"pink"}]}></View>
+            <View style={[styles.menuButton, { backgroundColor: "pink" }]}>
+              <Foundation name="photo" size={24} color={TITLE_COLOR} />
+            </View>
             <Text style={styles.menuText}>Gallery</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton,{backgroundColor:"orange"}]}></View>
+            <View style={[styles.menuButton, { backgroundColor: "orange" }]}>
+              <FontAwesome5 name="headphones" size={24} color={TITLE_COLOR} />
+            </View>
             <Text style={styles.menuText}>Audio</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton,{backgroundColor:"green"}]}></View>
+            <View style={[styles.menuButton, { backgroundColor: "green" }]}>
+              <Ionicons
+                name="md-location-sharp"
+                size={24}
+                color={TITLE_COLOR}
+              />
+            </View>
             <Text style={styles.menuText}>Location</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton,{backgroundColor:"blue"}]}></View>
+            <View style={[styles.menuButton, { backgroundColor: "blue" }]}>
+              <Feather name="user" size={24} color={TITLE_COLOR} />
+            </View>
             <Text style={styles.menuText}>Contact</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton,{backgroundColor:"lightgreen"}]}></View>
+            <View
+              style={[styles.menuButton, { backgroundColor: "lightgreen" }]}
+            >
+              <MaterialCommunityIcons
+                name="poll"
+                size={24}
+                color={TITLE_COLOR}
+              />
+            </View>
             <Text style={styles.menuText}>Poll</Text>
           </View>
         </TouchableOpacity>
@@ -393,12 +450,36 @@ const MessagesScreen = ({ navigation, route }) => {
         }}
         onClose={() => setIsOpen(false)}
       />
-      <View style={{ flex: 12 }}>
-        <Text>Messages</Text>
+      <View style={{ flex: 12,padding:20 }}>
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.key}
+          renderItem={({ item }) => {
+            return (
+              <>
+              <View style={[styles.messagesContainer,{alignSelf:"flex-end"}]}>
+                <View style={[styles.message]}>
+                  <Text style={{color:TITLE_COLOR}}>{item.message}</Text>
+                </View>
+              </View>
+              <View style={[styles.messagesContainer,{alignSelf:"flex-end"}]}>
+                <View style={[styles.message]}>
+                  <Text style={{color:TITLE_COLOR}}>{item.message}</Text>
+                </View>
+              </View>
+              </>
+            );
+          }}
+        />
       </View>
       <KeyboardAvoidingView
         behavior="height"
-        style={{ flex: 1, justifyContent: "center", flexDirection: "row" }}
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          flexDirection: "row",
+          zIndex: 999999999999999,
+        }}
       >
         <View style={[styles.inputContainer, { overflow: "hidden" }]}>
           <View style={[styles.emoji, { alignSelf: "flex-end" }]}>
@@ -442,7 +523,7 @@ const MessagesScreen = ({ navigation, route }) => {
             </MessagesRippleButton>
           </Animated.View>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleSendMessages}>
           <View style={styles.sendButton}>
             <Animated.View
               style={{
@@ -579,7 +660,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 20,
     alignItems: "center",
-    zIndex:9999999
+    zIndex: 9999999,
   },
   menuButton: {
     width: 60,
@@ -587,10 +668,21 @@ const styles = StyleSheet.create({
     backgroundColor: "green",
     alignSelf: "center",
     borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  menuText:{
-    textAlign:"center",
-    color:CHAT_DATA_STATUS_COLOR
+  menuText: {
+    textAlign: "center",
+    color: CHAT_DATA_STATUS_COLOR,
+  },
+  message:{
+    backgroundColor:ACTIVE_TAB_GREEN_COLOR,
+    padding:10,
+    borderRadius:10
+  },
+  messagesContainer:{
+    flex:1,
+    flexWrap:"wrap"
   }
 });
 
