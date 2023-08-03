@@ -464,7 +464,7 @@ const MessagesScreen = ({ navigation, route }) => {
               </View>
               <View style={[styles.messagesContainer,{alignSelf:"flex-end"}]}>
                 <View style={[styles.message]}>
-                  <Text style={{color:TITLE_COLOR}}>{item.message}</Text>
+                  <Text style={{color:TITLE_COLOR}}>{item.answer}</Text>
                 </View>
               </View>
               </>
