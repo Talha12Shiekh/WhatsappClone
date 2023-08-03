@@ -179,7 +179,7 @@ export default function CameraComponent({ navigation }) {
         >
           <View style={styles.buttonContainer}>
             <View style={styles.cameraTopButtons}>
-              <IconsContainer onPress={() => navigation.popToTop()}>
+              <IconsContainer onPress={() => navigation.goBack()}>
                 <Entypo name="cross" size={35} color={TITLE_COLOR} />
               </IconsContainer>
               <IconsContainer

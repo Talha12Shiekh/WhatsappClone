@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  Pressable,
 } from "react-native";
 import { RippleButton } from "./RippleButton";
 import {
@@ -37,6 +38,7 @@ import {
   MENU_BACKGROUND_COLOR,
   MESSAGE_BACKGROUND_COLOR,
   EMOJI_BACKGROUND_COLOR,
+  CHAT_DATA_STATUS_COLOR,
 } from "./WhatsappMainScreen";
 import { useRef, useState } from "react";
 import Menu from "./Menu";
@@ -76,6 +78,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const [MenuOpen,setMenuOpen] = useState(false);
+
   const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
 
   const MenuAnimation = useRef(new Animated.Value(0)).current;
@@ -114,6 +118,19 @@ const MessagesScreen = ({ navigation, route }) => {
       AnimatedFunction(sendButtonAnimation, 0, 300);
       setpaddingRight(100);
     }
+  };
+
+  const AnimateMenu = () => {
+    const toValue = MenuOpen ? 0 : 1;
+    return Animated.timing(MenuAnimation, {
+      toValue,
+      duration: 500,
+      useNativeDriver: true,
+    }).start(({finished}) => {
+      if(finished){
+        setMenuOpen(opn => !opn);
+      }
+    });
   };
 
   const MessagesRippleButton = ({ children, onPress, ...rest }) => {
@@ -320,7 +337,55 @@ const MessagesScreen = ({ navigation, route }) => {
       source={{ uri: item.photo }}
       style={{ flex: 1 }}
     >
-      <Animated.View style={[styles.messagesMenu,{transform:[{scaleY:MenuAnimation}]}]}></Animated.View>
+      <Animated.View
+        style={[
+          styles.messagesMenu,
+          { transform: [{ scaleY: MenuAnimation }] },
+        ]}
+      >
+        <TouchableOpacity onPress={() => alert("talha shiekh")}>
+          <View style={{zIndex:999999999999}}>
+            <View style={[styles.menuButton,{backgroundColor:"#e91de99c"}]}></View>
+            <Text style={styles.menuText}>Document</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity >
+          <View>
+            <View style={[styles.menuButton,{backgroundColor:"red"}]}></View>
+            <Text style={styles.menuText}>Camera</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View>
+            <View style={[styles.menuButton,{backgroundColor:"pink"}]}></View>
+            <Text style={styles.menuText}>Gallery</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View>
+            <View style={[styles.menuButton,{backgroundColor:"orange"}]}></View>
+            <Text style={styles.menuText}>Audio</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View>
+            <View style={[styles.menuButton,{backgroundColor:"green"}]}></View>
+            <Text style={styles.menuText}>Location</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View>
+            <View style={[styles.menuButton,{backgroundColor:"blue"}]}></View>
+            <Text style={styles.menuText}>Contact</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View>
+            <View style={[styles.menuButton,{backgroundColor:"lightgreen"}]}></View>
+            <Text style={styles.menuText}>Poll</Text>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
       <EmojiPicker
         open={isOpen}
         onEmojiSelected={(emojiObject) => {
@@ -365,7 +430,7 @@ const MessagesScreen = ({ navigation, route }) => {
               { transform: [{ translateX: ClipandCameraAnimation }] },
             ]}
           >
-            <MessagesRippleButton onPress={() => AnimatedFunction(MenuAnimation,1,800)}>
+            <MessagesRippleButton onPress={AnimateMenu}>
               <Entypo
                 name="attachment"
                 size={20}
@@ -503,12 +568,30 @@ const styles = StyleSheet.create({
   messagesMenu: {
     position: "absolute",
     width: 350,
-    height: 300,
+    height: 320,
     backgroundColor: MENU_BACKGROUND_COLOR,
-    bottom:56,
-    alignSelf:"center",
-    borderRadius:10
+    bottom: 56,
+    alignSelf: "center",
+    borderRadius: 10,
+    flexDirection: "row",
+    paddingHorizontal: 50,
+    paddingVertical: 20,
+    flexWrap: "wrap",
+    gap: 20,
+    alignItems: "center",
+    zIndex:9999999
   },
+  menuButton: {
+    width: 60,
+    aspectRatio: 1,
+    backgroundColor: "green",
+    alignSelf: "center",
+    borderRadius: 100,
+  },
+  menuText:{
+    textAlign:"center",
+    color:CHAT_DATA_STATUS_COLOR
+  }
 });
 
 export default MessagesScreen;
