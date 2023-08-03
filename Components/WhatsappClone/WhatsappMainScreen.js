@@ -38,8 +38,9 @@ export const CALLS_KEY = "call_chats";
 export const CALLS_ICONS_COLOR = "#787f87";
 export const FILTER_STORAGE_KEY = "filter_items";
 export const FILTER_CALLS_STORAGE_KEY = "filter_calls";
-export const MESSAGE_BACKGROUND_COLOR = "#1f2c34";
+export const ANSWER_BACKGROUND_COLOR = "#1f2c34";
 export const EMOJI_BACKGROUND_COLOR = "#86949d";
+export const MESSAGE_BACKGROUND_COLOR = "#005d4b";
 export const months = [
   "January",
   "February",

@@ -37,9 +37,10 @@ import {
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
   MENU_BACKGROUND_COLOR,
-  MESSAGE_BACKGROUND_COLOR,
+  ANSWER_BACKGROUND_COLOR,
   EMOJI_BACKGROUND_COLOR,
   CHAT_DATA_STATUS_COLOR,
+  MESSAGE_BACKGROUND_COLOR,
 } from "./WhatsappMainScreen";
 import { useRef, useState } from "react";
 import Menu from "./Menu";
@@ -54,6 +55,8 @@ const MessagesScreen = ({ navigation, route }) => {
   const [currentItem, setCurrentItem] = useState({
     ...item,
   });
+
+  const [messages,setmessages] = useState([]);
 
   const handleOpenCallScreen = () => {
     setCurrentItem({
@@ -89,6 +92,12 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const handleSendMessages = () => {
     if (value == "") return;
+
+    let messagesObject = {
+      message:value,key:Date.now(),time:Date.now(),
+    };
+    setmessages(prev => [...prev,messagesObject]);
+    setvalue("")
   };
 
   const MessagesMenuData = [
@@ -103,10 +112,6 @@ const MessagesScreen = ({ navigation, route }) => {
       onPress: () => {},
       key: 7,
     },
-  ];
-
-  const messages = [
-    { message: "Hello how are you", answer: "I am fine", key: 1 },
   ];
 
   const AnimatedFunction = (animation, toValue, duration) => {
@@ -450,25 +455,39 @@ const MessagesScreen = ({ navigation, route }) => {
         }}
         onClose={() => setIsOpen(false)}
       />
-      <View style={{ flex: 12,padding:20 }}>
+      <View style={{ flex: 12,paddingVertical:20 }}>
         <FlatList
           data={messages}
           keyExtractor={(item) => item.key}
-          renderItem={({ item }) => {
-            return (
-              <>
-              <View style={[styles.messagesContainer,{alignSelf:"flex-end"}]}>
-                <View style={[styles.message]}>
-                  <Text style={{color:TITLE_COLOR}}>{item.message}</Text>
+          renderItem={({ item ,index}) => {
+            if(index % 2 == 0){
+              return (
+                <TouchableNativeFeedback>
+                <View style={[styles.messagesContainer,{alignSelf:"flex-end"}]}>
+                <View style={styles.messageCorner}/>
+                  <View style={[styles.message,{transform:[{translateX:-20}],flexDirection:"row"}]}>
+                    <View>
+                    <Text style={{color:TITLE_COLOR,fontSize:15,marginRight:10}}>{item.message}</Text>
+                    </View>
+                    <View style={{alignSelf:"flex-end"}}>
+                    <Text style={{color:TITLE_COLOR,fontSize:10}}>10:10 pm //</Text>
+                    </View>
+                  </View>
                 </View>
-              </View>
-              <View style={[styles.messagesContainer,{alignSelf:"flex-end"}]}>
-                <View style={[styles.message]}>
-                  <Text style={{color:TITLE_COLOR}}>{item.answer}</Text>
+                </TouchableNativeFeedback>
+              );
+            }else {
+              return (
+                <TouchableNativeFeedback>
+                <View style={[styles.messagesContainer,{alignSelf:"flex-start"}]}>
+                <View style={[styles.answermessageCorner]}/>
+                  <View style={[styles.message,{backgroundColor:ANSWER_BACKGROUND_COLOR,transform:[{translateX:20}]}]}>
+                    <Text style={{color:TITLE_COLOR,fontSize:15}}>{item.message}</Text>
+                  </View>
                 </View>
-              </View>
-              </>
-            );
+                </TouchableNativeFeedback>
+              );
+            }
           }}
         />
       </View>
@@ -481,7 +500,7 @@ const MessagesScreen = ({ navigation, route }) => {
           zIndex: 999999999999999,
         }}
       >
-        <View style={[styles.inputContainer, { overflow: "hidden" }]}>
+        <View style={[styles.inputContainer, { overflow: "hidden",marginBottom:10 }]}>
           <View style={[styles.emoji, { alignSelf: "flex-end" }]}>
             <MessagesRippleButton
               onPress={() => {
@@ -602,7 +621,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 8,
     flexDirection: "row",
-    backgroundColor: MESSAGE_BACKGROUND_COLOR,
+    backgroundColor: ANSWER_BACKGROUND_COLOR,
     borderRadius: 50,
     marginHorizontal: 10,
     marginTop: 5,
@@ -676,13 +695,36 @@ const styles = StyleSheet.create({
     color: CHAT_DATA_STATUS_COLOR,
   },
   message:{
-    backgroundColor:ACTIVE_TAB_GREEN_COLOR,
-    padding:10,
-    borderRadius:10
+    backgroundColor:"green",
+    padding:7,
+    borderRadius:10,
+    marginBottom:5,    
   },
   messagesContainer:{
     flex:1,
-    flexWrap:"wrap"
+    flexWrap:"wrap",
+    maxWidth:"80%",
+  },
+  messageCorner:{
+    width:15,
+    height:15,
+    backgroundColor:"green",
+    position:"absolute",
+    zIndex:-1,
+    right:12,
+    borderBottomLeftRadius:100,
+    top:0,
+    transform:[{rotate:"270deg"}]
+  },
+  answermessageCorner:{
+    width:15,
+    height:15,
+    backgroundColor:ANSWER_BACKGROUND_COLOR,
+    position:"absolute" ,
+    zIndex:-1,
+    left:12,
+    borderBottomLeftRadius:100,
+    top:0,
   }
 });
 
