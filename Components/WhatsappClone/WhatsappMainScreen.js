@@ -241,15 +241,17 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           const ChatToEdit = newChats.findIndex(
             (chat) => chat.key == editedKey
           );
-          const CallToEdit = newCalls.find(call => call.name == newChats[ChatToEdit].name);
+          const CallToEdit = newCalls.find(
+            (call) => call.name == newChats[ChatToEdit].name
+          );
           newChats[ChatToEdit] = {
             name,
             number,
             about,
             key: newChats[ChatToEdit].key,
-            date:newChats[ChatToEdit].date,
-            month:newChats[ChatToEdit].month,
-            year:newChats[ChatToEdit].year,
+            date: newChats[ChatToEdit].date,
+            month: newChats[ChatToEdit].month,
+            year: newChats[ChatToEdit].year,
             photo,
             type: "chat",
             selected: false,
@@ -258,12 +260,12 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             readed: false,
             blocked: false,
           };
-          if(CallToEdit){
+          if (CallToEdit) {
             CallToEdit.name = name;
           }
           setchats(newChats);
           setcalls([...calls]);
-          showToast("Chat edited successfully !")
+          showToast("Chat edited successfully !");
           edited = false;
         }
         setcallChats((chts) => [...chts, callInformation]);
@@ -472,4 +474,3 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 };
 
 export default WhatsappMainScreen;
-

@@ -10,6 +10,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { RippleButton } from "./RippleButton";
 import {
@@ -56,7 +57,7 @@ const MessagesScreen = ({ navigation, route }) => {
     ...item,
   });
 
-  const [messages,setmessages] = useState([]);
+  const [messages, setmessages] = useState([]);
 
   const handleOpenCallScreen = () => {
     setCurrentItem({
@@ -94,10 +95,12 @@ const MessagesScreen = ({ navigation, route }) => {
     if (value == "") return;
 
     let messagesObject = {
-      message:value,key:Date.now(),time:Date.now(),
+      message: value,
+      key: Date.now(),
+      time: Date.now(),
     };
-    setmessages(prev => [...prev,messagesObject]);
-    setvalue("")
+    setmessages((prev) => [...prev, messagesObject]);
+    setvalue("");
   };
 
   const MessagesMenuData = [
@@ -455,41 +458,53 @@ const MessagesScreen = ({ navigation, route }) => {
         }}
         onClose={() => setIsOpen(false)}
       />
-      <View style={{ flex: 12,paddingVertical:20 }}>
-        <FlatList
-          data={messages}
-          keyExtractor={(item) => item.key}
-          renderItem={({ item ,index}) => {
-            if(index % 2 == 0){
-              return (
-                <TouchableNativeFeedback>
-                <View style={[styles.messagesContainer,{alignSelf:"flex-end"}]}>
-                <View style={styles.messageCorner}/>
-                  <View style={[styles.message,{transform:[{translateX:-20}],flexDirection:"row"}]}>
+      <View style={{ flex: 12, paddingVertical: 20, paddingHorizontal: 10 }}>
+        <ScrollView scrollToOverflowEnabled>
+          {messages.map((item, index) => {
+            const isEven = index % 2 == 0;
+            return (
+              <TouchableNativeFeedback key={item.key}>
+                <View
+                  style={[
+                    styles.messagesContainer,
+                    { alignSelf: isEven ? "flex-end" : "flex-start" },
+                  ]}
+                >
+                  <View style={isEven ? styles.messageCorner : styles.answermessageCorner} />
+                  <View
+                    style={[
+                      styles.message,
+                      {
+                        transform: [{ translateX: isEven ? -20 : 20 }],
+                        flexDirection: "row",
+                        backgroundColor: isEven
+                          ? "green"
+                          : ANSWER_BACKGROUND_COLOR,
+                      },
+                    ]}
+                  >
                     <View>
-                    <Text style={{color:TITLE_COLOR,fontSize:15,marginRight:10}}>{item.message}</Text>
-                    </View>
-                    <View style={{alignSelf:"flex-end"}}>
-                    <Text style={{color:TITLE_COLOR,fontSize:10}}>10:10 pm //</Text>
+                      <Text
+                        style={{
+                          color: TITLE_COLOR,
+                          fontSize: 15,
+                          marginRight: 10,
+                        }}
+                      >
+                        {item.message}
+                      </Text>
+                      <View style={{ alignSelf: "flex-end", marginTop: 5 }}>
+                        <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
+                          10:10 pm //
+                        </Text>
+                      </View>
                     </View>
                   </View>
                 </View>
-                </TouchableNativeFeedback>
-              );
-            }else {
-              return (
-                <TouchableNativeFeedback>
-                <View style={[styles.messagesContainer,{alignSelf:"flex-start"}]}>
-                <View style={[styles.answermessageCorner]}/>
-                  <View style={[styles.message,{backgroundColor:ANSWER_BACKGROUND_COLOR,transform:[{translateX:20}]}]}>
-                    <Text style={{color:TITLE_COLOR,fontSize:15}}>{item.message}</Text>
-                  </View>
-                </View>
-                </TouchableNativeFeedback>
-              );
-            }
-          }}
-        />
+              </TouchableNativeFeedback>
+            );
+          })}
+        </ScrollView>
       </View>
       <KeyboardAvoidingView
         behavior="height"
@@ -500,7 +515,12 @@ const MessagesScreen = ({ navigation, route }) => {
           zIndex: 999999999999999,
         }}
       >
-        <View style={[styles.inputContainer, { overflow: "hidden",marginBottom:10 }]}>
+        <View
+          style={[
+            styles.inputContainer,
+            { overflow: "hidden", marginBottom: 10 },
+          ]}
+        >
           <View style={[styles.emoji, { alignSelf: "flex-end" }]}>
             <MessagesRippleButton
               onPress={() => {
@@ -694,38 +714,38 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: CHAT_DATA_STATUS_COLOR,
   },
-  message:{
-    backgroundColor:"green",
-    padding:7,
-    borderRadius:10,
-    marginBottom:5,    
+  message: {
+    backgroundColor: "green",
+    padding: 7,
+    borderRadius: 10,
+    marginBottom: 5,
   },
-  messagesContainer:{
-    flex:1,
-    flexWrap:"wrap",
-    maxWidth:"80%",
+  messagesContainer: {
+    flex: 1,
+    flexWrap: "wrap",
+    maxWidth: "80%",
   },
-  messageCorner:{
-    width:15,
-    height:15,
-    backgroundColor:"green",
-    position:"absolute",
-    zIndex:-1,
-    right:12,
-    borderBottomLeftRadius:100,
-    top:0,
-    transform:[{rotate:"270deg"}]
+  messageCorner: {
+    width: 15,
+    height: 15,
+    backgroundColor: "green",
+    position: "absolute",
+    zIndex: -1,
+    right: 12,
+    borderBottomLeftRadius: 100,
+    top: 0,
+    transform: [{ rotate: "270deg" }],
   },
-  answermessageCorner:{
-    width:15,
-    height:15,
-    backgroundColor:ANSWER_BACKGROUND_COLOR,
-    position:"absolute" ,
-    zIndex:-1,
-    left:12,
-    borderBottomLeftRadius:100,
-    top:0,
-  }
+  answermessageCorner: {
+    width: 15,
+    height: 15,
+    backgroundColor: ANSWER_BACKGROUND_COLOR,
+    position: "absolute",
+    zIndex: -1,
+    left: 12,
+    borderBottomLeftRadius: 100,
+    top: 0,
+  },
 });
 
 export default MessagesScreen;
