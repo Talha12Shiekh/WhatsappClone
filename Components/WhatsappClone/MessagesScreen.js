@@ -43,7 +43,7 @@ import {
   CHAT_DATA_STATUS_COLOR,
   MESSAGE_BACKGROUND_COLOR,
 } from "./WhatsappMainScreen";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Menu from "./Menu";
 import { TouchableWithoutFeedback } from "react-native";
 import { FlatList } from "react-native";
@@ -91,13 +91,21 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const MenuAnimation = useRef(new Animated.Value(0)).current;
 
+  const time = new Date();
+  const hours = time.getHours() > 12 ? time.getHours() - 12 : time.getHours();
+  const minutes =
+    time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes();
+  const am_pm = time.getHours() >= 12 ? "PM" : "AM";
+
   const handleSendMessages = () => {
     if (value == "") return;
 
     let messagesObject = {
       message: value,
       key: Date.now(),
-      time: Date.now(),
+     hours,
+     minutes,
+     am_pm,
     };
     setmessages((prev) => [...prev, messagesObject]);
     setvalue("");
@@ -125,10 +133,8 @@ const MessagesScreen = ({ navigation, route }) => {
     }).start();
   };
 
-  const handleChangeText = (vlue) => {
-    setvalue(vlue);
-
-    if (vlue !== "") {
+  useEffect(() => {
+    if (value !== "") {
       AnimatedFunction(ClipandCameraAnimation, 50, 300);
       AnimatedFunction(sendButtonAnimation, 1, 300);
       setpaddingRight(50);
@@ -137,7 +143,8 @@ const MessagesScreen = ({ navigation, route }) => {
       AnimatedFunction(sendButtonAnimation, 0, 300);
       setpaddingRight(100);
     }
-  };
+  },[value])
+
 
   const AnimateMenu = () => {
     const toValue = MenuOpen ? 0 : 1;
@@ -458,8 +465,8 @@ const MessagesScreen = ({ navigation, route }) => {
         }}
         onClose={() => setIsOpen(false)}
       />
-      <View style={{ flex: 12, paddingVertical: 20, paddingHorizontal: 10 }}>
-        <ScrollView scrollToOverflowEnabled>
+      <KeyboardAvoidingView style={{ flex: 10, paddingTop: 20}}>
+        <ScrollView>
           {messages.map((item, index) => {
             const isEven = index % 2 == 0;
             return (
@@ -495,7 +502,7 @@ const MessagesScreen = ({ navigation, route }) => {
                       </Text>
                       <View style={{ alignSelf: "flex-end", marginTop: 5 }}>
                         <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                          10:10 pm //
+                          {item.hours}:{item.minutes} {item.am_pm} //
                         </Text>
                       </View>
                     </View>
@@ -505,20 +512,12 @@ const MessagesScreen = ({ navigation, route }) => {
             );
           })}
         </ScrollView>
-      </View>
-      <KeyboardAvoidingView
-        behavior="height"
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          flexDirection: "row",
-          zIndex: 999999999999999,
-        }}
-      >
+      </KeyboardAvoidingView>
+      <View>
         <View
           style={[
             styles.inputContainer,
-            { overflow: "hidden", marginBottom: 10 },
+            { overflow: "hidden", marginBottom: 10,position:"absolute",bottom:0,left:0,right:50 },
           ]}
         >
           <View style={[styles.emoji, { alignSelf: "flex-end" }]}>
@@ -541,7 +540,7 @@ const MessagesScreen = ({ navigation, route }) => {
               style={[styles.input, { paddingRight: paddingRight }]}
               multiline
               value={value}
-              onChangeText={handleChangeText}
+              onChangeText={(vlue) => setvalue(vlue)}
             />
           </View>
           <Animated.View
@@ -562,8 +561,9 @@ const MessagesScreen = ({ navigation, route }) => {
             </MessagesRippleButton>
           </Animated.View>
         </View>
+        <View style={{marginLeft:"86%",marginBottom:5}}>
         <TouchableOpacity onPress={handleSendMessages}>
-          <View style={styles.sendButton}>
+          <View style={[styles.sendButton]}>
             <Animated.View
               style={{
                 position: "absolute",
@@ -602,7 +602,8 @@ const MessagesScreen = ({ navigation, route }) => {
             </Animated.View>
           </View>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
+        </View>
+      </View>
     </ImageBackground>
   );
 };
@@ -653,7 +654,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     width: 50,
     height: 50,
-    marginRight: 5,
+    // marginRight: 5,
     justifyContent: "center",
     alignItems: "center",
   },
