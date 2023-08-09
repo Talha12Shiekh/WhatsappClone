@@ -53,6 +53,18 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const ICONS_SIZE = 22;
 
+  // const [messageStatus,setmessageStatus] = useState("single")
+
+  const generateSendTick = (messageStatus) => {
+    if (messageStatus == "single") {
+      return <MaterialIcons name="done" size={13} color={TITLE_COLOR} />;
+    } else if (messageStatus == "double") {
+      return <Ionicons name="checkmark-done" size={13} color={TITLE_COLOR} />;
+    } else {
+      return <Ionicons name="checkmark-done" size={13} color={"blue"} />;
+    }
+  };
+
   const [currentItem, setCurrentItem] = useState({
     ...item,
   });
@@ -103,12 +115,67 @@ const MessagesScreen = ({ navigation, route }) => {
     let messagesObject = {
       message: value,
       key: Date.now(),
-     hours,
-     minutes,
-     am_pm,
+      hours,
+      minutes,
+      am_pm,
+      messageStatus: "single",
+      selected: false,
     };
-    setmessages((prev) => [...prev, messagesObject]);
+
     setvalue("");
+
+    setTimeout(() => {
+      setmessages((prev) =>
+        prev.map((msg) =>
+          msg.key === messagesObject.key
+            ? { ...msg, messageStatus: "double" }
+            : msg
+        )
+      );
+    }, 60000);
+
+    // After 3 minutes, update message status to "triple" and change color
+    setTimeout(() => {
+      setmessages((prev) =>
+        prev.map((msg) =>
+          msg.key === messagesObject.key
+            ? { ...msg, messageStatus: "triple" }
+            : msg
+        )
+      );
+    }, 180000);
+
+    setmessages((prev) => [...prev, messagesObject]);
+  };
+
+  const findMessagesToSelect = (selectedKey) => {
+    let newMessages = [...messages];
+    const SelectedMessages = newMessages.map((msg) => {
+      if (msg.key == selectedKey) {
+        return {
+          ...msg,
+          selected: true,
+        };
+      }
+      return msg;
+    });
+    setmessages(SelectedMessages);
+  };
+
+  const findMessagesToDeSelect = (selectedKey) => {
+    let newMessages = [...messages];
+    const DeSelectedMessages = newMessages.map((msg) => {
+      if (msg.key == selectedKey) {
+        if (msg.selected) {
+          return {
+            ...msg,
+            selected: false,
+          };
+        }
+      }
+      return msg;
+    });
+    setmessages(DeSelectedMessages);
   };
 
   const MessagesMenuData = [
@@ -143,8 +210,7 @@ const MessagesScreen = ({ navigation, route }) => {
       AnimatedFunction(sendButtonAnimation, 0, 300);
       setpaddingRight(100);
     }
-  },[value])
-
+  }, [value]);
 
   const AnimateMenu = () => {
     const toValue = MenuOpen ? 0 : 1;
@@ -465,19 +531,31 @@ const MessagesScreen = ({ navigation, route }) => {
         }}
         onClose={() => setIsOpen(false)}
       />
-      <KeyboardAvoidingView style={{ flex: 10, paddingTop: 20}}>
+      <View style={{ flex: 10, paddingTop: 20 }}>
         <ScrollView>
           {messages.map((item, index) => {
             const isEven = index % 2 == 0;
             return (
-              <TouchableNativeFeedback key={item.key}>
+              <TouchableOpacity
+                onPress={() => findMessagesToDeSelect(item.key)}
+                style={{
+                  marginBottom: 10,
+                  backgroundColor: item.selected ? "green" : "transparent",
+                }}
+                onLongPress={() => findMessagesToSelect(item.key)}
+                key={item.key}
+              >
                 <View
                   style={[
                     styles.messagesContainer,
                     { alignSelf: isEven ? "flex-end" : "flex-start" },
                   ]}
                 >
-                  <View style={isEven ? styles.messageCorner : styles.answermessageCorner} />
+                  <View
+                    style={
+                      isEven ? styles.messageCorner : styles.answermessageCorner
+                    }
+                  />
                   <View
                     style={[
                       styles.message,
@@ -502,22 +580,30 @@ const MessagesScreen = ({ navigation, route }) => {
                       </Text>
                       <View style={{ alignSelf: "flex-end", marginTop: 5 }}>
                         <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                          {item.hours}:{item.minutes} {item.am_pm} //
+                          {item.hours}:{item.minutes} {item.am_pm}{" "}
+                          {generateSendTick(item.messageStatus)}
                         </Text>
                       </View>
                     </View>
                   </View>
                 </View>
-              </TouchableNativeFeedback>
+              </TouchableOpacity>
             );
           })}
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
       <View>
         <View
           style={[
             styles.inputContainer,
-            { overflow: "hidden", marginBottom: 10,position:"absolute",bottom:0,left:0,right:50 },
+            {
+              overflow: "hidden",
+              marginBottom: 10,
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 50,
+            },
           ]}
         >
           <View style={[styles.emoji, { alignSelf: "flex-end" }]}>
@@ -561,47 +647,47 @@ const MessagesScreen = ({ navigation, route }) => {
             </MessagesRippleButton>
           </Animated.View>
         </View>
-        <View style={{marginLeft:"86%",marginBottom:5}}>
-        <TouchableOpacity onPress={handleSendMessages}>
-          <View style={[styles.sendButton]}>
-            <Animated.View
-              style={{
-                position: "absolute",
-                zIndex: 99999,
-                transform: [
-                  {
-                    scale: sendButtonAnimation.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [1, 0],
-                    }),
-                  },
-                ],
-              }}
-            >
-              <MaterialIcons
-                name="keyboard-voice"
-                size={25}
-                color={TITLE_COLOR}
-              />
-            </Animated.View>
-            <Animated.View
-              style={{
-                position: "absolute",
-                zIndex: -1,
-                transform: [
-                  {
-                    scale: sendButtonAnimation.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, 1],
-                    }),
-                  },
-                ],
-              }}
-            >
-              <Ionicons name="send" size={24} color={TITLE_COLOR} />
-            </Animated.View>
-          </View>
-        </TouchableOpacity>
+        <View style={{ marginLeft: "86%", marginBottom: 5 }}>
+          <TouchableOpacity onPress={handleSendMessages}>
+            <View style={[styles.sendButton]}>
+              <Animated.View
+                style={{
+                  position: "absolute",
+                  zIndex: 99999,
+                  transform: [
+                    {
+                      scale: sendButtonAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 0],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <MaterialIcons
+                  name="keyboard-voice"
+                  size={25}
+                  color={TITLE_COLOR}
+                />
+              </Animated.View>
+              <Animated.View
+                style={{
+                  position: "absolute",
+                  zIndex: -1,
+                  transform: [
+                    {
+                      scale: sendButtonAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 1],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <Ionicons name="send" size={24} color={TITLE_COLOR} />
+              </Animated.View>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
