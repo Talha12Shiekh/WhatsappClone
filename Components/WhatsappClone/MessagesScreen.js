@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
+  useWindowDimensions
 } from "react-native";
 import { RippleButton } from "./RippleButton";
 import {
@@ -48,12 +49,18 @@ import Menu from "./Menu";
 import { TouchableWithoutFeedback } from "react-native";
 import { FlatList } from "react-native";
 
+const PURPLE = "#765fee";
+const RED = "#fd2e74";
+const PINK = "#c861fa";
+const ORANGE = "#f96632";
+const GREEN = "#1fa755";
+const BLUE = "#029ce2";
+const LIGHTGREEN = "#01a698"
+
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
 
   const ICONS_SIZE = 22;
-
-  // const [messageStatus,setmessageStatus] = useState("single")
 
   const generateSendTick = (messageStatus) => {
     if (messageStatus == "single") {
@@ -61,7 +68,7 @@ const MessagesScreen = ({ navigation, route }) => {
     } else if (messageStatus == "double") {
       return <Ionicons name="checkmark-done" size={13} color={TITLE_COLOR} />;
     } else {
-      return <Ionicons name="checkmark-done" size={13} color={"blue"} />;
+      return <Ionicons name="checkmark-done" size={13} color={"#53bdeb"} />;
     }
   };
 
@@ -95,13 +102,19 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const sendButtonAnimation = useRef(new Animated.Value(0)).current;
 
+  const {height} = useWindowDimensions()
+
   const [isOpen, setIsOpen] = useState(false);
 
   const [MenuOpen, setMenuOpen] = useState(false);
 
   const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
 
-  const MenuAnimation = useRef(new Animated.Value(0)).current;
+  const MenuAnimation = useRef(new Animated.Value(height)).current;
+
+  const MenuItemsAnimation = useRef(new Animated.Value(0)).current;
+
+  const AnimatedView = Animated.createAnimatedComponent(View);
 
   const time = new Date();
   const hours = time.getHours() > 12 ? time.getHours() - 12 : time.getHours();
@@ -212,18 +225,43 @@ const MessagesScreen = ({ navigation, route }) => {
     }
   }, [value]);
 
+  // const AnimateMenu = () => {
+  //   const toValue = MenuOpen ? 0 : height;
+    
+  //   return Animated.timing(MenuAnimation, {
+  //     toValue,
+  //     duration: 500,
+  //     useNativeDriver: true,
+  //   }).start(({ finished }) => {
+  //     AnimatedFunction(MenuItemsAnimation,1,50)
+  //     if (finished) {
+  //       setMenuOpen((opn) => !opn);
+  //     }
+  //   });
+  // };
+
   const AnimateMenu = () => {
-    const toValue = MenuOpen ? 0 : 1;
-    return Animated.timing(MenuAnimation, {
-      toValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) {
-        setMenuOpen((opn) => !opn);
-      }
-    });
-  };
+    const toValue = MenuOpen? 0 : height;
+    Animated.sequence([
+      Animated.timing(MenuItemsAnimation,{
+        toValue:0,
+        duration:100,
+        useNativeDriver:true
+      }),
+      Animated.timing(MenuAnimation,{
+        toValue,
+        duration:500,
+        useNativeDriver:true
+      }),
+      Animated.timing(MenuItemsAnimation,{
+        toValue:1,
+        duration:500,
+        useNativeDriver:true
+      })
+    ]).start(() => {
+      setMenuOpen((opn) => !opn);
+    })
+  }
 
   const MessagesRippleButton = ({ children, onPress, ...rest }) => {
     return (
@@ -454,72 +492,72 @@ const MessagesScreen = ({ navigation, route }) => {
       <Animated.View
         style={[
           styles.messagesMenu,
-          { transform: [{ scaleY: MenuAnimation }], zIndex: 33333333333 },
+          { transform: [{ translateY: MenuAnimation }], zIndex: 3333333333333 },
         ]}
       >
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton, { backgroundColor: "#e91de99c" }]}>
+            <AnimatedView style={[styles.menuButton, { backgroundColor: PURPLE,opacity:MenuItemsAnimation }]}>
               <Ionicons name="document" size={24} color={TITLE_COLOR} />
-            </View>
+            </AnimatedView>
             <Text style={styles.menuText}>Document</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton, { backgroundColor: "red" }]}>
+            <AnimatedView style={[styles.menuButton, { backgroundColor:RED,opacity:MenuItemsAnimation }]}>
               <FontAwesome name="camera" size={24} color={TITLE_COLOR} />
-            </View>
+            </AnimatedView>
             <Text style={styles.menuText}>Camera</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton, { backgroundColor: "pink" }]}>
+            <AnimatedView style={[styles.menuButton, { backgroundColor: PINK,opacity:MenuItemsAnimation }]}>
               <Foundation name="photo" size={24} color={TITLE_COLOR} />
-            </View>
+            </AnimatedView>
             <Text style={styles.menuText}>Gallery</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton, { backgroundColor: "orange" }]}>
+            <AnimatedView style={[styles.menuButton, { backgroundColor: ORANGE,opacity:MenuItemsAnimation }]}>
               <FontAwesome5 name="headphones" size={24} color={TITLE_COLOR} />
-            </View>
+            </AnimatedView>
             <Text style={styles.menuText}>Audio</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton, { backgroundColor: "green" }]}>
+            <AnimatedView style={[styles.menuButton, { backgroundColor: GREEN,opacity:MenuItemsAnimation }]}>
               <Ionicons
                 name="md-location-sharp"
                 size={24}
                 color={TITLE_COLOR}
               />
-            </View>
+            </AnimatedView>
             <Text style={styles.menuText}>Location</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View style={[styles.menuButton, { backgroundColor: "blue" }]}>
+            <AnimatedView style={[styles.menuButton, { backgroundColor: BLUE,opacity:MenuItemsAnimation }]}>
               <Feather name="user" size={24} color={TITLE_COLOR} />
-            </View>
+            </AnimatedView>
             <Text style={styles.menuText}>Contact</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View>
-            <View
-              style={[styles.menuButton, { backgroundColor: "lightgreen" }]}
+            <AnimatedView
+              style={[styles.menuButton, { backgroundColor: LIGHTGREEN,opacity:MenuItemsAnimation }]}
             >
               <MaterialCommunityIcons
                 name="poll"
                 size={24}
                 color={TITLE_COLOR}
               />
-            </View>
+            </AnimatedView>
             <Text style={styles.menuText}>Poll</Text>
           </View>
         </TouchableOpacity>
@@ -536,11 +574,11 @@ const MessagesScreen = ({ navigation, route }) => {
           {messages.map((item, index) => {
             const isEven = index % 2 == 0;
             return (
-              <TouchableOpacity
+              <Pressable
                 onPress={() => findMessagesToDeSelect(item.key)}
                 style={{
                   marginBottom: 10,
-                  backgroundColor: item.selected ? "green" : "transparent",
+                  backgroundColor: item.selected ? "#0080004d" : "transparent",
                 }}
                 onLongPress={() => findMessagesToSelect(item.key)}
                 key={item.key}
@@ -563,7 +601,7 @@ const MessagesScreen = ({ navigation, route }) => {
                         transform: [{ translateX: isEven ? -20 : 20 }],
                         flexDirection: "row",
                         backgroundColor: isEven
-                          ? "green"
+                          ? MESSAGE_BACKGROUND_COLOR
                           : ANSWER_BACKGROUND_COLOR,
                       },
                     ]}
@@ -578,16 +616,22 @@ const MessagesScreen = ({ navigation, route }) => {
                       >
                         {item.message}
                       </Text>
-                      <View style={{ alignSelf: "flex-end", marginTop: 5 }}>
+                      <View style={{ alignSelf: "flex-end", marginTop: 5 ,flexDirection:"row"}}>
+                        <View>
                         <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                          {item.hours}:{item.minutes} {item.am_pm}{" "}
+                          {item.hours}:{item.minutes} {item.am_pm.toLowerCase()}{" "}
+                        </Text>
+                        </View>
+                        {isEven && <View>
+                        <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
                           {generateSendTick(item.messageStatus)}
                         </Text>
+                        </View>}
                       </View>
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </ScrollView>
@@ -603,6 +647,7 @@ const MessagesScreen = ({ navigation, route }) => {
               bottom: 0,
               left: 0,
               right: 50,
+              zIndex:9999999999999999999999999
             },
           ]}
         >
@@ -815,7 +860,7 @@ const styles = StyleSheet.create({
   messageCorner: {
     width: 15,
     height: 15,
-    backgroundColor: "green",
+    backgroundColor: MESSAGE_BACKGROUND_COLOR,
     position: "absolute",
     zIndex: -1,
     right: 12,
