@@ -44,10 +44,11 @@ import {
   CHAT_DATA_STATUS_COLOR,
   MESSAGE_BACKGROUND_COLOR,
 } from "./WhatsappMainScreen";
-import { useEffect, useRef, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import Menu from "./Menu";
 import { TouchableWithoutFeedback } from "react-native";
 import { FlatList } from "react-native";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 const PURPLE = "#765fee";
 const RED = "#fd2e74";
@@ -55,7 +56,9 @@ const PINK = "#c861fa";
 const ORANGE = "#f96632";
 const GREEN = "#1fa755";
 const BLUE = "#029ce2";
-const LIGHTGREEN = "#01a698"
+const LIGHTGREEN = "#01a698";
+const GREEN_MESSAGE_CLICKED_BACKGROUND = "#004133";
+const BLACK_MESSAGE_CLICKED_BACKGROUND = "black";
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
@@ -78,6 +81,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [messages, setmessages] = useState([]);
 
+  const messageRef = useRef(null);
+
   const handleOpenCallScreen = () => {
     setCurrentItem({
       ...item,
@@ -93,6 +98,8 @@ const MessagesScreen = ({ navigation, route }) => {
     });
     navigation.navigate("CallScreen", { item: currentItem });
   };
+
+  let messageStyles = [styles.message];
 
   const [value, setvalue] = useState("");
 
@@ -133,6 +140,7 @@ const MessagesScreen = ({ navigation, route }) => {
       am_pm,
       messageStatus: "single",
       selected: false,
+      ref:createRef(),
     };
 
     setvalue("");
@@ -165,17 +173,18 @@ const MessagesScreen = ({ navigation, route }) => {
     let newMessages = [...messages];
     const SelectedMessages = newMessages.map((msg) => {
       if (msg.key == selectedKey) {
-        return {
-          ...msg,
-          selected: true,
+          return {
+            ...msg,
+            selected: true,
         };
       }
       return msg;
     });
-    setmessages(SelectedMessages);
+      setmessages(SelectedMessages);
   };
 
-  const findMessagesToDeSelect = (selectedKey) => {
+  const findMessagesToDeSelect = (selectedKey,inde) => {
+    
     let newMessages = [...messages];
     const DeSelectedMessages = newMessages.map((msg) => {
       if (msg.key == selectedKey) {
@@ -185,6 +194,25 @@ const MessagesScreen = ({ navigation, route }) => {
             selected: false,
           };
         }
+        if(inde % 2 == 0 ){
+          messageStyles.push(styles.green_selected_background);
+        }else{
+          messageStyles.push(styles.grey_selected_background);
+        }
+        msg.ref.current.setNativeProps({
+          style:messageStyles
+        });
+
+        setTimeout(() => {
+          if(inde % 2 == 0 ){
+            messageStyles.push(styles.message_background_color);
+          }else{
+            messageStyles.push(styles.answer_background_color);
+          }
+          msg.ref.current.setNativeProps({
+            style:messageStyles
+          })
+        }, 1000);
       }
       return msg;
     });
@@ -575,7 +603,8 @@ const MessagesScreen = ({ navigation, route }) => {
             const isEven = index % 2 == 0;
             return (
               <Pressable
-                onPress={() => findMessagesToDeSelect(item.key)}
+                
+                onPress={() => findMessagesToDeSelect(item.key,index)}
                 style={{
                   marginBottom: 10,
                   backgroundColor: item.selected ? "#0080004d" : "transparent",
@@ -594,7 +623,9 @@ const MessagesScreen = ({ navigation, route }) => {
                       isEven ? styles.messageCorner : styles.answermessageCorner
                     }
                   />
+
                   <View
+                    ref={item.ref}
                     style={[
                       styles.message,
                       {
@@ -878,6 +909,18 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 100,
     top: 0,
   },
+  green_selected_background:{
+    backgroundColor:GREEN_MESSAGE_CLICKED_BACKGROUND
+  },
+  grey_selected_background:{
+    backgroundColor:"black"
+  },
+  message_background_color:{
+    backgroundColor:MESSAGE_BACKGROUND_COLOR
+  },
+  answer_background_color:{
+    backgroundColor:ANSWER_BACKGROUND_COLOR
+  }
 });
 
 export default MessagesScreen;
