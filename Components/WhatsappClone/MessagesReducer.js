@@ -1,12 +1,17 @@
 import { createRef } from "react";
 import { StyleSheet } from "react-native";
 import {GREEN_MESSAGE_CLICKED_BACKGROUND,MESSAGE_BACKGROUND_COLOR,ANSWER_BACKGROUND_COLOR} from "./WhatsappMainScreen";
+import AwesomeAlert from 'react-native-awesome-alerts';
+
 
 export const ACTIONS = {
   SEND_MESSAGES: "handleSendMessages",
   SELECT_MESSAGES: "handleSelection",
   DE_SELECT_MESSAGES: "handleDeSelection",
+  DELETE_MESSAGES:"handleDelete",
+  DELETE_FOR_EVERYONE:"handledeleteforeveryone"
 };
+
 
 const time = new Date();
 const hours = time.getHours() > 12 ? time.getHours() - 12 : time.getHours();
@@ -98,6 +103,12 @@ export const MessagesReducer = (state, { type, payload }) => {
         }
         return msg;
       });
+    }
+    case ACTIONS.DELETE_MESSAGES :{
+      return state.filter(msgs => !msgs.selected);
+    }
+    case ACTIONS.DELETE_FOR_EVERYONE :{
+      
     }
     default: {
       return state;
