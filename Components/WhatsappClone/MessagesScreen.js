@@ -71,13 +71,15 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const ICONS_SIZE = 22;
 
+  const TICK_SIZE = 15
+
   const generateSendTick = (messageStatus) => {
     if (messageStatus == "single") {
-      return <MaterialIcons name="done" size={13} color={TITLE_COLOR} />;
+      return <MaterialIcons name="done" size={TICK_SIZE} color={TITLE_COLOR} />;
     } else if (messageStatus == "double") {
-      return <Ionicons name="checkmark-done" size={13} color={TITLE_COLOR} />;
+      return <Ionicons name="checkmark-done" size={TICK_SIZE} color={TITLE_COLOR} />;
     } else {
-      return <Ionicons name="checkmark-done" size={13} color={"#53bdeb"} />;
+      return <Ionicons name="checkmark-done" size={TICK_SIZE} color={"#53bdeb"} />;
     }
   };
 
@@ -148,7 +150,7 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const AnimatedView = Animated.createAnimatedComponent(View);
 
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const MessagesMenuData = [
     { text: "View contact", onPress: () => {}, key: 1 },
@@ -370,7 +372,11 @@ const MessagesScreen = ({ navigation, route }) => {
                     />
                   </RippleButton>
                 ) : null}
-                <RippleButton onPress={() => {}}>
+                <RippleButton onPress={() => {
+                  dispatch({
+                    type:ACTIONS.STARRE_MESSAGES
+                  })
+                }}>
                   <FontAwesome
                     name="star"
                     size={ICONS_SIZE}
@@ -419,22 +425,24 @@ const MessagesScreen = ({ navigation, route }) => {
     });
   });
 
-  function handleShowSelectionInAlert(){
-    if(selectedMessages.length == 1){
-      const indexOFMessage = messages.findIndex(msg => msg.selected);
-      if(indexOFMessage % 2 === 0){
-        return "Delete message ?"
-      }else {
-        return `Delete message from ${item.name}`
+  function handleShowSelectionInAlert() {
+    if (selectedMessages.length == 1) {
+      const indexOFMessage = messages.findIndex((msg) => msg.selected);
+      if (indexOFMessage % 2 === 0) {
+        return "Delete message ?";
+      } else {
+        return `Delete message from ${item.name}`;
       }
     }
   }
 
   const selectedMessageIndices = messages
-  .map((msg, index) => (msg.selected ? index : -1))
-  .filter((index) => index !== -1);
+    .map((msg, index) => (msg.selected ? index : -1))
+    .filter((index) => index !== -1);
 
-  let showDeleteforeveryone = selectedMessageIndices.some(msg => msg % 2 !== 0);
+  let showDeleteforeveryone = selectedMessageIndices.some(
+    (msg) => msg % 2 !== 0
+  );
 
   return (
     <>
@@ -459,7 +467,7 @@ const MessagesScreen = ({ navigation, route }) => {
             <View
               style={{
                 width: "90%",
-                height:!showDeleteforeveryone ? 200 : 120,
+                height: !showDeleteforeveryone ? 200 : 120,
                 backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR,
                 zIndex: 999999999,
                 padding: 20,
@@ -473,7 +481,9 @@ const MessagesScreen = ({ navigation, route }) => {
                     marginLeft: 10,
                   }}
                 >
-                   {selectedMessages.length > 1 ? "Delete " + selectedMessages.length + " messages" : handleShowSelectionInAlert()} 
+                  {selectedMessages.length > 1
+                    ? "Delete " + selectedMessages.length + " messages"
+                    : handleShowSelectionInAlert()}
                 </Text>
               </View>
               <View
@@ -482,51 +492,55 @@ const MessagesScreen = ({ navigation, route }) => {
                   flex: 1,
                   justifyContent: "space-around",
                   marginTop: !showDeleteforeveryone ? 10 : 30,
-                  flexDirection:showDeleteforeveryone ? "row" : "column",
-                  gap:10,
+                  flexDirection: showDeleteforeveryone ? "row" : "column",
+                  gap: 10,
                 }}
               >
-                {!showDeleteforeveryone && <TouchableOpacity onPress={() => {
-                  setModalVisible(v => !v)
-                  dispatch({
-                    type:ACTIONS.DELETE_FOR_EVERYONE
-                  })
-                  }}>
-                  <Text
-                    style={{
-                      textAlign: "right",
-                      color: ACTIVE_TAB_GREEN_COLOR,
-                      fontWeight:'bold'
+                {!showDeleteforeveryone && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setModalVisible((v) => !v);
+                      dispatch({
+                        type: ACTIONS.DELETE_FOR_EVERYONE,
+                      });
                     }}
                   >
-                    Delete for everyone
-                  </Text>
-                </TouchableOpacity>}
+                    <Text
+                      style={{
+                        textAlign: "right",
+                        color: ACTIVE_TAB_GREEN_COLOR,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Delete for everyone
+                    </Text>
+                  </TouchableOpacity>
+                )}
                 <TouchableOpacity
-                  onPress={() =>{
-                    setModalVisible(v => !v)
+                  onPress={() => {
+                    setModalVisible((v) => !v);
                     dispatch({
                       type: ACTIONS.DELETE_MESSAGES,
                       payload: {},
-                    })}
-                  }
+                    });
+                  }}
                 >
                   <Text
                     style={{
                       textAlign: "right",
                       color: ACTIVE_TAB_GREEN_COLOR,
-                      fontWeight:'bold'
+                      fontWeight: "bold",
                     }}
                   >
                     Delete for me
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setModalVisible(v => !v)}>
+                <TouchableOpacity onPress={() => setModalVisible((v) => !v)}>
                   <Text
                     style={{
                       textAlign: "right",
                       color: ACTIVE_TAB_GREEN_COLOR,
-                      fontWeight:'bold'
+                      fontWeight: "bold",
                     }}
                   >
                     Cancel
@@ -745,17 +759,39 @@ const MessagesScreen = ({ navigation, route }) => {
                             flexDirection: ColumnOrRow,
                           }}
                         >
-                          <View>
-                            <Text
-                              style={{
-                                color: TITLE_COLOR,
-                                fontSize: 15,
-                                marginRight: 10,
-                              }}
-                            >
-                              {item.message}
-                            </Text>
-                          </View>
+                          {!item.deleteForEveryone ? (
+                            <View>
+                              <Text
+                                style={{
+                                  color: TITLE_COLOR,
+                                  fontSize: 15,
+                                  marginRight: 10,
+                                }}
+                              >
+                                {item.message}
+                              </Text>
+                            </View>
+                          ) : (
+                            <View style={{flexDirection:"row"}}>
+                              <Text style={{marginRight:5}}>
+                                <MaterialIcons
+                                  name="block-flipped"
+                                  size={20}
+                                  color={INACTIVE_TAB_WHITE_COLOR}
+                                />
+                              </Text>
+                              <Text
+                                style={{
+                                  color: INACTIVE_TAB_WHITE_COLOR,
+                                  fontSize: 15,
+                                  marginRight: 10,
+                                  fontStyle: "italic",
+                                }}
+                              >
+                                You deleted this message
+                              </Text>
+                            </View>
+                          )}
                           <View
                             style={{
                               alignSelf: "flex-end",
@@ -771,7 +807,7 @@ const MessagesScreen = ({ navigation, route }) => {
                                 {item.am_pm.toLowerCase()}{" "}
                               </Text>
                             </View>
-                            {isEven && (
+                            {isEven && !item.deleteForEveryone && (
                               <View>
                                 <Text
                                   style={{ color: TITLE_COLOR, fontSize: 10 }}

@@ -40,7 +40,8 @@ export const FILTER_STORAGE_KEY = "filter_items";
 export const FILTER_CALLS_STORAGE_KEY = "filter_calls";
 export const ANSWER_BACKGROUND_COLOR = "#1f2c34";
 export const EMOJI_BACKGROUND_COLOR = "#86949d";
-export const MESSAGE_BACKGROUND_COLOR = "#005d4b";
+export const MESSAGE_BACKGROUND_COLOR = "#005b49";
+export const GREEN_MESSAGE_CLICKED_BACKGROUND = "#024033"
 export const months = [
   "January",
   "February",
