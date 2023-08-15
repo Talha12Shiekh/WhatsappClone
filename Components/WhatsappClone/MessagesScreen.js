@@ -50,6 +50,9 @@ import {
   EMOJI_BACKGROUND_COLOR,
   CHAT_DATA_STATUS_COLOR,
   MESSAGE_BACKGROUND_COLOR,
+  MODAL_BACKGROUND_COLOR,
+  MODAL_TEXT_COLOR,
+  generateSendTick,
 } from "./WhatsappMainScreen";
 import { createRef, useEffect, useReducer, useRef, useState } from "react";
 import Menu from "./Menu";
@@ -71,18 +74,6 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const ICONS_SIZE = 22;
 
-  const TICK_SIZE = 15
-
-  const generateSendTick = (messageStatus) => {
-    if (messageStatus == "single") {
-      return <MaterialIcons name="done" size={TICK_SIZE} color={TITLE_COLOR} />;
-    } else if (messageStatus == "double") {
-      return <Ionicons name="checkmark-done" size={TICK_SIZE} color={TITLE_COLOR} />;
-    } else {
-      return <Ionicons name="checkmark-done" size={TICK_SIZE} color={"#53bdeb"} />;
-    }
-  };
-
   const [currentItem, setCurrentItem] = useState({
     ...item,
   });
@@ -94,6 +85,8 @@ const MessagesScreen = ({ navigation, route }) => {
   const messagesSelected = messages.some((msg) => msg.selected);
 
   const selectedMessages = messages.filter((msg) => msg.selected);
+
+  const InfoMessages = messages.find(msg => msg.selected);
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
@@ -125,6 +118,7 @@ const MessagesScreen = ({ navigation, route }) => {
     let selectedMessages = messages.filter((msgs) => msgs.selected);
     let msgs = selectedMessages.map((msg) => msg.message).join(" ");
     await Clipboard.setStringAsync(msgs);
+    dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})
     showToast(`${selectedMessages.length} messages copied`);
   };
 
@@ -384,7 +378,10 @@ const MessagesScreen = ({ navigation, route }) => {
                   />
                 </RippleButton>
                 {selectedMessages.length <= 1 ? (
-                  <RippleButton onPress={() => {}}>
+                  <RippleButton onPress={() => {
+                    navigation.navigate("MessagesInfo",{InfoMessages,item})
+                    dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})
+                  }}>
                     <Feather
                       name="info"
                       size={ICONS_SIZE}
@@ -468,7 +465,7 @@ const MessagesScreen = ({ navigation, route }) => {
               style={{
                 width: "90%",
                 height: !showDeleteforeveryone ? 200 : 120,
-                backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR,
+                backgroundColor: MODAL_BACKGROUND_COLOR,
                 zIndex: 999999999,
                 padding: 20,
               }}
@@ -476,7 +473,7 @@ const MessagesScreen = ({ navigation, route }) => {
               <View>
                 <Text
                   style={{
-                    color: TAB_BACKGROUND_COLOR,
+                    color: MODAL_TEXT_COLOR,
                     fontSize: 17,
                     marginLeft: 10,
                   }}

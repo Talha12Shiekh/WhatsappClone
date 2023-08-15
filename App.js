@@ -39,6 +39,7 @@ import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
 import CallScreen from "./Components/WhatsappClone/CallScreen";
+import MessagesInfo from "./Components/WhatsappClone/MessagesInfo";
 
 LogBox.ignoreLogs([
   "Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",
@@ -327,6 +328,11 @@ export default function App() {
           <Stack.Screen
             name="MessagesScreen"
             component={MessagesScreen}
+          />
+          <Stack.Screen
+            name="MessagesInfo"
+            component={MessagesInfo}
+            options={{headerTransparent:true}}
           />
         </Stack.Group>
       </Stack.Navigator>

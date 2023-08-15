@@ -16,7 +16,7 @@ import {
   useIsFocused,
 } from "@react-navigation/native";
 import { showToast } from "./RippleButton";
-import { FontAwesome5, Ionicons, Feather } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons, Feather,MaterialIcons } from "@expo/vector-icons";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -41,7 +41,10 @@ export const FILTER_CALLS_STORAGE_KEY = "filter_calls";
 export const ANSWER_BACKGROUND_COLOR = "#1f2c34";
 export const EMOJI_BACKGROUND_COLOR = "#86949d";
 export const MESSAGE_BACKGROUND_COLOR = "#005b49";
-export const GREEN_MESSAGE_CLICKED_BACKGROUND = "#024033"
+export const GREEN_MESSAGE_CLICKED_BACKGROUND = "#024033";
+export const MODAL_BACKGROUND_COLOR = "#2a3b45";
+export const MODAL_TEXT_COLOR = "#7e8f99";
+const TICK_SIZE = 15
 export const months = [
   "January",
   "February",
@@ -56,6 +59,15 @@ export const months = [
   "November",
   "December",
 ];
+export const generateSendTick = (messageStatus) => {
+  if (messageStatus == "single") {
+    return <MaterialIcons name="done" size={TICK_SIZE} color={TITLE_COLOR} />;
+  } else if (messageStatus == "double") {
+    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={TITLE_COLOR} />;
+  } else {
+    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={"#53bdeb"} />;
+  }
+};
 
 export function generateRandomArrow(arrow) {
   if (arrow == "incoming") {

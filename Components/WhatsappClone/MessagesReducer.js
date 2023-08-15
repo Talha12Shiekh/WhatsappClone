@@ -1,15 +1,19 @@
 import { createRef } from "react";
 import { StyleSheet } from "react-native";
-import {GREEN_MESSAGE_CLICKED_BACKGROUND,MESSAGE_BACKGROUND_COLOR,ANSWER_BACKGROUND_COLOR} from "./WhatsappMainScreen";
-
+import {
+  GREEN_MESSAGE_CLICKED_BACKGROUND,
+  MESSAGE_BACKGROUND_COLOR,
+  ANSWER_BACKGROUND_COLOR,
+} from "./WhatsappMainScreen";
 
 export const ACTIONS = {
   SEND_MESSAGES: "handleSendMessages",
   SELECT_MESSAGES: "handleSelection",
   DE_SELECT_MESSAGES: "handleDeSelection",
-  DELETE_MESSAGES:"handleDelete",
-  DELETE_FOR_EVERYONE:"handledeleteforeveryone",
-  STARRE_MESSAGES:"handleStareMessages"
+  DELETE_MESSAGES: "handleDelete",
+  DELETE_FOR_EVERYONE: "handledeleteforeveryone",
+  STARRE_MESSAGES: "handleStareMessages",
+  COPY_TO_CLIPBOARD: "handleCopyToClipboard",
 };
 
 const time = new Date();
@@ -32,8 +36,18 @@ export const MessagesReducer = (state, { type, payload }) => {
         messageStatus: "single",
         selected: false,
         ref: createRef(),
-        deleteForEveryone:false,
-        starred:false
+        deleteForEveryone: false,
+        starred: false,
+        readedTime: {
+          hours,
+          minutes,
+          am_pm,
+        },
+        deliveredTime: {
+          hours,
+          minutes,
+          am_pm,
+        },
       };
 
       payload.setvalue("");
@@ -42,7 +56,20 @@ export const MessagesReducer = (state, { type, payload }) => {
         // setmessages((prev) =>
         return state.map((msg) =>
           msg.key === messagesObject.key
-            ? { ...msg, messageStatus: "double" }
+            ? {
+                ...msg,
+                messageStatus: "double",
+                readedTime: {
+                  hours,
+                  minutes,
+                  am_pm,
+                },
+                deliveredTime: {
+                  hours,
+                  minutes,
+                  am_pm,
+                },
+              }
             : msg
         );
         // );
@@ -52,7 +79,20 @@ export const MessagesReducer = (state, { type, payload }) => {
       setTimeout(() => {
         return state.map((msg) =>
           msg.key === messagesObject.key
-            ? { ...msg, messageStatus: "triple" }
+            ? {
+                ...msg,
+                messageStatus: "triple",
+                readedTime: {
+                  hours,
+                  minutes,
+                  am_pm,
+                },
+                deliveredTime: {
+                  hours,
+                  minutes,
+                  am_pm,
+                },
+              }
             : msg
         );
       }, 180000);
@@ -105,30 +145,42 @@ export const MessagesReducer = (state, { type, payload }) => {
         return msg;
       });
     }
-    case ACTIONS.DELETE_MESSAGES :{
-      return state.filter(msgs => !msgs.selected);
+    case ACTIONS.DELETE_MESSAGES: {
+      return state.filter((msgs) => !msgs.selected);
     }
-    case ACTIONS.DELETE_FOR_EVERYONE :{
-      return state.map(msg => {
-        if(msg.selected){
+    case ACTIONS.DELETE_FOR_EVERYONE: {
+      return state.map((msg) => {
+        if (msg.selected) {
           return {
             ...msg,
-            deleteForEveryone:true,
-            selected:false
-          }
+            deleteForEveryone: true,
+            selected: false,
+          };
         }
         return msg;
-      })
+      });
     }
-    case ACTIONS.STARRE_MESSAGES:{
-      return state.map(msg => {
-        if(msg.selected){
+    case ACTIONS.STARRE_MESSAGES: {
+      return state.map((msg) => {
+        if (msg.selected) {
           return {
-            ...msg,starred:true
-          }
+            ...msg,
+            starred: true,
+          };
         }
         return msg;
-      })
+      });
+    }
+    case ACTIONS.COPY_TO_CLIPBOARD: {
+      return state.map((msg) => {
+        if (msg.selected) {
+          return {
+            ...msg,
+            selected: false,
+          };
+        }
+        return msg;
+      });
     }
     default: {
       return state;
