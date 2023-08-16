@@ -44,6 +44,7 @@ export const MESSAGE_BACKGROUND_COLOR = "#005b49";
 export const GREEN_MESSAGE_CLICKED_BACKGROUND = "#024033";
 export const MODAL_BACKGROUND_COLOR = "#2a3b45";
 export const MODAL_TEXT_COLOR = "#7e8f99";
+export const BLUE_TICK_BACKGROUND = "#53bdeb";
 const TICK_SIZE = 15
 export const months = [
   "January",
@@ -65,7 +66,7 @@ export const generateSendTick = (messageStatus) => {
   } else if (messageStatus == "double") {
     return <Ionicons name="checkmark-done" size={TICK_SIZE} color={TITLE_COLOR} />;
   } else {
-    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={"#53bdeb"} />;
+    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={BLUE_TICK_BACKGROUND} />;
   }
 };
 

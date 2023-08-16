@@ -53,6 +53,7 @@ import {
   MODAL_BACKGROUND_COLOR,
   MODAL_TEXT_COLOR,
   generateSendTick,
+  CHAT_BACKROUND_COLOR,
 } from "./WhatsappMainScreen";
 import { createRef, useEffect, useReducer, useRef, useState } from "react";
 import Menu from "./Menu";
@@ -260,7 +261,11 @@ const MessagesScreen = ({ navigation, route }) => {
                   </View>
                   <View>
                     <Image
-                      source={{ uri: item.photo }}
+                       source={
+                        item.photo
+                          ? { uri: item.photo }
+                          : require("./Images/profile.png")
+                      }
                       style={styles.messagesImage}
                     />
                   </View>
@@ -441,6 +446,14 @@ const MessagesScreen = ({ navigation, route }) => {
     (msg) => msg % 2 !== 0
   );
 
+  const Container = ({children}) => {
+    if(item.photo){
+      return <ImageBackground resizeMode="cover" source={{uri:item.photo}} style={{flex:1}}>{children}</ImageBackground>
+    }else{
+      return <View style={{flex:1,backgroundColor:CHAT_BACKROUND_COLOR}}>{children}</View>
+    }
+  }
+
   return (
     <>
       <Modal
@@ -548,33 +561,8 @@ const MessagesScreen = ({ navigation, route }) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-      <ImageBackground
-        resizeMode="cover"
-        source={{ uri: item.photo }}
-        style={{ flex: 1 }}
+      <Container
       >
-        {/* <TouchableWithoutFeedback onPress={() => setMenuOpen(true)}>
-        <Animated.View
-          style={[
-            styles.messagesMenu,
-            {
-              zIndex: 222222222222222,
-              width: 50,
-              height: 50,
-              right: 0,
-              backgroundColor: "rgba(0,0,0,.1)",
-              transform: [
-                {
-                  scale: MenuAnimation.interpolate({
-                    inputRange:[0,1],
-                    outputRange:[0,30]
-                  })
-                },
-              ],
-            },
-          ]}
-        />
-      </TouchableWithoutFeedback> */}
         <Animated.View
           style={[
             styles.messagesMenu,
@@ -855,7 +843,7 @@ const MessagesScreen = ({ navigation, route }) => {
               <TextInput
                 placeholderTextColor={EMOJI_BACKGROUND_COLOR}
                 placeholder="Messages"
-                style={[styles.input, { paddingRight: paddingRight }]}
+                style={[styles.input,{paddingRight:paddingRight}]}
                 multiline
                 value={value}
                 onChangeText={(vlue) => setvalue(vlue)}
@@ -938,7 +926,7 @@ const MessagesScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground>
+      </Container>
     </>
   );
 };
