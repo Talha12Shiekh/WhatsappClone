@@ -116,15 +116,15 @@ const MessagesInfo = ({ route }) => {
                 <Text>
                   <Ionicons
                     name="checkmark-done"
-                    size={15}
+                    size={18}
                     color={BLUE_TICK_BACKGROUND}
                   />{" "}
                 </Text>
 
-                <Text style={{ color: TITLE_COLOR, fontSize: 15 }}>Read</Text>
+                <Text style={{ color: TITLE_COLOR, fontSize: 17 }}>Read</Text>
               </View>
 
-              <Text style={{ color: CHAT_DATA_STATUS_COLOR,marginTop:5 }}>
+              <Text style={{ color: CHAT_DATA_STATUS_COLOR,marginTop:2,fontSize:17 }}>
                 8 July, 10:45 pm
               </Text>
             </View>
@@ -135,15 +135,15 @@ const MessagesInfo = ({ route }) => {
                 <Text>
                   <Ionicons
                     name="checkmark-done"
-                    size={15}
+                    size={17}
                     color={CHAT_DATA_STATUS_COLOR}
                   />{" "}
                 </Text>
 
-                <Text style={{ color: TITLE_COLOR, fontSize: 15 }}>Delivered</Text>
+                <Text style={{ color: TITLE_COLOR, fontSize: 17 }}>Delivered</Text>
               </View>
 
-              <Text style={{ color: CHAT_DATA_STATUS_COLOR,marginTop:5 }}>
+              <Text style={{ color: CHAT_DATA_STATUS_COLOR,marginTop:2,fontSize:17 }}>
                 8 July, 10:45 pm
               </Text>
             </View>
@@ -196,12 +196,12 @@ const styles = StyleSheet.create({
   },
   messageInfoContainer: {
     width: "90%",
-    height: 150,
+    height: 160,
     backgroundColor: CHAT_SELECTION_BACKGROUND,
     margin: 20,
   },
   singleInfoMessage: {
-    padding: 10,
+    padding: 12,
   },
   centerLine: {
     height: 1,

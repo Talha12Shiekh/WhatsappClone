@@ -315,7 +315,7 @@ const Chats = ({
                   if(item.selected){
                     findItemstoDeSelect(item.key);
                   }else{
-                    navigation.navigate("MessagesScreen",{item})
+                    navigation.navigate("MessagesScreen",{item,setchats})
                   }
                 },
                 onLongPress: () => {

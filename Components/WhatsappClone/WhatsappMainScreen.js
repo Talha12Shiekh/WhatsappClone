@@ -236,6 +236,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           muted: false,
           readed: false,
           blocked: false,
+          messages:[]
         };
         const callInformation = {
           name,

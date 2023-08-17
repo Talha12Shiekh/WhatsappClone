@@ -17,10 +17,11 @@ export const ACTIONS = {
 };
 
 const time = new Date();
-const hours = time.getHours() > 12 ? time.getHours() - 12 : time.getHours();
-const minutes =
-  time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes();
-const am_pm = time.getHours() >= 12 ? "PM" : "AM";
+const hours = time.getHours();
+const minutes = time.getMinutes();
+const Messagehours = hours > 12 ? hours - 12 : hours;
+const MessageMinutes = minutes > 9 ? minutes : "0" + minutes; 
+const am_pm = hours >= 12 ? "PM" : "AM";
 
 export const MessagesReducer = (state, { type, payload }) => {
   switch (type) {
@@ -29,75 +30,22 @@ export const MessagesReducer = (state, { type, payload }) => {
 
       let messagesObject = {
         message: payload.value,
-        key: Date.now(),
-        hours,
-        minutes,
+        key: Date.now().toString(),
+        hours:Messagehours,
+        minutes:MessageMinutes,
         am_pm,
         messageStatus: "single",
         selected: false,
         ref: createRef(),
+        cornerRef:createRef(),
         deleteForEveryone: false,
         starred: false,
-        readedTime: {
-          hours,
-          minutes,
-          am_pm,
-        },
-        deliveredTime: {
-          hours,
-          minutes,
-          am_pm,
-        },
       };
 
-      payload.setvalue("");
-
-      setTimeout(() => {
-        // setmessages((prev) =>
-        return state.map((msg) =>
-          msg.key === messagesObject.key
-            ? {
-                ...msg,
-                messageStatus: "double",
-                readedTime: {
-                  hours,
-                  minutes,
-                  am_pm,
-                },
-                deliveredTime: {
-                  hours,
-                  minutes,
-                  am_pm,
-                },
-              }
-            : msg
-        );
-        // );
-      }, 60000);
-
-      // After 3 minutes, update message status to "triple" and change color
-      setTimeout(() => {
-        return state.map((msg) =>
-          msg.key === messagesObject.key
-            ? {
-                ...msg,
-                messageStatus: "triple",
-                readedTime: {
-                  hours,
-                  minutes,
-                  am_pm,
-                },
-                deliveredTime: {
-                  hours,
-                  minutes,
-                  am_pm,
-                },
-              }
-            : msg
-        );
-      }, 180000);
-
+      payload.setvalue("")
+      
       return [...state, messagesObject];
+      
     }
     case ACTIONS.SELECT_MESSAGES: {
       let newMessages = [...state];
@@ -114,6 +62,8 @@ export const MessagesReducer = (state, { type, payload }) => {
     case ACTIONS.DE_SELECT_MESSAGES: {
       let newMessages = [...state];
       let messageStyles = [styles.message];
+      let questionMessageCornerStyles = [styles.messageCorner];
+      let answerMessageCornerStyles = [styles.answermessageCorner];
       return newMessages.map((msg) => {
         if (msg.key == payload.key) {
           if (msg.selected) {
@@ -124,21 +74,32 @@ export const MessagesReducer = (state, { type, payload }) => {
           }
           if (payload.index % 2 == 0) {
             messageStyles.push(styles.green_selected_background);
+            questionMessageCornerStyles.push(styles.green_selected_background);
           } else {
             messageStyles.push(styles.grey_selected_background);
+            answerMessageCornerStyles.push(styles.grey_selected_background);
           }
           msg.ref.current.setNativeProps({
             style: messageStyles,
+          });
+          msg.cornerRef.current.setNativeProps({
+            style: payload.index % 2 == 0 ? questionMessageCornerStyles : answerMessageCornerStyles,
           });
 
           setTimeout(() => {
             if (payload.index % 2 == 0) {
               messageStyles.push(styles.message_background_color);
+              questionMessageCornerStyles.push(styles.message_background_color);
             } else {
               messageStyles.push(styles.answer_background_color);
+              answerMessageCornerStyles.push(styles.answer_background_color);
             }
             msg.ref.current.setNativeProps({
               style: messageStyles,
+            });
+
+            msg.cornerRef.current.setNativeProps({
+              style: payload.index % 2 == 0 ? questionMessageCornerStyles : answerMessageCornerStyles,
             });
           }, 1000);
         }
@@ -165,7 +126,8 @@ export const MessagesReducer = (state, { type, payload }) => {
         if (msg.selected) {
           return {
             ...msg,
-            starred: true,
+            starred: !msg.starred,
+            selected:false
           };
         }
         return msg;
@@ -205,5 +167,26 @@ const styles = StyleSheet.create({
   },
   answer_background_color: {
     backgroundColor: ANSWER_BACKGROUND_COLOR,
+  },
+  messageCorner: {
+    width: 15,
+    height: 15,
+    backgroundColor: MESSAGE_BACKGROUND_COLOR,
+    position: "absolute",
+    zIndex: -1,
+    right: 12,
+    borderBottomLeftRadius: 100,
+    top: 0,
+    transform: [{ rotate: "270deg" }],
+  },
+  answermessageCorner: {
+    width: 15,
+    height: 15,
+    backgroundColor: ANSWER_BACKGROUND_COLOR,
+    position: "absolute",
+    zIndex: -1,
+    left: 12,
+    borderBottomLeftRadius: 100,
+    top: 0,
   },
 });

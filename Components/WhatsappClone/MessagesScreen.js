@@ -59,6 +59,7 @@ import { createRef, useEffect, useReducer, useRef, useState } from "react";
 import Menu from "./Menu";
 import { MessagesReducer, ACTIONS } from "./MessagesReducer";
 import { Modal } from "react-native";
+import { Share } from "react-native";
 
 const PURPLE = "#765fee";
 const RED = "#fd2e74";
@@ -71,7 +72,7 @@ const GREEN_MESSAGE_CLICKED_BACKGROUND = "#004133";
 const BLACK_MESSAGE_CLICKED_BACKGROUND = "black";
 
 const MessagesScreen = ({ navigation, route }) => {
-  const { item } = route.params;
+  const { item, setchats } = route.params;
 
   const ICONS_SIZE = 22;
 
@@ -83,11 +84,11 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const messagesNavbarAnimation = useRef(new Animated.Value(0)).current;
 
-  const messagesSelected = messages.some((msg) => msg.selected);
+  const messagesSelected = messages?.some((msg) => msg.selected);
 
-  const selectedMessages = messages.filter((msg) => msg.selected);
+  const selectedMessages = messages?.filter((msg) => msg.selected);
 
-  const InfoMessages = messages.find(msg => msg.selected);
+  const InfoMessages = messages?.find((msg) => msg.selected);
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
@@ -119,7 +120,7 @@ const MessagesScreen = ({ navigation, route }) => {
     let selectedMessages = messages.filter((msgs) => msgs.selected);
     let msgs = selectedMessages.map((msg) => msg.message).join(" ");
     await Clipboard.setStringAsync(msgs);
-    dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})
+    dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
     showToast(`${selectedMessages.length} messages copied`);
   };
 
@@ -223,6 +224,18 @@ const MessagesScreen = ({ navigation, route }) => {
     );
   };
 
+  const ForwardMessages = async () => {
+    let selectedMessages = messages.filter((msgs) => msgs.selected);
+    let msgs = selectedMessages.map((msg) => msg.message).join(" ");
+    try {
+      const result = await Share.share({
+        message: msgs,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   useFocusEffect(() => {
     navigation.setOptions({
       header: () => {
@@ -261,7 +274,7 @@ const MessagesScreen = ({ navigation, route }) => {
                   </View>
                   <View>
                     <Image
-                       source={
+                      source={
                         item.photo
                           ? { uri: item.photo }
                           : require("./Images/profile.png")
@@ -353,7 +366,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 <Text
                   style={{ fontSize: 20, marginLeft: 15, color: TITLE_COLOR }}
                 >
-                  {selectedMessages.length}
+                  {selectedMessages?.length}
                 </Text>
               </View>
               <View
@@ -362,7 +375,7 @@ const MessagesScreen = ({ navigation, route }) => {
                   { justifyContent: "center", alignItems: "center", gap: -5 },
                 ]}
               >
-                {selectedMessages.length <= 1 ? (
+                {selectedMessages?.length <= 1 ? (
                   <RippleButton onPress={() => {}}>
                     <Ionicons
                       name="md-arrow-undo-sharp"
@@ -371,22 +384,29 @@ const MessagesScreen = ({ navigation, route }) => {
                     />
                   </RippleButton>
                 ) : null}
-                <RippleButton onPress={() => {
-                  dispatch({
-                    type:ACTIONS.STARRE_MESSAGES
-                  })
-                }}>
+                <RippleButton
+                  onPress={() => {
+                    dispatch({
+                      type: ACTIONS.STARRE_MESSAGES,
+                    });
+                  }}
+                >
                   <FontAwesome
                     name="star"
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                {selectedMessages.length <= 1 ? (
-                  <RippleButton onPress={() => {
-                    navigation.navigate("MessagesInfo",{InfoMessages,item})
-                    dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})
-                  }}>
+                {selectedMessages?.length <= 1 ? (
+                  <RippleButton
+                    onPress={() => {
+                      navigation.navigate("MessagesInfo", {
+                        InfoMessages,
+                        item,
+                      });
+                      dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
+                    }}
+                  >
                     <Feather
                       name="info"
                       size={ICONS_SIZE}
@@ -412,7 +432,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                <RippleButton>
+                <RippleButton onPress={ForwardMessages}>
                   <Ionicons
                     name="md-arrow-redo-sharp"
                     size={ICONS_SIZE}
@@ -428,7 +448,7 @@ const MessagesScreen = ({ navigation, route }) => {
   });
 
   function handleShowSelectionInAlert() {
-    if (selectedMessages.length == 1) {
+    if (selectedMessages?.length == 1) {
       const indexOFMessage = messages.findIndex((msg) => msg.selected);
       if (indexOFMessage % 2 === 0) {
         return "Delete message ?";
@@ -439,20 +459,32 @@ const MessagesScreen = ({ navigation, route }) => {
   }
 
   const selectedMessageIndices = messages
-    .map((msg, index) => (msg.selected ? index : -1))
-    .filter((index) => index !== -1);
+    ?.map((msg, index) => (msg.selected ? index : -1))
+    ?.filter((index) => index !== -1);
 
-  let showDeleteforeveryone = selectedMessageIndices.some(
+  let showDeleteforeveryone = selectedMessageIndices?.some(
     (msg) => msg % 2 !== 0
   );
 
-  const Container = ({children}) => {
-    if(item.photo){
-      return <ImageBackground resizeMode="cover" source={{uri:item.photo}} style={{flex:1}}>{children}</ImageBackground>
-    }else{
-      return <View style={{flex:1,backgroundColor:CHAT_BACKROUND_COLOR}}>{children}</View>
+  const Container = ({ children }) => {
+    if (item.photo) {
+      return (
+        <ImageBackground
+          resizeMode="cover"
+          source={{ uri: item.photo }}
+          style={{ flex: 1 }}
+        >
+          {children}
+        </ImageBackground>
+      );
+    } else {
+      return (
+        <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
+          {children}
+        </View>
+      );
     }
-  }
+  };
 
   return (
     <>
@@ -491,7 +523,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     marginLeft: 10,
                   }}
                 >
-                  {selectedMessages.length > 1
+                  {selectedMessages?.length > 1
                     ? "Delete " + selectedMessages.length + " messages"
                     : handleShowSelectionInAlert()}
                 </Text>
@@ -561,7 +593,10 @@ const MessagesScreen = ({ navigation, route }) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-      <Container
+      <ImageBackground
+        source={{ uri: item.photo }}
+        resizeMode="cover"
+        style={{ flex: 1 }}
       >
         <Animated.View
           style={[
@@ -684,9 +719,9 @@ const MessagesScreen = ({ navigation, route }) => {
             {messages.map((item, index) => {
               const isEven = index % 2 == 0;
               let ColumnOrRow =
-                item.message.length > messageLenght.length ? "column" : "row";
+                item.message?.length > messageLenght.length ? "column" : "row";
               return (
-                <>
+                <View key={item.key}>
                   <Pressable
                     key={item.key}
                     onPress={() => {
@@ -725,6 +760,7 @@ const MessagesScreen = ({ navigation, route }) => {
                             ? styles.messageCorner
                             : styles.answermessageCorner
                         }
+                        ref={item.cornerRef}
                       />
                       <View
                         ref={item.ref}
@@ -757,8 +793,8 @@ const MessagesScreen = ({ navigation, route }) => {
                               </Text>
                             </View>
                           ) : (
-                            <View style={{flexDirection:"row"}}>
-                              <Text style={{marginRight:5}}>
+                            <View style={{ flexDirection: "row" }}>
+                              <Text style={{ marginRight: 5 }}>
                                 <MaterialIcons
                                   name="block-flipped"
                                   size={20}
@@ -788,6 +824,11 @@ const MessagesScreen = ({ navigation, route }) => {
                               <Text
                                 style={{ color: TITLE_COLOR, fontSize: 10 }}
                               >
+                                {item.starred && <FontAwesome
+                                  name="star"
+                                  size={8}
+                                  color={TITLE_COLOR}
+                                />}{" "}
                                 {item.hours}:{item.minutes}{" "}
                                 {item.am_pm.toLowerCase()}{" "}
                               </Text>
@@ -806,7 +847,7 @@ const MessagesScreen = ({ navigation, route }) => {
                       </View>
                     </View>
                   </Pressable>
-                </>
+                </View>
               );
             })}
           </ScrollView>
@@ -843,7 +884,7 @@ const MessagesScreen = ({ navigation, route }) => {
               <TextInput
                 placeholderTextColor={EMOJI_BACKGROUND_COLOR}
                 placeholder="Messages"
-                style={[styles.input,{paddingRight:paddingRight}]}
+                style={[styles.input, { paddingRight: paddingRight }]}
                 multiline
                 value={value}
                 onChangeText={(vlue) => setvalue(vlue)}
@@ -926,7 +967,7 @@ const MessagesScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </Container>
+      </ImageBackground>
     </>
   );
 };
