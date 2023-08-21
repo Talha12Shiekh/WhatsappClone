@@ -31,6 +31,7 @@ import { ACTIVE_TAB_GREEN_COLOR } from "./WhatsappMainScreen";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { showToast } from "./RippleButton";
 import { DummyChats } from "./DummyChats";
+import { useArchivedContext, useChatsContext } from "../../App";
 
 if (
   Platform.OS === "android" &&
@@ -40,11 +41,7 @@ if (
 }
 
 const Chats = ({
-  chats,
-  setchats,
   opensearchBar,
-  archived,
-  setarchived,
   handleChatsMaking,
   isEnabled,
   setcurrentTabIndex
@@ -52,6 +49,10 @@ const Chats = ({
   const navigation = useNavigation();
   const animation = useRef(new Animated.Value(0)).current;
   const [open, setopen] = useState(false);
+
+  const {archived,setarchived} = useArchivedContext()
+
+  const {chats,setchats} = useChatsContext()
 
   const checkedAnimaton = new Animated.Value(0);
   const [margin, setmargin] = useState(0);
@@ -134,11 +135,7 @@ const Chats = ({
           false
         )}
         onPress={() =>
-          navigation.navigate("Archived", {
-            archived,
-            setchats,
-            setarchived,
-          })
+          navigation.navigate("Archived")
         }
       >
         <View
@@ -346,7 +343,6 @@ const Chats = ({
         animation={animation}
         open={open}
         setopen={setopen}
-        chats={chats}
         handleChatsMaking={handleChatsMaking}
       />
     </KeyboardAvoidingView>

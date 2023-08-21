@@ -36,31 +36,32 @@ import {
   useNavigationState,
   useRoute,
 } from "@react-navigation/native";
+import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext } from "../../App";
 
 const WhatsAppNavbar = ({
-  selected,
-  chats,
-  setchats,
   opensearchBar,
   setopensearchBar,
   FileredChats,
   setFileredChats,
-  archived,
-  setarchived,
   handleChatsMaking,
   currentTabIndex,
   setactiveRoute,
   activeRoute,
-  storeChats,
-  callChats,
-  setcallChats,
   storeCallChats,
-  calls,
-  setcalls,
   setcallFilterChats,
-  callFilterChats
+  callFilterChats,
 }) => {
   // *! DATA OF THE BADGES IN THE NAVBAR
+
+  const {callChats,setcallChats} = useCallsChatsContext()
+
+  const {chats,setchats} = useChatsContext();
+
+  const {calls,setcalls} = useCallsContext();
+
+  const { setarchived } = useArchivedContext();
+
+  const selected = chats.some((chat) => chat.selected);
 
   const badgesData = [
     { badgeText: "Unread", badgeIcons: "mark-chat-unread", size: 22, key: 1 },
@@ -78,7 +79,7 @@ const WhatsAppNavbar = ({
   let screens = ["Community", "Chats","Status","Calls"];
 
   useEffect(() => {
-    setactiveRoute(screens[currentTabIndex]);
+      setactiveRoute(screens[currentTabIndex]);
   },[currentTabIndex])
 
 
@@ -289,7 +290,7 @@ const WhatsAppNavbar = ({
         unSelectChatsArchived.length > 1 ? "s" : ""
       } Archieved`
     );
-  }, [chats, setchats, setFileredChats, setarchived]);
+  }, [chats, setchats, setFileredChats]);
 
   // *! FUNCTION TO FILTER THE CHAT
 
@@ -411,7 +412,7 @@ const WhatsAppNavbar = ({
   useEffect(() => {
     if (activeRoute == "Community") {
       const UpDatedData = [{ text: "Settings", onPress: () => {
-        navigation.navigate("Settings",{handleChatsMaking,chats})
+        navigation.navigate("Settings",{handleChatsMaking})
       }, key: 10 }];
       setMenuData(UpDatedData);
     }else {
@@ -439,7 +440,7 @@ const WhatsAppNavbar = ({
         },
         { text: "Starred Messages", onPress: () => {}, key: 4 },
         { text: "Settings", onPress: () => {
-          navigation.navigate("Settings",{handleChatsMaking,chats})
+          navigation.navigate("Settings",{handleChatsMaking})
         }, key: 5 },
       ];
       setMenuData(UpDatedData);

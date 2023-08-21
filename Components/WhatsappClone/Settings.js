@@ -9,13 +9,15 @@ import Chat from "./Chat";
 import { FlatList } from "react-native";
 import { Image } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { useChatsContext } from "../../App";
 
 const Settings = ({ route ,navigation }) => {
-  const { handleChatsMaking ,chats } = route.params;
+  const { handleChatsMaking  } = route.params;
+
+  const {chats} = useChatsContext();
 
   const findtItemsToEdit = (id) => {
-    let editedChats = [...chats];
-    const findedChattoEdit = editedChats.find(chat => chat.key == id);
+    const findedChattoEdit = chats.find(chat => chat.key == id);
     navigation.navigate("Profile",{handleChatsMaking,findedChattoEdit,edited:true});
   }
 

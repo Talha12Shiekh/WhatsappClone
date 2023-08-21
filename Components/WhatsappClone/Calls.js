@@ -29,6 +29,7 @@ import {
 } from "@expo/vector-icons";
 import Chat from "./Chat";
 import { ChatGreenLeftComponent, ClosenavbarAnimation, RippleButton, navbarAnimation } from "./RippleButton";
+import { useCallsChatsContext, useCallsContext, useChatsContext } from "../../App";
 
 const CALLS_BUTTON = [
   {
@@ -42,16 +43,16 @@ const CALLS_BUTTON = [
 ];
 
 const Calls = ({
-  calls,
-  setcalls,
-  callChats,
   navigation,
   setcurrentTabIndex,
-  chats,
-  setchats,
   setcallFilterChats
 }) => {
-  const isFocused = useIsFocused()
+  const isFocused = useIsFocused();
+
+
+  const {callChats} = useCallsChatsContext();
+
+  const {calls,setcalls} = useCallsContext();
 
   useEffect(() => {
     if(isFocused){
@@ -129,12 +130,8 @@ const Calls = ({
             NotshowChatMakingDate: false,
             onPress: () => {
               navigation.navigate("CallDetails", {
-                callChats,
-                setcalls,
-                calls,
                 setcallFilterChats,
                 setRepatedDates,
-                chats
               });
             },
           };
@@ -266,7 +263,7 @@ const Calls = ({
                 if(item.selected){
                   findItemstoDeSelect(item.key)
                 }else {
-                  navigation.navigate("CallInfo", { item,calls,setcalls,chats,setchats,repeatedDates });
+                  navigation.navigate("CallInfo", { item,calls,setcalls,repeatedDates });
                 }
               },
               onLongPress: () => {

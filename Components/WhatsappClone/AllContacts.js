@@ -15,10 +15,13 @@ import {
   CHAT_DATA_STATUS_COLOR,
   TAB_BACKGROUND_COLOR,
 } from "./WhatsappMainScreen";
+import { useChatsContext } from "../../App";
 
 
 const AllContacts = ({ route ,navigation}) => {
-  const { chats,handleChatsMaking } = route.params;
+  const { handleChatsMaking } = route.params;
+
+  const {chats} = useChatsContext();
 
   const sections = [
     {
@@ -125,11 +128,3 @@ const AllContacts = ({ route ,navigation}) => {
 };
 
 export default AllContacts;
-
-const styles = StyleSheet.create({});
-
-
-
-
-// [{"about": "Hello world how are you", "date": 12, "key": "1683877196460", "month": 4, "name": "Talha Shiekh", "number": "0321494671", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/015d66f8-7cd6-4971-a82b-37a47f1af1cf.jpeg", "year": 2023}, {"about": "Bdbdbdbbd", "date": 12, "key": "1683877303873", "month": 4, "name": "Ndndndndn", "number": "959595", "photo": "", "year":
-// 2023}, {"about": "No one can take place of friends", "date": 12, "key": "1683877402187", "month": 4, "name": "Friends", "number": "032222222222", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/96081276-6c22-4067-a269-f31577b99109.jpeg", "year": 2023}, {"about": "Obsessed", "date": 12, "key": "1683877435232", "month": 4, "name": "Specification ", "number": "0000000000", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/498da7a4-e75c-44c7-9fb1-09d236e00f28.jpeg", "year": 2023}, {"about": "With marcadise ", "date": 12, "key": "1683877475542", "month": 4, "name": "Talha Shiekh", "number": "03214946471", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/c093d341-747e-4e10-acf6-7d65e3b5cecb.jpeg", "year": 2023}, {"about": "Eid day 1", "date": 12, "key": "1683877512737", "month": 4, "name": "Talha Shiekh", "number": "03214946471", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/069b8399-6759-4233-90f3-ee03fe28bcbd.jpeg", "year": 2023}, {"about": "Eid day 2", "date": 12, "key": "1683877544664", "month": 4, "name": "Talha Shiekh", "number": "03214946471", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/bae154f1-8cf6-436b-84d8-40afcb36bc6a.jpeg", "year": 2023}, {"about": "Eid day 3", "date": 12, "key": "1683877577775", "month": 4, "name": "Talha Shiekh", "number": "03214946471", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/be25ce52-ab50-43c8-a880-0a2c5e33340c.jpeg", "year": 2023}, {"about": "Shogran", "date": 12, "key": "1683877620337", "month": 4, "name": "Talha Shiekh", "number": "03214946471", "photo": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Freact_native_ultimate_projects-a1bbaa6f-a3c1-4216-b247-c000bbd2640e/ImagePicker/b92b9896-a2e7-4f2b-82d6-e91aa10422b3.jpeg", "year": 2023}]

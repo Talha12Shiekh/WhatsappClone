@@ -30,14 +30,18 @@ import {
 } from "./RippleButton";
 import { useFocusEffect } from "@react-navigation/native";
 import Menu from "./Menu";
+import { useArchivedContext, useChatsContext } from "../../App";
 
 const Archived = ({ route, navigation }) => {
   const checkedAnimaton = new Animated.Value(0);
 
-  const { setchats, setarchived } = route.params;
+  const { setarchived,archived } = useArchivedContext()
+
+  const {setchats} = useChatsContext()
+
   const archivedNavbarAnimation = useRef(new Animated.Value(0)).current;
 
-  const [archived, setArchived] = useState(route.params.archived);
+  // const [archived, setArchived] = useState(route.params.archived);
 
   const selected = archived.some((chat) => chat.selected);
 
@@ -70,7 +74,6 @@ const Archived = ({ route, navigation }) => {
         {
           text: "Delete chat",
           onPress: () => {
-            setArchived(deletedChats);
             setarchived(deletedChats);
           },
         },
@@ -94,7 +97,6 @@ const Archived = ({ route, navigation }) => {
     setchats((prevChat) => [...prevChat, ...unSelectSelectedChats]);
 
     const unSelectedChats = newChats.filter((chat) => !chat.selected);
-    setArchived(unSelectedChats);
     setarchived(unSelectedChats);
   };
 
@@ -137,7 +139,7 @@ const Archived = ({ route, navigation }) => {
           }
           return chat;
         });
-        setArchived(readedChats);
+        setarchived(readedChats);
       },
     },
   ];
@@ -296,7 +298,7 @@ const Archived = ({ route, navigation }) => {
       }
       return chat;
     });
-    setArchived(SelectedArchiveChats);
+    setarchived(SelectedArchiveChats);
   };
 
   const findArchiveItemsToDeSelect = (key) => {
@@ -310,7 +312,7 @@ const Archived = ({ route, navigation }) => {
       }
       return chat;
     });
-    setArchived(SelectedArchiveChats);
+    setarchived(SelectedArchiveChats);
   };
 
   return (

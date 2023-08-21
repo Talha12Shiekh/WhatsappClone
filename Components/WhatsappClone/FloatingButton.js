@@ -17,7 +17,7 @@ import {
 } from "./WhatsappMainScreen";
 import { useNavigation } from "@react-navigation/native";
 
-const FloatingButton = ({ onPress, ToggleOpen, animation,chats,handleChatsMaking }) => {
+const FloatingButton = ({ onPress, ToggleOpen, animation,handleChatsMaking }) => {
   const navigation = useNavigation()
   const reloadStyle = {
     transform: [
@@ -104,7 +104,7 @@ const FloatingButton = ({ onPress, ToggleOpen, animation,chats,handleChatsMaking
         ]}
       >
         <TouchableNativeFeedback
-            onPress={() => navigation.navigate("AllContacts",{chats,handleChatsMaking})}
+            onPress={() => navigation.navigate("AllContacts",{handleChatsMaking})}
           background={TouchableNativeFeedback.Ripple(TITLE_COLOR, true)}
         >
           <View style={[styles.button, { bottom: 0, right: 0 }]}>

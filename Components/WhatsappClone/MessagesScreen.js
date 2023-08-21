@@ -72,7 +72,7 @@ const GREEN_MESSAGE_CLICKED_BACKGROUND = "#004133";
 const BLACK_MESSAGE_CLICKED_BACKGROUND = "black";
 
 const MessagesScreen = ({ navigation, route }) => {
-  const { item, setchats } = route.params;
+  const { item} = route.params;
 
   const ICONS_SIZE = 22;
 

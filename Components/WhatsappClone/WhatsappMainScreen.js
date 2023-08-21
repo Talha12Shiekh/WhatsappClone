@@ -17,6 +17,8 @@ import {
 } from "@react-navigation/native";
 import { showToast } from "./RippleButton";
 import { FontAwesome5, Ionicons, Feather,MaterialIcons } from "@expo/vector-icons";
+import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext } from "../../App";
+import { useDeferredValue } from "react";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -89,13 +91,13 @@ export function generateRandomArrow(arrow) {
 }
 
 const WhatsappMainScreen = ({ isEnabled }) => {
-  const [chats, setchats] = useState([]);
+  const {chats,setchats} = useChatsContext();
 
-  const [calls, setcalls] = useState([]);
+  const {calls,setcalls} = useCallsContext();
 
-  const [archived, setarchived] = useState([]);
+  const {archived,setarchived} = useArchivedContext();
 
-  const [callChats, setcallChats] = useState([]);
+  const {callChats,setcallChats} = useCallsChatsContext();  
 
   const [callFilterChats, setcallFilterChats] = useState([]);
 
@@ -178,6 +180,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const [opensearchBar, setopensearchBar] = useState(false);
 
+  const [currentTabIndex, setcurrentTabIndex] = useState(1);
+
+  const [activeRoute, setactiveRoute] = useState("Chats");
+
   const time = new Date();
 
   const date = time.getDate();
@@ -251,22 +257,21 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           setchats((chts) => [...chts, ChatInformation]);
           setFileredChats((chts) => [...chts, ChatInformation]);
         } else {
-          let newChats = [...chats];
           let newCalls = [...calls];
-          const ChatToEdit = newChats.findIndex(
+          const ChatToEdit = chats.findIndex(
             (chat) => chat.key == editedKey
           );
           const CallToEdit = newCalls.find(
-            (call) => call.name == newChats[ChatToEdit].name
+            (call) => call.name == chats[ChatToEdit].name
           );
-          newChats[ChatToEdit] = {
+          chats[ChatToEdit] = {
             name,
             number,
             about,
-            key: newChats[ChatToEdit].key,
-            date: newChats[ChatToEdit].date,
-            month: newChats[ChatToEdit].month,
-            year: newChats[ChatToEdit].year,
+            key: chats[ChatToEdit].key,
+            date: chats[ChatToEdit].date,
+            month: chats[ChatToEdit].month,
+            year: chats[ChatToEdit].year,
             photo,
             type: "chat",
             selected: false,
@@ -278,7 +283,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           if (CallToEdit) {
             CallToEdit.name = name;
           }
-          setchats(newChats);
+          setchats(chats);
           setcalls([...calls]);
           showToast("Chat edited successfully !");
           edited = false;
@@ -337,40 +342,24 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     );
   };
 
-  const findSelected = chats.some((chat) => chat.selected);
-
-  const [currentTabIndex, setcurrentTabIndex] = useState(0);
-
-  const [activeRoute, setactiveRoute] = useState("Chats");
-
   return (
     <SafeAreaProvider>
       <WhatsAppNavbar
-        selected={findSelected}
-        chats={chats}
-        setchats={setchats}
         opensearchBar={opensearchBar}
         setopensearchBar={setopensearchBar}
         FileredChats={FileredChats}
         setFileredChats={setFileredChats}
-        archived={archived}
-        setarchived={setarchived}
         handleChatsMaking={handleChatsMaking}
         currentTabIndex={currentTabIndex}
         setactiveRoute={setactiveRoute}
         activeRoute={activeRoute}
         storeChats={storeChats}
-        callChats={callChats}
         callFilterChats={callFilterChats}
         setcallFilterChats={setcallFilterChats}
-        setcallChats={setcallChats}
         storeCallChats={storeCallChats}
-        calls={calls}
-        setcalls={setcalls}
       />
       <Tab.Navigator
         initialRouteName="Chats"
-        onStateChange={(state) => console.log("talha shiekh")}
         screenOptions={({ route }) => ({
           tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
@@ -446,13 +435,9 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             return (
               <Chats
                 {...props}
-                chats={chats}
-                setchats={setchats}
                 opensearchBar={opensearchBar}
                 FileredChats={FileredChats}
                 setFileredChats={setFileredChats}
-                archived={archived}
-                setarchived={setarchived}
                 handleChatsMaking={handleChatsMaking}
                 isEnabled={isEnabled}
                 setcurrentTabIndex={setcurrentTabIndex}
@@ -472,12 +457,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             return (
               <Calls
                 {...props}
-                calls={calls}
-                setcalls={setcalls}
                 setcurrentTabIndex={setcurrentTabIndex}
-                chats={chats}
-                setchats={setchats}
-                callChats={callChats}
                 setcallFilterChats={setcallFilterChats}
               />
             );

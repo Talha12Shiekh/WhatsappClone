@@ -33,9 +33,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import Menu from "./Menu";
 import { useRef } from "react";
 import { Alert } from "react-native";
+import { useCallsContext, useChatsContext } from "../../App";
 const CallInfo = ({ route, navigation }) => {
-  const { item, calls, setcalls, chats, setchats, repeatedDates } =
+  const { item, repeatedDates } =
     route.params;
+
+  const {calls,setcalls} = useCallsContext()
+
+  const {chats, setchats} = useChatsContext();
 
   const CallArray = repeatedDates
     .map((element) => {

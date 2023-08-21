@@ -27,10 +27,17 @@ import {
 } from "react-native-gesture-handler";
 import CallButton from "./Button";
 import { Ionicons } from "@expo/vector-icons";
+import { useCallsChatsContext, useCallsContext, useChatsContext } from "../../App";
 
 const CallDetails = ({ route, navigation }) => {
-  const { callChats, setcalls, calls, setcallFilterChats, setRepatedDates ,chats} =
+  const {setcallFilterChats, setRepatedDates} =
     route.params;
+
+  const {chats} = useChatsContext();
+
+  const {callChats} = useCallsChatsContext();
+
+  const { setcalls, calls} = useCallsContext()  
 
   const [items, setItems] = useState([]);
 

@@ -48,6 +48,7 @@ const Profile = ({ route, navigation }) => {
 
   const handleSubmitModel = () => {
     const { name, number, about, photo } = chatinformation;
+
     if(edited){
       handleChatsMaking(name, number, about, photo,edited,findedChattoEdit.key);
     }else{

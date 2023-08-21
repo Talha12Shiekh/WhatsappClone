@@ -18,7 +18,6 @@ const CommunityComponent = ({
   title,
   para,
   btnText,
-  handleChatsMaking,
   imagepath,
   onPress
 }) => {
