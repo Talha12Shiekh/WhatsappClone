@@ -17,7 +17,7 @@ import {
 } from "@react-navigation/native";
 import { showToast } from "./RippleButton";
 import { FontAwesome5, Ionicons, Feather,MaterialIcons } from "@expo/vector-icons";
-import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext } from "../../App";
+import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
 import { useDeferredValue } from "react";
 
 const Tab = createMaterialTopTabNavigator();
@@ -91,15 +91,17 @@ export function generateRandomArrow(arrow) {
 }
 
 const WhatsappMainScreen = ({ isEnabled }) => {
-  const {chats,setchats} = useChatsContext();
+  const {chats,setchats,storeChats} = useChatsContext();
 
-  const {calls,setcalls} = useCallsContext();
+  const {calls,setcalls,storeCalls} = useCallsContext();
 
-  const {archived,setarchived} = useArchivedContext();
+  const {archived,setarchived,storeArchivedChats} = useArchivedContext();
 
-  const {callChats,setcallChats} = useCallsChatsContext();  
+  const {callChats,setcallChats,storeCallChats} = useCallsChatsContext();  
 
-  const [callFilterChats, setcallFilterChats] = useState([]);
+  const {callFilterChats,setcallFilterChats,storeFilterCalls} = useCallsFilterChatsContext();
+
+  const {FileredChats, setFileredChats,storeFilterChats} = useFilterChatsContext()
 
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
@@ -176,7 +178,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     getFilterCalls();
   }, []);
 
-  const [FileredChats, setFileredChats] = useState([]);
 
   const [opensearchBar, setopensearchBar] = useState(false);
 
@@ -191,36 +192,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   const month = time.getMonth();
 
   const year = time.getFullYear();
-
-  const storeChats = async () => {
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
-  };
-
-  const storeFilterChats = async () => {
-    await AsyncStorage.setItem(
-      FILTER_STORAGE_KEY,
-      JSON.stringify(FileredChats)
-    );
-  };
-
-  const storeArchivedChats = async () => {
-    await AsyncStorage.setItem(ARCHIVED_STORAGE_KEY, JSON.stringify(archived));
-  };
-
-  const storeCallChats = async () => {
-    await AsyncStorage.setItem(CALLS_STORAGE_KEY, JSON.stringify(callChats));
-  };
-
-  const storeCalls = async () => {
-    await AsyncStorage.setItem(CALLS_KEY, JSON.stringify(calls));
-  };
-
-  const storeFilterCalls = async () => {
-    await AsyncStorage.setItem(
-      FILTER_CALLS_STORAGE_KEY,
-      JSON.stringify(callFilterChats)
-    );
-  };
 
   const handleChatsMaking = useCallback(
     (name, number, about, photo, edited, editedKey) => {
@@ -293,7 +264,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         storeCalls();
       }
     },
-    [chats, calls, callFilterChats, FileredChats]
+    [chats, calls, callFilterChats, FileredChats,name, number, about, photo, edited, editedKey]
   );
 
   useEffect(() => {
@@ -347,16 +318,10 @@ const WhatsappMainScreen = ({ isEnabled }) => {
       <WhatsAppNavbar
         opensearchBar={opensearchBar}
         setopensearchBar={setopensearchBar}
-        FileredChats={FileredChats}
-        setFileredChats={setFileredChats}
         handleChatsMaking={handleChatsMaking}
         currentTabIndex={currentTabIndex}
         setactiveRoute={setactiveRoute}
         activeRoute={activeRoute}
-        storeChats={storeChats}
-        callFilterChats={callFilterChats}
-        setcallFilterChats={setcallFilterChats}
-        storeCallChats={storeCallChats}
       />
       <Tab.Navigator
         initialRouteName="Chats"
@@ -436,8 +401,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
               <Chats
                 {...props}
                 opensearchBar={opensearchBar}
-                FileredChats={FileredChats}
-                setFileredChats={setFileredChats}
                 handleChatsMaking={handleChatsMaking}
                 isEnabled={isEnabled}
                 setcurrentTabIndex={setcurrentTabIndex}
@@ -458,7 +421,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
               <Calls
                 {...props}
                 setcurrentTabIndex={setcurrentTabIndex}
-                setcallFilterChats={setcallFilterChats}
               />
             );
           }}

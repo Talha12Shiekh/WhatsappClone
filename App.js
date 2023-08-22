@@ -7,10 +7,17 @@ import WhatsappMainScreen, {
   CHAT_BACKROUND_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
+  STORAGE_KEY,
+  FILTER_STORAGE_KEY,
+  ARCHIVED_STORAGE_KEY,
+  CALLS_STORAGE_KEY,
+  CALLS_KEY,
+  FILTER_CALLS_STORAGE_KEY,
 } from "./Components/WhatsappClone/WhatsappMainScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import CommunityComponent from "./Components/WhatsappClone/CommunityComponent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Profile from "./Components/WhatsappClone/Profile";
 import AllContacts from "./Components/WhatsappClone/AllContacts";
 import Archived from "./Components/WhatsappClone/Archived";
@@ -49,6 +56,8 @@ export const ChatsContext = createContext([]);
 export const CallsContext = createContext([]);
 export const ArchivedContext = createContext([]);
 export const CallChatsContext = createContext([]);
+export const CallFilterChatsContext = createContext([]);
+export const FilterChatsContext = createContext([]);
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -92,7 +101,7 @@ export default function App() {
     );
   };
 
-  const LinkedDevices = ({ handleChatsMaking }) => {
+  const LinkedDevices = () => {
     const navigation = useNavigation();
 
     const [isscanned, setisscanned] = useState(false);
@@ -110,7 +119,6 @@ export default function App() {
             para="Use Whatsapp on Web,Desktop and other devices"
             btnText="Link a device"
             imagepath={require("./Components/WhatsappClone/Images/connection.png")}
-            handleChatsMaking={handleChatsMaking}
             onPress={() => {
               navigation.navigate("BarCodeScanner", { setisscanned });
             }}
@@ -229,12 +237,59 @@ export default function App() {
     const [calls, setcalls] = useState([]);
     const [archived, setarchived] = useState([]);
     const [callChats, setcallChats] = useState([]);
+    const [callFilterChats, setcallFilterChats] = useState([]);
+    const [FileredChats, setFileredChats] = useState([]);
+
+    const storeChats = async () => {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+    };
+
+    const storeFilterChats = async () => {
+      await AsyncStorage.setItem(
+        FILTER_STORAGE_KEY,
+        JSON.stringify(FileredChats)
+      );
+    };
+
+    const storeArchivedChats = async () => {
+      await AsyncStorage.setItem(
+        ARCHIVED_STORAGE_KEY,
+        JSON.stringify(archived)
+      );
+    };
+
+    const storeCallChats = async () => {
+      await AsyncStorage.setItem(CALLS_STORAGE_KEY, JSON.stringify(callChats));
+    };
+
+    const storeCalls = async () => {
+      await AsyncStorage.setItem(CALLS_KEY, JSON.stringify(calls));
+    };
+
+    const storeFilterCalls = async () => {
+      await AsyncStorage.setItem(
+        FILTER_CALLS_STORAGE_KEY,
+        JSON.stringify(callFilterChats)
+      );
+    };
     return (
-      <ChatsContext.Provider value={{ chats, setchats }}>
-        <CallsContext.Provider value={{ calls, setcalls }}>
-          <ArchivedContext.Provider value={{ archived, setarchived }}>
-            <CallChatsContext.Provider value={{ callChats, setcallChats }}>
-              {children}
+      <ChatsContext.Provider value={{ chats, setchats, storeChats }}>
+        <CallsContext.Provider value={{ calls, setcalls, storeCalls }}>
+          <ArchivedContext.Provider
+            value={{ archived, setarchived, storeArchivedChats }}
+          >
+            <CallChatsContext.Provider
+              value={{ callChats, setcallChats, storeCallChats }}
+            >
+              <CallFilterChatsContext.Provider
+                value={{ callFilterChats, setcallFilterChats, storeFilterCalls }}
+              >
+                <FilterChatsContext.Provider
+                  value={{ FileredChats, setFileredChats, storeFilterChats }}
+                >
+                  {children}
+                </FilterChatsContext.Provider>
+              </CallFilterChatsContext.Provider>
             </CallChatsContext.Provider>
           </ArchivedContext.Provider>
         </CallsContext.Provider>
@@ -369,4 +424,10 @@ export function useArchivedContext() {
 }
 export function useCallsChatsContext() {
   return useContext(CallChatsContext);
+}
+export function useCallsFilterChatsContext() {
+  return useContext(CallFilterChatsContext);
+}
+export function useFilterChatsContext() {
+  return useContext(FilterChatsContext);
 }

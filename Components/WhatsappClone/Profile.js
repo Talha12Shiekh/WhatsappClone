@@ -157,7 +157,7 @@ const Profile = ({ route, navigation }) => {
           )}
         </View>
       </View>
-      <KeyboardAvoidingView behavior="position">
+      <KeyboardAvoidingView enabled behavior="position">
         <ScrollView>
           <View style={styles.inputsContainer}>
             <View style={{ marginTop: 15 }}>

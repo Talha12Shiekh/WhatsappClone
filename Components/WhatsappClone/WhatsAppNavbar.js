@@ -36,30 +36,29 @@ import {
   useNavigationState,
   useRoute,
 } from "@react-navigation/native";
-import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext } from "../../App";
+import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
 
 const WhatsAppNavbar = ({
   opensearchBar,
   setopensearchBar,
-  FileredChats,
-  setFileredChats,
   handleChatsMaking,
   currentTabIndex,
   setactiveRoute,
   activeRoute,
-  storeCallChats,
-  setcallFilterChats,
-  callFilterChats,
 }) => {
   // *! DATA OF THE BADGES IN THE NAVBAR
 
-  const {callChats,setcallChats} = useCallsChatsContext()
+  const {callChats,setcallChats,storeCallChats} = useCallsChatsContext()
 
   const {chats,setchats} = useChatsContext();
 
   const {calls,setcalls} = useCallsContext();
 
   const { setarchived } = useArchivedContext();
+
+  const {callFilterChats,setcallFilterChats} = useCallsFilterChatsContext();
+
+  const { FileredChats,setFileredChats } = useFilterChatsContext();
 
   const selected = chats.some((chat) => chat.selected);
 
@@ -305,11 +304,11 @@ const WhatsAppNavbar = ({
           return chat.name.toLowerCase().includes(vlue.toLowerCase());
         });
 
-        // if (FilteredItems.length > 0) {
+        if (FilteredItems.length > 0) {
           setchats(FilteredItems);
-        // } else {
-        //   setchats(FileredChats);
-        // }
+        } else {
+          setchats(FileredChats);
+        }
       }
     }else if(route == "Calls"){
       if(vlue == ""){
@@ -319,11 +318,11 @@ const WhatsAppNavbar = ({
           return call.name.toLowerCase().includes(vlue.toLowerCase());
         });
 
-        // if (FilteredCallItems.length > 0) {
+        if (FilteredCallItems.length > 0) {
           setcalls(FilteredCallItems);
-        // } else {
-        //   setcalls(callFilterChats);
-        // } 
+        } else {
+          setcalls(callFilterChats);
+        } 
       }
     }
     },
