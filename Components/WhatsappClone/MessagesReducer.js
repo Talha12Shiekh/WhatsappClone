@@ -20,7 +20,7 @@ const time = new Date();
 const hours = time.getHours();
 const minutes = time.getMinutes();
 const Messagehours = hours > 12 ? hours - 12 : hours;
-const MessageMinutes = minutes > 9 ? minutes : "0" + minutes; 
+const MessageMinutes = minutes > 9 ? minutes : "0" + minutes;
 const am_pm = hours >= 12 ? "PM" : "AM";
 
 export const MessagesReducer = (state, { type, payload }) => {
@@ -31,21 +31,20 @@ export const MessagesReducer = (state, { type, payload }) => {
       let messagesObject = {
         message: payload.value,
         key: Date.now().toString(),
-        hours:Messagehours,
-        minutes:MessageMinutes,
+        hours: Messagehours,
+        minutes: MessageMinutes,
         am_pm,
         messageStatus: "single",
         selected: false,
         ref: createRef(),
-        cornerRef:createRef(),
+        cornerRef: createRef(),
         deleteForEveryone: false,
         starred: false,
       };
 
-      payload.setvalue("")
-      
+      payload.setvalue("");
+
       return [...state, messagesObject];
-      
     }
     case ACTIONS.SELECT_MESSAGES: {
       let newMessages = [...state];
@@ -83,7 +82,10 @@ export const MessagesReducer = (state, { type, payload }) => {
             style: messageStyles,
           });
           msg.cornerRef.current.setNativeProps({
-            style: payload.index % 2 == 0 ? questionMessageCornerStyles : answerMessageCornerStyles,
+            style:
+              payload.index % 2 == 0
+                ? questionMessageCornerStyles
+                : answerMessageCornerStyles,
           });
 
           setTimeout(() => {
@@ -99,7 +101,10 @@ export const MessagesReducer = (state, { type, payload }) => {
             });
 
             msg.cornerRef.current.setNativeProps({
-              style: payload.index % 2 == 0 ? questionMessageCornerStyles : answerMessageCornerStyles,
+              style:
+                payload.index % 2 == 0
+                  ? questionMessageCornerStyles
+                  : answerMessageCornerStyles,
             });
           }, 1000);
         }
@@ -127,7 +132,7 @@ export const MessagesReducer = (state, { type, payload }) => {
           return {
             ...msg,
             starred: !msg.starred,
-            selected:false
+            selected: false,
           };
         }
         return msg;

@@ -55,11 +55,20 @@ import {
   generateSendTick,
   CHAT_BACKROUND_COLOR,
 } from "./WhatsappMainScreen";
-import { createRef, useEffect, useReducer, useRef, useState } from "react";
+import {
+  createRef,
+  useDeferredValue,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import Menu from "./Menu";
 import { MessagesReducer, ACTIONS } from "./MessagesReducer";
 import { Modal } from "react-native";
 import { Share } from "react-native";
+import SingleMessage from "./SingleMessage";
+import { useChatsContext } from "../../App";
 
 const PURPLE = "#765fee";
 const RED = "#fd2e74";
@@ -68,11 +77,9 @@ const ORANGE = "#f96632";
 const GREEN = "#1fa755";
 const BLUE = "#029ce2";
 const LIGHTGREEN = "#01a698";
-const GREEN_MESSAGE_CLICKED_BACKGROUND = "#004133";
-const BLACK_MESSAGE_CLICKED_BACKGROUND = "black";
 
 const MessagesScreen = ({ navigation, route }) => {
-  const { item} = route.params;
+  const { item } = route.params;
 
   const ICONS_SIZE = 22;
 
@@ -80,7 +87,23 @@ const MessagesScreen = ({ navigation, route }) => {
     ...item,
   });
 
-  const [messages, dispatch] = useReducer(MessagesReducer, []);
+  const { chats, setchats } = useChatsContext();
+  const [messages, dispatch] = useReducer(MessagesReducer, item.messages);
+
+  useEffect(() => {
+    const updatedChats = chats.map((chat) => {
+      if (chat.key == item.key) {
+        return {
+          ...chat,
+          messages: messages,
+        };
+      }
+      return chat;
+    });
+    setchats(updatedChats);
+  }, [messages]);
+
+  const [MenuVisible, setMenuVisible] = useState(false);
 
   const messagesNavbarAnimation = useRef(new Animated.Value(0)).current;
 
@@ -134,15 +157,7 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { height } = useWindowDimensions();
-
-  const [MenuOpen, setMenuOpen] = useState(false);
-
   const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
-
-  const MenuAnimation = useRef(new Animated.Value(height)).current;
-
-  const MenuItemsAnimation = useRef(new Animated.Value(0)).current;
 
   const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -181,29 +196,6 @@ const MessagesScreen = ({ navigation, route }) => {
       setpaddingRight(100);
     }
   }, [value]);
-
-  const AnimateMenu = () => {
-    const toValue = MenuOpen ? 0 : height;
-    Animated.sequence([
-      Animated.timing(MenuItemsAnimation, {
-        toValue: 0,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(MenuAnimation, {
-        toValue,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(MenuItemsAnimation, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setMenuOpen((opn) => !opn);
-    });
-  };
 
   const MessagesRippleButton = ({ children, onPress, ...rest }) => {
     return (
@@ -466,26 +458,6 @@ const MessagesScreen = ({ navigation, route }) => {
     (msg) => msg % 2 !== 0
   );
 
-  const Container = ({ children }) => {
-    if (item.photo) {
-      return (
-        <ImageBackground
-          resizeMode="cover"
-          source={{ uri: item.photo }}
-          style={{ flex: 1 }}
-        >
-          {children}
-        </ImageBackground>
-      );
-    } else {
-      return (
-        <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
-          {children}
-        </View>
-      );
-    }
-  };
-
   return (
     <>
       <Modal
@@ -593,120 +565,114 @@ const MessagesScreen = ({ navigation, route }) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-      <ImageBackground
-        source={{ uri: item.photo }}
-        resizeMode="cover"
-        style={{ flex: 1 }}
-      >
-        <Animated.View
-          style={[
-            styles.messagesMenu,
-            {
-              transform: [{ translateY: MenuAnimation }],
-              zIndex: 3333333333333,
-            },
-          ]}
+      <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={MenuVisible}
+          onRequestClose={() => setMenuVisible((v) => !v)}
         >
-          <TouchableOpacity>
-            <View>
-              <AnimatedView
-                style={[
-                  styles.menuButton,
-                  { backgroundColor: PURPLE, opacity: MenuItemsAnimation },
-                ]}
-              >
-                <Ionicons name="document" size={24} color={TITLE_COLOR} />
-              </AnimatedView>
-              <Text style={styles.menuText}>Document</Text>
+          <TouchableWithoutFeedback onPress={() => setMenuVisible((v) => !v)}>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,.1)" }} />
+          </TouchableWithoutFeedback>
+          <Animated.View
+            style={[
+              styles.messagesMenu,
+              {
+                zIndex: 3333333333333,
+                transform: [{ translateY: -30 }],
+              },
+            ]}
+          >
+            <View style={styles.singleLineOfMenu}>
+              <TouchableOpacity>
+                <View>
+                  <AnimatedView
+                    style={[styles.menuButton, { backgroundColor: PURPLE }]}
+                  >
+                    <Ionicons name="document" size={24} color={TITLE_COLOR} />
+                  </AnimatedView>
+                  <Text style={styles.menuText}>Document</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View>
+                  <AnimatedView
+                    style={[styles.menuButton, { backgroundColor: RED }]}
+                  >
+                    <FontAwesome name="camera" size={24} color={TITLE_COLOR} />
+                  </AnimatedView>
+                  <Text style={styles.menuText}>Camera</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View>
+                  <AnimatedView
+                    style={[styles.menuButton, { backgroundColor: PINK }]}
+                  >
+                    <Foundation name="photo" size={24} color={TITLE_COLOR} />
+                  </AnimatedView>
+                  <Text style={styles.menuText}>Gallery</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View>
-              <AnimatedView
-                style={[
-                  styles.menuButton,
-                  { backgroundColor: RED, opacity: MenuItemsAnimation },
-                ]}
-              >
-                <FontAwesome name="camera" size={24} color={TITLE_COLOR} />
-              </AnimatedView>
-              <Text style={styles.menuText}>Camera</Text>
+            <View style={styles.singleLineOfMenu}>
+              <TouchableOpacity>
+                <View>
+                  <AnimatedView
+                    style={[styles.menuButton, { backgroundColor: ORANGE }]}
+                  >
+                    <FontAwesome5
+                      name="headphones"
+                      size={24}
+                      color={TITLE_COLOR}
+                    />
+                  </AnimatedView>
+                  <Text style={styles.menuText}>Audio</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View>
+                  <AnimatedView
+                    style={[styles.menuButton, { backgroundColor: GREEN }]}
+                  >
+                    <Ionicons
+                      name="md-location-sharp"
+                      size={24}
+                      color={TITLE_COLOR}
+                    />
+                  </AnimatedView>
+                  <Text style={styles.menuText}>Location</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View>
+                  <AnimatedView
+                    style={[styles.menuButton, { backgroundColor: BLUE }]}
+                  >
+                    <Feather name="user" size={24} color={TITLE_COLOR} />
+                  </AnimatedView>
+                  <Text style={styles.menuText}>Contact</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View>
-              <AnimatedView
-                style={[
-                  styles.menuButton,
-                  { backgroundColor: PINK, opacity: MenuItemsAnimation },
-                ]}
-              >
-                <Foundation name="photo" size={24} color={TITLE_COLOR} />
-              </AnimatedView>
-              <Text style={styles.menuText}>Gallery</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View>
-              <AnimatedView
-                style={[
-                  styles.menuButton,
-                  { backgroundColor: ORANGE, opacity: MenuItemsAnimation },
-                ]}
-              >
-                <FontAwesome5 name="headphones" size={24} color={TITLE_COLOR} />
-              </AnimatedView>
-              <Text style={styles.menuText}>Audio</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View>
-              <AnimatedView
-                style={[
-                  styles.menuButton,
-                  { backgroundColor: GREEN, opacity: MenuItemsAnimation },
-                ]}
-              >
-                <Ionicons
-                  name="md-location-sharp"
-                  size={24}
-                  color={TITLE_COLOR}
-                />
-              </AnimatedView>
-              <Text style={styles.menuText}>Location</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View>
-              <AnimatedView
-                style={[
-                  styles.menuButton,
-                  { backgroundColor: BLUE, opacity: MenuItemsAnimation },
-                ]}
-              >
-                <Feather name="user" size={24} color={TITLE_COLOR} />
-              </AnimatedView>
-              <Text style={styles.menuText}>Contact</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View>
-              <AnimatedView
-                style={[
-                  styles.menuButton,
-                  { backgroundColor: LIGHTGREEN, opacity: MenuItemsAnimation },
-                ]}
-              >
-                <MaterialCommunityIcons
-                  name="poll"
-                  size={24}
-                  color={TITLE_COLOR}
-                />
-              </AnimatedView>
-              <Text style={styles.menuText}>Poll</Text>
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
+            <TouchableOpacity>
+              <View>
+                <AnimatedView
+                  style={[styles.menuButton, { backgroundColor: LIGHTGREEN }]}
+                >
+                  <MaterialCommunityIcons
+                    name="poll"
+                    size={24}
+                    color={TITLE_COLOR}
+                  />
+                </AnimatedView>
+                <Text style={styles.menuText}>Poll</Text>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+        </Modal>
+
         <EmojiPicker
           open={isOpen}
           onEmojiSelected={(emojiObject) => {
@@ -721,133 +687,23 @@ const MessagesScreen = ({ navigation, route }) => {
               let ColumnOrRow =
                 item.message?.length > messageLenght.length ? "column" : "row";
               return (
-                <View key={item.key}>
-                  <Pressable
-                    key={item.key}
-                    onPress={() => {
-                      dispatch({
-                        type: ACTIONS.DE_SELECT_MESSAGES,
-                        payload: {
-                          key: item.key,
-                          index,
-                        },
-                      });
-                    }}
-                    style={{
-                      backgroundColor: item.selected
-                        ? "#00800094"
-                        : "transparent",
-                      marginBottom: 10,
-                    }}
-                    onLongPress={() =>
-                      dispatch({
-                        type: ACTIONS.SELECT_MESSAGES,
-                        payload: {
-                          key: item.key,
-                        },
-                      })
-                    }
-                  >
-                    <View
-                      style={[
-                        styles.messagesContainer,
-                        { alignSelf: isEven ? "flex-end" : "flex-start" },
-                      ]}
-                    >
-                      <View
-                        style={
-                          isEven
-                            ? styles.messageCorner
-                            : styles.answermessageCorner
-                        }
-                        ref={item.cornerRef}
-                      />
-                      <View
-                        ref={item.ref}
-                        style={[
-                          styles.message,
-                          {
-                            transform: [{ translateX: isEven ? -20 : 20 }],
-                            flexDirection: "row",
-                            backgroundColor: isEven
-                              ? MESSAGE_BACKGROUND_COLOR
-                              : ANSWER_BACKGROUND_COLOR,
-                          },
-                        ]}
-                      >
-                        <View
-                          style={{
-                            flexDirection: ColumnOrRow,
-                          }}
-                        >
-                          {!item.deleteForEveryone ? (
-                            <View>
-                              <Text
-                                style={{
-                                  color: TITLE_COLOR,
-                                  fontSize: 15,
-                                  marginRight: 10,
-                                }}
-                              >
-                                {item.message}
-                              </Text>
-                            </View>
-                          ) : (
-                            <View style={{ flexDirection: "row" }}>
-                              <Text style={{ marginRight: 5 }}>
-                                <MaterialIcons
-                                  name="block-flipped"
-                                  size={20}
-                                  color={INACTIVE_TAB_WHITE_COLOR}
-                                />
-                              </Text>
-                              <Text
-                                style={{
-                                  color: INACTIVE_TAB_WHITE_COLOR,
-                                  fontSize: 15,
-                                  marginRight: 10,
-                                  fontStyle: "italic",
-                                }}
-                              >
-                                You deleted this message
-                              </Text>
-                            </View>
-                          )}
-                          <View
-                            style={{
-                              alignSelf: "flex-end",
-                              marginTop: 5,
-                              flexDirection: "row",
-                            }}
-                          >
-                            <View>
-                              <Text
-                                style={{ color: TITLE_COLOR, fontSize: 10 }}
-                              >
-                                {item.starred && <FontAwesome
-                                  name="star"
-                                  size={8}
-                                  color={TITLE_COLOR}
-                                />}{" "}
-                                {item.hours}:{item.minutes}{" "}
-                                {item.am_pm.toLowerCase()}{" "}
-                              </Text>
-                            </View>
-                            {isEven && !item.deleteForEveryone && (
-                              <View>
-                                <Text
-                                  style={{ color: TITLE_COLOR, fontSize: 10 }}
-                                >
-                                  {generateSendTick(item.messageStatus)}
-                                </Text>
-                              </View>
-                            )}
-                          </View>
-                        </View>
-                      </View>
-                    </View>
-                  </Pressable>
-                </View>
+                <SingleMessage
+                  key={item.key}
+                  isEven={isEven}
+                  index={index}
+                  ColumnOrRow={ColumnOrRow}
+                  dispatch={dispatch}
+                  ref={{CornerRef:item.cornerRef,messageRef:item.ref}}
+                  selected={item.selected}
+                  keyOfMessage={item.key}
+                  message={item.message}
+                  starred={item.starred}
+                  hours={item.hours}
+                  minutes={item.minutes}
+                  am_pm={item.am_pm.toLowerCase()}
+                  deleteForEveryone={item.deleteForEveryone}
+                  messageStatus={item.messageStatus}
+                />
               );
             })}
           </ScrollView>
@@ -863,7 +719,6 @@ const MessagesScreen = ({ navigation, route }) => {
                 bottom: 0,
                 left: 0,
                 right: 50,
-                zIndex: 9999999999999999999999999,
               },
             ]}
           >
@@ -887,7 +742,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 style={[styles.input, { paddingRight: paddingRight }]}
                 multiline
                 value={value}
-                onChangeText={(vlue) => setvalue(vlue)}
+                onChangeText={(value) => setvalue(value)}
               />
             </View>
             <Animated.View
@@ -896,7 +751,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 { transform: [{ translateX: ClipandCameraAnimation }] },
               ]}
             >
-              <MessagesRippleButton onPress={AnimateMenu}>
+              <MessagesRippleButton onPress={() => setMenuVisible((v) => !v)}>
                 <Entypo
                   name="attachment"
                   size={20}
@@ -967,7 +822,7 @@ const MessagesScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground>
+      </View>
     </>
   );
 };
@@ -1062,7 +917,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     paddingVertical: 20,
     flexWrap: "wrap",
-    gap: 20,
     alignItems: "center",
     zIndex: 9999999,
   },
@@ -1109,6 +963,13 @@ const styles = StyleSheet.create({
     left: 12,
     borderBottomLeftRadius: 100,
     top: 0,
+  },
+  singleLineOfMenu: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 20,
   },
 });
 

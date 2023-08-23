@@ -58,7 +58,7 @@ const MessagesInfo = ({ route }) => {
   };
 
   return (
-    <ImageBackground source={{ uri: item.photo }} style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.container}>
         <View style={{ marginTop: 70, marginRight: 30, paddingHorizontal: 10 }}>
           <Pressable
@@ -151,7 +151,7 @@ const MessagesInfo = ({ route }) => {
           </View>
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 
@@ -160,6 +160,7 @@ export default MessagesInfo;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor:CHAT_SELECTION_BACKGROUND
   },
   message: {
     padding: 7,
@@ -209,5 +210,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: CHAT_DATA_STATUS_COLOR,
     marginTop: 5,
-  },
+  }
 });

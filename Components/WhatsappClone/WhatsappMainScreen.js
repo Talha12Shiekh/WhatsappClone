@@ -264,7 +264,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         storeCalls();
       }
     },
-    [chats, calls, callFilterChats, FileredChats,name, number, about, photo, edited, editedKey]
+    [chats, calls, callFilterChats, FileredChats]
   );
 
   useEffect(() => {
