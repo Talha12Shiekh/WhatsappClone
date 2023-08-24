@@ -1,5 +1,5 @@
 import { createRef } from "react";
-import { StyleSheet } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import {
   GREEN_MESSAGE_CLICKED_BACKGROUND,
   MESSAGE_BACKGROUND_COLOR,
@@ -14,37 +14,15 @@ export const ACTIONS = {
   DELETE_FOR_EVERYONE: "handledeleteforeveryone",
   STARRE_MESSAGES: "handleStareMessages",
   COPY_TO_CLIPBOARD: "handleCopyToClipboard",
+  UPDATE_MESSAGE_STATUS_TO_DOUBLE:"handleUpdateMessageStatusToDouble",
+  UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple"
 };
 
-const time = new Date();
-const hours = time.getHours();
-const minutes = time.getMinutes();
-const Messagehours = hours > 12 ? hours - 12 : hours;
-const MessageMinutes = minutes > 9 ? minutes : "0" + minutes;
-const am_pm = hours >= 12 ? "PM" : "AM";
 
 export const MessagesReducer = (state, { type, payload }) => {
   switch (type) {
     case ACTIONS.SEND_MESSAGES: {
-      if (payload.value == "") return;
-
-      let messagesObject = {
-        message: payload.value,
-        key: Date.now().toString(),
-        hours: Messagehours,
-        minutes: MessageMinutes,
-        am_pm,
-        messageStatus: "single",
-        selected: false,
-        ref: createRef(),
-        cornerRef: createRef(),
-        deleteForEveryone: false,
-        starred: false,
-      };
-
-      payload.setvalue("");
-
-      return [...state, messagesObject];
+      return [...state, payload.messagesObject];
     }
     case ACTIONS.SELECT_MESSAGES: {
       let newMessages = [...state];
@@ -60,9 +38,6 @@ export const MessagesReducer = (state, { type, payload }) => {
     }
     case ACTIONS.DE_SELECT_MESSAGES: {
       let newMessages = [...state];
-      let messageStyles = [styles.message];
-      let questionMessageCornerStyles = [styles.messageCorner];
-      let answerMessageCornerStyles = [styles.answermessageCorner];
       return newMessages.map((msg) => {
         if (msg.key == payload.key) {
           if (msg.selected) {
@@ -71,42 +46,6 @@ export const MessagesReducer = (state, { type, payload }) => {
               selected: false,
             };
           }
-          if (payload.index % 2 == 0) {
-            messageStyles.push(styles.green_selected_background);
-            questionMessageCornerStyles.push(styles.green_selected_background);
-          } else {
-            messageStyles.push(styles.grey_selected_background);
-            answerMessageCornerStyles.push(styles.grey_selected_background);
-          }
-          msg.ref.current.setNativeProps({
-            style: messageStyles,
-          });
-          msg.cornerRef.current.setNativeProps({
-            style:
-              payload.index % 2 == 0
-                ? questionMessageCornerStyles
-                : answerMessageCornerStyles,
-          });
-
-          setTimeout(() => {
-            if (payload.index % 2 == 0) {
-              messageStyles.push(styles.message_background_color);
-              questionMessageCornerStyles.push(styles.message_background_color);
-            } else {
-              messageStyles.push(styles.answer_background_color);
-              answerMessageCornerStyles.push(styles.answer_background_color);
-            }
-            msg.ref.current.setNativeProps({
-              style: messageStyles,
-            });
-
-            msg.cornerRef.current.setNativeProps({
-              style:
-                payload.index % 2 == 0
-                  ? questionMessageCornerStyles
-                  : answerMessageCornerStyles,
-            });
-          }, 1000);
         }
         return msg;
       });
@@ -126,9 +65,18 @@ export const MessagesReducer = (state, { type, payload }) => {
         return msg;
       });
     }
-    case ACTIONS.STARRE_MESSAGES: {
+    case ACTIONS.STARRE_MESSAGES: {      
       return state.map((msg) => {
         if (msg.selected) {
+          Animated.timing(msg.starAnimation,{
+            toValue:1,
+            duration:500,
+            useNativeDriver:true
+          }).start(() => {
+            setTimeout(() => {
+              msg.starAnimation.setValue(0)
+            }, 100);
+          })
           return {
             ...msg,
             starred: !msg.starred,
@@ -149,10 +97,33 @@ export const MessagesReducer = (state, { type, payload }) => {
         return msg;
       });
     }
+    case ACTIONS.UPDATE_MESSAGE_STATUS_TO_DOUBLE:{
+      return state.map(msg => {
+        if(msg.key == payload.key){
+          return {
+            ...msg,
+            messageStatus:"double"
+          }
+        }
+        return msg;
+      })
+    }
+    case ACTIONS.UPDATE_MESSAGE_STATUS_TO_TRIPLE:{
+      return state.map(msg => {
+        if(msg.key == payload.key){
+          return {
+            ...msg,
+            messageStatus:"triple"
+          }
+        }
+        return msg;
+      })
+    }
     default: {
       return state;
     }
   }
+  
 };
 
 const styles = StyleSheet.create({

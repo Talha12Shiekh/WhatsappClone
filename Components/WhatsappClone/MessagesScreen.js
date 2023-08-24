@@ -88,6 +88,7 @@ const MessagesScreen = ({ navigation, route }) => {
   });
 
   const { chats, setchats } = useChatsContext();
+
   const [messages, dispatch] = useReducer(MessagesReducer, item.messages);
 
   useEffect(() => {
@@ -114,6 +115,8 @@ const MessagesScreen = ({ navigation, route }) => {
   const InfoMessages = messages?.find((msg) => msg.selected);
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
+
+  const starScaleAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (messagesSelected) {
@@ -378,6 +381,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 ) : null}
                 <RippleButton
                   onPress={() => {
+                    makeStarAnimation()
                     dispatch({
                       type: ACTIONS.STARRE_MESSAGES,
                     });
@@ -450,6 +454,16 @@ const MessagesScreen = ({ navigation, route }) => {
     }
   }
 
+  const makeStarAnimation = () => {
+    return Animated.timing(starScaleAnimation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start(() => {
+      starScaleAnimation.setValue(0);
+    });
+  };
+
   const selectedMessageIndices = messages
     ?.map((msg, index) => (msg.selected ? index : -1))
     ?.filter((index) => index !== -1);
@@ -457,6 +471,14 @@ const MessagesScreen = ({ navigation, route }) => {
   let showDeleteforeveryone = selectedMessageIndices?.some(
     (msg) => msg % 2 !== 0
   );
+
+  const time = new Date();
+  const hours = time.getHours();
+  const minutes = time.getMinutes();
+  const Messagehours = hours > 12 ? hours - 12 : hours;
+  const MessageMinutes = minutes > 9 ? minutes : "0" + minutes;
+  const am_pm = hours >= 12 ? "PM" : "AM";
+
 
   return (
     <>
@@ -505,7 +527,7 @@ const MessagesScreen = ({ navigation, route }) => {
                   alignSelf: "flex-end",
                   flex: 1,
                   justifyContent: "space-around",
-                  marginTop: !showDeleteforeveryone ? 10 : 30,
+                  marginTop: 10,
                   flexDirection: showDeleteforeveryone ? "row" : "column",
                   gap: 10,
                 }}
@@ -529,13 +551,12 @@ const MessagesScreen = ({ navigation, route }) => {
                       Delete for everyone
                     </Text>
                   </TouchableOpacity>
-                )}
+                 )}
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible((v) => !v);
                     dispatch({
                       type: ACTIONS.DELETE_MESSAGES,
-                      payload: {},
                     });
                   }}
                 >
@@ -693,7 +714,6 @@ const MessagesScreen = ({ navigation, route }) => {
                   index={index}
                   ColumnOrRow={ColumnOrRow}
                   dispatch={dispatch}
-                  ref={{CornerRef:item.cornerRef,messageRef:item.ref}}
                   selected={item.selected}
                   keyOfMessage={item.key}
                   message={item.message}
@@ -703,8 +723,9 @@ const MessagesScreen = ({ navigation, route }) => {
                   am_pm={item.am_pm.toLowerCase()}
                   deleteForEveryone={item.deleteForEveryone}
                   messageStatus={item.messageStatus}
+                  starScaleAnimation={item.starAnimation}
                 />
-              );
+              )
             })}
           </ScrollView>
         </View>
@@ -771,14 +792,49 @@ const MessagesScreen = ({ navigation, route }) => {
           </View>
           <View style={{ marginLeft: "86%", marginBottom: 5 }}>
             <TouchableOpacity
-              onPress={() =>
+              onPress={() => {
+                let messagesObject = {
+                  message: value,
+                  key: Date.now().toString(),
+                  hours: Messagehours,
+                  minutes: MessageMinutes,
+                  am_pm,
+                  messageStatus: "single",
+                  selected: false,
+                  deleteForEveryone: false,
+                  starred: false,
+                  starAnimation:new Animated.Value(0)
+                };
+
+                if(value == "") return;
+
                 dispatch({
                   type: ACTIONS.SEND_MESSAGES,
                   payload: {
-                    value,
-                    setvalue,
+                    messagesObject,
                   },
-                })
+                });
+
+                setTimeout(() => {
+                  dispatch({
+                    type:ACTIONS.UPDATE_MESSAGE_STATUS_TO_DOUBLE,
+                    payload:{
+                      key:messagesObject.key
+                    }
+                  })
+                }, 60 * 1000);
+
+                setTimeout(() => {
+                  dispatch({
+                    type:ACTIONS.UPDATE_MESSAGE_STATUS_TO_TRIPLE,
+                    payload:{
+                      key:messagesObject.key
+                    }
+                  })
+                }, 3 * 60 * 1000);
+
+                setvalue("")
+              }
               }
             >
               <View style={[styles.sendButton]}>
