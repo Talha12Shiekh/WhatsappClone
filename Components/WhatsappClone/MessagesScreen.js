@@ -15,6 +15,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
+
 import {
   ClosenavbarAnimation,
   RippleButton,
@@ -472,12 +473,12 @@ const MessagesScreen = ({ navigation, route }) => {
     (msg) => msg % 2 !== 0
   );
 
-  const time = new Date();
-  const hours = time.getHours();
-  const minutes = time.getMinutes();
-  const Messagehours = hours > 12 ? hours - 12 : hours;
-  const MessageMinutes = minutes > 9 ? minutes : "0" + minutes;
-  const am_pm = hours >= 12 ? "PM" : "AM";
+  // const time = new Date();
+  // const hours = time.getHours();
+  // const minutes = time.getMinutes();
+  // const Messagehours = hours > 12 ? hours - 12 : hours;
+  // const MessageMinutes = minutes > 9 ? minutes : "0" + minutes;
+  // const am_pm = hours >= 12 ? "PM" : "AM";
 
 
   return (
@@ -718,12 +719,10 @@ const MessagesScreen = ({ navigation, route }) => {
                   keyOfMessage={item.key}
                   message={item.message}
                   starred={item.starred}
-                  hours={item.hours}
-                  minutes={item.minutes}
-                  am_pm={item.am_pm.toLowerCase()}
                   deleteForEveryone={item.deleteForEveryone}
                   messageStatus={item.messageStatus}
                   starScaleAnimation={item.starAnimation}
+                  time={item.time}
                 />
               )
             })}
@@ -796,9 +795,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 let messagesObject = {
                   message: value,
                   key: Date.now().toString(),
-                  hours: Messagehours,
-                  minutes: MessageMinutes,
-                  am_pm,
+                  time:Date.now(),
                   messageStatus: "single",
                   selected: false,
                   deleteForEveryone: false,

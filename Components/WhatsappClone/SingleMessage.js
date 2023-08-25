@@ -21,6 +21,7 @@ import {
   Foundation,
 } from "@expo/vector-icons";
 import { useRef } from "react";
+import { FormattedTime  } from "react-intl";
 
 const SingleMessage = ({
   isEven,
@@ -32,11 +33,9 @@ const SingleMessage = ({
   deleteForEveryone,
   message,
   starred,
-  hours,
-  minutes,
-  am_pm,
   messageStatus,
-  starScaleAnimation
+  starScaleAnimation,
+  time
 }) => {
 
   const messageRef = useRef(null);
@@ -226,8 +225,8 @@ const SingleMessage = ({
                           />
                         </Animated.View>
                       </>
-                    )}{" "} 
-                    {hours}:{minutes} {am_pm.toLowerCase()}{" "}
+                    )}
+                    <FormattedTime value={new Date(time)} />{"  "}
                   </Text>
                 </View>
                 {isEven && !deleteForEveryone && (

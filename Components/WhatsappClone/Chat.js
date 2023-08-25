@@ -10,12 +10,8 @@ import {
   TouchableWithoutFeedback,
   Pressable,
 } from "react-native";
-import React, { useRef, useState } from "react";
-import {
-  Feather,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "react-native-vector-icons";
+import React, { useEffect, useRef, useState } from "react";
+import { FormattedDate, FormattedTime } from "react-intl";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   CHAT_BACKROUND_COLOR,
@@ -27,6 +23,7 @@ import {
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
   generateRandomArrow,
+  generateSendTick,
   months,
 } from "./WhatsappMainScreen";
 import {
@@ -39,10 +36,28 @@ const Chat = (item) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalphoto, setmodalphoto] = useState("");
   const [modalName, setmodalName] = useState("");
+
+  const [lastMessage, setLastMessage] = useState({
+    message:"",
+    time:""
+  });
+
+
+  useEffect(() => {
+    if (item.messages && item.messages.length > 0) {
+      setLastMessage({
+        indexOfMessage:item.messages.length - 1, 
+        message:item.messages[item.messages.length - 1].message,
+        time:item.messages[item.messages.length - 1].time,
+        status:item.messages[item.messages.length - 1].messageStatus,
+      });
+    }
+  }, [item.messages]);
+
   const { RightPlaceRenderThing, LeftPlaceRenderThing } = item;
   let aboutlimit = item.NotshowChatMakingDate
-    ? "Lorem ipsum dolor sit amet"
-    : "Lorem ipsum dolor sit amet talha call";
+  ? "Lorem ipsum dolor sit amet"
+  : "Lorem ipsum dolor sit amet talha call";
 
   function handleOpenDpModel(photo, name) {
     setModalVisible(true);
@@ -74,13 +89,25 @@ const Chat = (item) => {
         </View>
       );
     } else {
-      return (
-        <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-          {!item.blocked ? item.about?.length > aboutlimit.length
-            ? item.about.slice(0, aboutlimit.length - 1) + "..."
-            : item.about : "You blocked this contact"}
-        </Text>
-      );
+      if (item.messages?.length == 0) {
+        return (
+          <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+            {!item.blocked
+              ? item.about?.length > aboutlimit.length
+                ? item.about.slice(0, aboutlimit.length - 1) + "..."
+                : item.about
+              : "You blocked this contact"}
+          </Text>
+        );
+      } else {
+        return (
+          <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+           {lastMessage.indexOfMessage % 2 == 0 && generateSendTick(lastMessage.status,CHAT_DATA_STATUS_COLOR)} {lastMessage.message.length > aboutlimit.length
+              ? lastMessage.message.slice(0, aboutlimit.length - 1) + "..."
+              : lastMessage.message}
+          </Text>
+        );
+      }
     }
   }
 
@@ -93,7 +120,7 @@ const Chat = (item) => {
             {
               color: TITLE_COLOR,
               fontWeight: "normal",
-              fontSize:18
+              fontSize: 18,
             },
           ]}
         >
@@ -113,6 +140,22 @@ const Chat = (item) => {
           ]}
         >
           {item.name?.length > 18 ? item.name.slice(0, 19) : item.name}
+        </Text>
+      );
+    }
+  }
+
+  function initTime() {
+    if(item.messages?.length == 0){
+      return (
+        <Text style={[styles.time, { color: CHAT_DATA_STATUS_COLOR }]}>
+          <FormattedDate value={new Date(item.time)} />
+        </Text>
+      );
+    }else{
+      return (
+        <Text style={[styles.time, { color: CHAT_DATA_STATUS_COLOR }]}>
+          <FormattedTime value={new Date(lastMessage.time)} />
         </Text>
       );
     }
@@ -159,15 +202,7 @@ const Chat = (item) => {
             <View style={[styles.textContainer, { flex: 1 }]}>
               <View style={{ width: "60%" }}>{initTitle()}</View>
               <View style={{ width: "32%" }}>
-                {item.NotshowChatMakingDate && (
-                  <Text
-                    style={[styles.time, { color: CHAT_DATA_STATUS_COLOR }]}
-                  >
-                    {item.date < 10 ? "0" + item.date : item.date}/
-                    {item.month < 10 ? "0" + item.month : item.month}/
-                    {item.year}
-                  </Text>
-                )}
+                {item.NotshowChatMakingDate && initTime()}
               </View>
             </View>
             <View style={[styles.textContainer]}>

@@ -62,11 +62,11 @@ export const months = [
   "November",
   "December",
 ];
-export const generateSendTick = (messageStatus) => {
+export const generateSendTick = (messageStatus,COLOR = TITLE_COLOR) => {
   if (messageStatus == "single") {
-    return <MaterialIcons name="done" size={TICK_SIZE} color={TITLE_COLOR} />;
+    return <MaterialIcons name="done" size={TICK_SIZE} color={COLOR} />;
   } else if (messageStatus == "double") {
-    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={TITLE_COLOR} />;
+    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={COLOR} />;
   } else {
     return <Ionicons name="checkmark-done" size={TICK_SIZE} color={BLUE_TICK_BACKGROUND} />;
   }
@@ -193,6 +193,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const year = time.getFullYear();
 
+  const timeInMilliseconds = Date.now()
+
   const handleChatsMaking = useCallback(
     (name, number, about, photo, edited, editedKey) => {
       if (name.length == "" && number.length == "") {
@@ -203,9 +205,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           number,
           about,
           key: Date.now().toString(),
-          date,
-          month,
-          year,
+          time:timeInMilliseconds,
           photo,
           type: "chat",
           selected: false,

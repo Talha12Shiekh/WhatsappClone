@@ -39,6 +39,7 @@ const CALLS_BUTTON = [
     key: 1,
     photo: "",
     type: "chat",
+    messages:[]
   },
 ];
 

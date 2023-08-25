@@ -17,6 +17,7 @@ import WhatsappMainScreen, {
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import CommunityComponent from "./Components/WhatsappClone/CommunityComponent";
+import {IntlProvider} from 'react-intl'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Profile from "./Components/WhatsappClone/Profile";
 import AllContacts from "./Components/WhatsappClone/AllContacts";
@@ -298,6 +299,7 @@ export default function App() {
   };
 
   return (
+    <IntlProvider locale="en" onError={(error) => console.log(error)}>
     <MyProviders>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Main">
@@ -410,6 +412,7 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </MyProviders>
+    </IntlProvider>
   );
 }
 

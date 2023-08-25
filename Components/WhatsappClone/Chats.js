@@ -274,20 +274,20 @@ const Chats = ({
                         alignItems: "center",
                         flexDirection: "row",
                         positon: "absolute",
-                        left: -35,
-                        gap: 20,
+                        left: -25,
+                        gap: 10,
                       }}
                     >
                       <FontAwesome5
                         name="volume-mute"
                         color={CHAT_DATA_STATUS_COLOR}
-                        size={20}
+                        size={18}
                         style={{ transform: [{ scale: item.muted ? 1 : 0 }] }}
                       />
                       <AntDesign
                         name="pushpin"
                         color={CHAT_DATA_STATUS_COLOR}
-                        size={20}
+                        size={18}
                         style={{
                           transform: [
                             { rotate: "90deg" },
@@ -297,7 +297,7 @@ const Chats = ({
                       />
                       <View
                         style={{
-                          width: 20,
+                          width: 18,
                           aspectRatio: 1,
                           backgroundColor: ACTIVE_TAB_GREEN_COLOR,
                           borderRadius: 100,

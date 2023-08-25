@@ -26,6 +26,7 @@ const STATUS_BUTTON = [
     key: 1,
     photo: "",
     type: "chat",
+    messages:[]
   },
 ];
 
