@@ -47,7 +47,7 @@ const SingleMessage = ({
   let answerMessageCornerStyles = [styles.answermessageCorner];
 
 
-  const changeMessageBackground = () => {
+  const handleChangeMessageBackground = () => {
     if (index % 2 == 0) {
       messageStyles.push(styles.green_selected_background);
       questionMessageCornerStyles.push(styles.green_selected_background);
@@ -64,40 +64,43 @@ const SingleMessage = ({
           ? questionMessageCornerStyles
           : answerMessageCornerStyles,
     });
+  }
 
-    setTimeout(() => {
-      if (index % 2 == 0) {
-        messageStyles.push(styles.message_background_color);
-        questionMessageCornerStyles.push(styles.message_background_color);
-      } else {
-        messageStyles.push(styles.answer_background_color);
-        answerMessageCornerStyles.push(styles.answer_background_color);
-      }
-      messageRef.current.setNativeProps({
-        style: messageStyles,
-      });
+  const handleUnChangeMessageBackground = () => {
+    if (index % 2 == 0) {
+      messageStyles.push(styles.message_background_color);
+      questionMessageCornerStyles.push(styles.message_background_color);
+    } else {
+      messageStyles.push(styles.answer_background_color);
+      answerMessageCornerStyles.push(styles.answer_background_color);
+    }
+    messageRef.current.setNativeProps({
+      style: messageStyles,
+    });
 
-      cornerRef.current.setNativeProps({
-        style:
-          index % 2 == 0
-            ? questionMessageCornerStyles
-            : answerMessageCornerStyles,
-      });
-    }, 2000);
-  };
+    cornerRef.current.setNativeProps({
+      style:
+        index % 2 == 0
+          ? questionMessageCornerStyles
+          : answerMessageCornerStyles,
+    });
+  }
 
   return (
     <View>
       <Pressable
+        onPressIn={handleChangeMessageBackground}
+        onPressOut={handleUnChangeMessageBackground}
         onPress={() => {
-          changeMessageBackground();
-          dispatch({
-            type: ACTIONS.DE_SELECT_MESSAGES,
-            payload: {
-              key: keyOfMessage,
-              index,
-            },
-          });
+          if(selected){
+            dispatch({
+              type: ACTIONS.DE_SELECT_MESSAGES,
+              payload: {
+                key: keyOfMessage,
+                index,
+              },
+            });
+          }
         }}
         style={{
           backgroundColor: selected ? "#00800094" : "transparent",
@@ -180,8 +183,8 @@ const SingleMessage = ({
                   flexDirection: "row",
                 }}
               >
-                <View>
-                  <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
+                <View style={{flexDirection:"row",alignItems:"center"}}>
+                  <Text style={{ color: TITLE_COLOR, fontSize: 10}}>
                     <View
                       style={{
                         position: "absolute",
@@ -228,14 +231,14 @@ const SingleMessage = ({
                     )}
                     <FormattedTime value={new Date(time)} />{"  "}
                   </Text>
-                </View>
-                {isEven && !deleteForEveryone && (
+                  {isEven && !deleteForEveryone && (
                   <View>
                     <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
                       {generateSendTick(messageStatus)}
                     </Text>
                   </View>
                 )}
+                </View>
               </View>
             </View>
           </View>

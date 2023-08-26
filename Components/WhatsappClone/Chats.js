@@ -267,44 +267,31 @@ const Chats = ({
                 },
                 RightPlaceRenderThing: () => {
                   return (
-                    <View
-                      style={{
-                        width: "25%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "row",
-                        positon: "absolute",
-                        left: -25,
-                        gap: 10,
-                      }}
-                    >
-                      <FontAwesome5
+                    <>
+                     {item.muted && <FontAwesome5
                         name="volume-mute"
                         color={CHAT_DATA_STATUS_COLOR}
                         size={18}
-                        style={{ transform: [{ scale: item.muted ? 1 : 0 }] }}
-                      />
-                      <AntDesign
+                      />}
+                      {item.pinned && <AntDesign
                         name="pushpin"
                         color={CHAT_DATA_STATUS_COLOR}
                         size={18}
                         style={{
                           transform: [
                             { rotate: "90deg" },
-                            { scale: item.pinned ? 1 : 0 },
                           ],
                         }}
-                      />
-                      <View
+                      />}
+                      {item.readed && <View
                         style={{
                           width: 18,
                           aspectRatio: 1,
                           backgroundColor: ACTIVE_TAB_GREEN_COLOR,
                           borderRadius: 100,
-                          transform: [{ scale: item.readed ? 1 : 0 }],
                         }}
-                      ></View>
-                    </View>
+                      />}
+                    </>
                   );
                 },
                 NotshowChatMakingDate: true,

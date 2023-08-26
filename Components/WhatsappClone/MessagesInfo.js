@@ -94,8 +94,8 @@ const MessagesInfo = ({ route }) => {
                   >
                     <View>
                       <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                        {InfoMessages.hours}:{InfoMessages.minutes}{" "}
-                        {InfoMessages.am_pm.toLowerCase()}{" "}
+                        {/* {InfoMessages.hours}:{InfoMessages.minutes}{" "}
+                        {InfoMessages.am_pm.toLowerCase()}{" "} */}
                       </Text>
                     </View>
                     <View>

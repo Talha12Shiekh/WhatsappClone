@@ -47,7 +47,7 @@ export const GREEN_MESSAGE_CLICKED_BACKGROUND = "#024033";
 export const MODAL_BACKGROUND_COLOR = "#2a3b45";
 export const MODAL_TEXT_COLOR = "#7e8f99";
 export const BLUE_TICK_BACKGROUND = "#53bdeb";
-const TICK_SIZE = 15
+const TICK_SIZE = 20
 export const months = [
   "January",
   "February",
