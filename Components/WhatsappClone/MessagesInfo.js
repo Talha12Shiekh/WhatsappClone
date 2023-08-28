@@ -13,6 +13,7 @@ import {
   TITLE_COLOR,
   generateSendTick,
 } from "./WhatsappMainScreen";
+import { FormattedTime,FormattedDateParts } from "react-intl";
 import {
   FontAwesome5,
   Ionicons,
@@ -21,7 +22,7 @@ import {
 } from "@expo/vector-icons";
 
 const MessagesInfo = ({ route }) => {
-  const { InfoMessages, item } = route.params;
+  const { InfoMessages } = route.params;
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
@@ -65,12 +66,13 @@ const MessagesInfo = ({ route }) => {
             onPressIn={handleSelectMessage}
             onPressOut={handleDeSelectMessage}
           >
-            <View style={[styles.messagesContainer, { alignSelf: "flex-end" }]}>
+            <View style={[styles.messagesContainer, { alignSelf: "flex-end",maxHeight:500,marginBottom:10 }]}>
               <View style={[styles.messageCorner]} ref={messageCornerRef} />
               <View ref={messageRef} style={[styles.message]}>
                 <View
                   style={{
                     flexDirection: ColumnOrRow,
+                    overflow:"hidden"
                   }}
                 >
                   <View>
@@ -83,25 +85,34 @@ const MessagesInfo = ({ route }) => {
                     >
                       {InfoMessages.message}
                     </Text>
-                  </View>
-
-                  <View
-                    style={{
-                      alignSelf: "flex-end",
-                      marginTop: 5,
-                      flexDirection: "row",
-                    }}
-                  >
-                    <View>
-                      <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                        {/* {InfoMessages.hours}:{InfoMessages.minutes}{" "}
-                        {InfoMessages.am_pm.toLowerCase()}{" "} */}
-                      </Text>
-                    </View>
-                    <View>
-                      <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                        {generateSendTick(InfoMessages.messageStatus)}
-                      </Text>
+                    <View
+                      style={{
+                        alignSelf: "flex-end",
+                        marginTop: 5,
+                        flexDirection: "row",
+                      }}
+                    >
+                      <View
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: TITLE_COLOR,
+                            fontSize: 10,
+                            marginRight: 5,
+                          }}
+                        >
+                          <FormattedTime value={new Date(InfoMessages.time)} />
+                        </Text>
+                      </View>
+                      <View>
+                        <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
+                          {generateSendTick(InfoMessages.messageStatus)}
+                        </Text>
+                      </View>
                     </View>
                   </View>
                 </View>
@@ -121,32 +132,70 @@ const MessagesInfo = ({ route }) => {
                   />{" "}
                 </Text>
 
-                <Text style={{ color: TITLE_COLOR, fontSize: 17 }}>Read</Text>
+                <Text
+                  style={{ color: TITLE_COLOR, fontSize: 16, marginLeft: 5 }}
+                >
+                  Read
+                </Text>
               </View>
 
-              <Text style={{ color: CHAT_DATA_STATUS_COLOR,marginTop:2,fontSize:17 }}>
-                8 July, 10:45 pm
+              <Text
+                style={{
+                  color: CHAT_DATA_STATUS_COLOR,
+                  marginTop: 2,
+                  fontSize: 15,
+                }}
+              >
+                <FormattedDateParts
+                    value={new Date(InfoMessages.readedTime)}
+                    month="long"
+                    day="2-digit"
+                  >
+                    {
+                      parts => <Text>{parts[2].value} {parts[0].value} ,</Text>
+                    }
+                  </FormattedDateParts>
+                <FormattedTime value={new Date(InfoMessages.readedTime)} />
               </Text>
             </View>
             <View style={styles.centerLine} />
             <View>
-            <View style={styles.singleInfoMessage}>
-              <View style={{ flexDirection: "row" }}>
-                <Text>
-                  <Ionicons
-                    name="checkmark-done"
-                    size={17}
-                    color={CHAT_DATA_STATUS_COLOR}
-                  />{" "}
+              <View style={styles.singleInfoMessage}>
+                <View style={{ flexDirection: "row" }}>
+                  <Text>
+                    <Ionicons
+                      name="checkmark-done"
+                      size={18}
+                      color={CHAT_DATA_STATUS_COLOR}
+                    />{" "}
+                  </Text>
+
+                  <Text
+                    style={{ color: TITLE_COLOR, fontSize: 15, marginLeft: 5 }}
+                  >
+                    Delivered
+                  </Text>
+                </View>
+
+                <Text
+                  style={{
+                    color: CHAT_DATA_STATUS_COLOR,
+                    marginTop: 2,
+                    fontSize: 15,
+                  }}
+                >
+                  <FormattedDateParts
+                    value={new Date(InfoMessages.delivered)}
+                    month="long"
+                    day="2-digit"
+                  >
+                    {
+                      parts => <Text>{parts[2].value} {parts[0].value} ,</Text>
+                    }
+                  </FormattedDateParts>
+                  <FormattedTime value={new Date(InfoMessages.delivered)} />
                 </Text>
-
-                <Text style={{ color: TITLE_COLOR, fontSize: 17 }}>Delivered</Text>
               </View>
-
-              <Text style={{ color: CHAT_DATA_STATUS_COLOR,marginTop:2,fontSize:17 }}>
-                8 July, 10:45 pm
-              </Text>
-            </View>
             </View>
           </View>
         </View>
@@ -160,7 +209,7 @@ export default MessagesInfo;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:CHAT_SELECTION_BACKGROUND
+    backgroundColor: CHAT_SELECTION_BACKGROUND,
   },
   message: {
     padding: 7,
@@ -210,5 +259,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: CHAT_DATA_STATUS_COLOR,
     marginTop: 5,
-  }
+  },
 });

@@ -17,7 +17,7 @@ import WhatsappMainScreen, {
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import CommunityComponent from "./Components/WhatsappClone/CommunityComponent";
-import {IntlProvider} from 'react-intl'
+import { IntlProvider } from "react-intl";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Profile from "./Components/WhatsappClone/Profile";
 import AllContacts from "./Components/WhatsappClone/AllContacts";
@@ -29,6 +29,7 @@ import MessagesScreen from "./Components/WhatsappClone/MessagesScreen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { RippleButton } from "./Components/WhatsappClone/RippleButton";
 import Settings from "./Components/WhatsappClone/Settings";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import {
   View,
@@ -283,7 +284,11 @@ export default function App() {
               value={{ callChats, setcallChats, storeCallChats }}
             >
               <CallFilterChatsContext.Provider
-                value={{ callFilterChats, setcallFilterChats, storeFilterCalls }}
+                value={{
+                  callFilterChats,
+                  setcallFilterChats,
+                  storeFilterCalls,
+                }}
               >
                 <FilterChatsContext.Provider
                   value={{ FileredChats, setFileredChats, storeFilterChats }}
@@ -299,120 +304,126 @@ export default function App() {
   };
 
   return (
-    <IntlProvider locale="en" onError={(error) => console.log(error)}>
-    <MyProviders>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen name="Main" options={{ headerShown: false }}>
-            {(props) => {
-              return <WhatsappMainScreen {...props} isEnabled={isEnabled} />;
-            }}
-          </Stack.Screen>
-          <Stack.Group
-            screenOptions={{
-              headerStyle: {
-                backgroundColor: TAB_BACKGROUND_COLOR,
-              },
-              headerTintColor: TITLE_COLOR,
-            }}
-          >
-            <Stack.Screen
-              name="Profile"
-              component={Profile}
-              options={{
-                presentation: "modal",
-              }}
-            />
-            <Stack.Screen name="AllContacts" component={AllContacts} />
-            <Stack.Screen name="Archived" component={Archived} />
-            <Stack.Screen
-              name="ProfileImage"
-              component={ProfileImage}
-              options={{
-                headerStyle: {
-                  backgroundColor: "black",
-                },
-              }}
-            />
-            <Stack.Screen
-              name="LinkedDevices"
-              component={LinkedDevices}
-              options={{
-                title: "Linked devices",
-              }}
-            />
-            <Stack.Screen
-              name="ArchiveSettings"
-              component={ArchiveSettings}
-              options={{
-                title: "Archive settings",
-              }}
-            />
-            <Stack.Screen
-              name="BarCodeScanner"
-              component={BarCodeScannerScreen}
-              options={{
-                title: "Scan QR code",
-              }}
-            />
-            <Stack.Screen
-              name="Camera"
-              component={Camera}
-              options={{
-                title: "",
-                headerLeft: () => null,
-              }}
-            />
-            <Stack.Screen
-              name="ImageScreen"
-              component={CaptureImageScreen}
-              options={{
-                title: "",
-                headerLeft: () => null,
-              }}
-            />
-            <Stack.Screen
-              name="ImageCropScreen"
-              component={ImageCropScreen}
-              options={{
-                title: "",
-                headerLeft: () => null,
-              }}
-            />
-            <Stack.Screen
-              name="CallDetails"
-              component={CallDetails}
-              options={{
-                title: "Create call link",
-                headerTintColor: CHAT_DATA_STATUS_COLOR,
-              }}
-            />
-            <Stack.Screen
-              name="CallScreen"
-              component={CallScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="CallInfo"
-              component={CallInfo}
-              options={{
-                title: "Call Info",
-              }}
-            />
-            <Stack.Screen name="Settings" component={Settings} />
-            <Stack.Screen name="MessagesScreen" component={MessagesScreen} />
-            <Stack.Screen
-              name="MessagesInfo"
-              component={MessagesInfo}
-              options={{ headerTransparent: true }}
-            />
-          </Stack.Group>
-        </Stack.Navigator>
-      </NavigationContainer>
-    </MyProviders>
-    </IntlProvider>
+    
+      <IntlProvider locale="en" onError={(error) => console.log(error)}>
+        <MyProviders>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName="Main">
+              <Stack.Screen name="Main" options={{ headerShown: false }}>
+                {(props) => {
+                  return (
+                    <WhatsappMainScreen {...props} isEnabled={isEnabled} />
+                  );
+                }}
+              </Stack.Screen>
+              <Stack.Group
+                screenOptions={{
+                  headerStyle: {
+                    backgroundColor: TAB_BACKGROUND_COLOR,
+                  },
+                  headerTintColor: TITLE_COLOR,
+                }}
+              >
+                <Stack.Screen
+                  name="Profile"
+                  component={Profile}
+                  options={{
+                    presentation: "modal",
+                  }}
+                />
+                <Stack.Screen name="AllContacts" component={AllContacts} />
+                <Stack.Screen name="Archived" component={Archived} />
+                <Stack.Screen
+                  name="ProfileImage"
+                  component={ProfileImage}
+                  options={{
+                    headerStyle: {
+                      backgroundColor: "black",
+                    },
+                  }}
+                />
+                <Stack.Screen
+                  name="LinkedDevices"
+                  component={LinkedDevices}
+                  options={{
+                    title: "Linked devices",
+                  }}
+                />
+                <Stack.Screen
+                  name="ArchiveSettings"
+                  component={ArchiveSettings}
+                  options={{
+                    title: "Archive settings",
+                  }}
+                />
+                <Stack.Screen
+                  name="BarCodeScanner"
+                  component={BarCodeScannerScreen}
+                  options={{
+                    title: "Scan QR code",
+                  }}
+                />
+                <Stack.Screen
+                  name="Camera"
+                  component={Camera}
+                  options={{
+                    title: "",
+                    headerLeft: () => null,
+                  }}
+                />
+                <Stack.Screen
+                  name="ImageScreen"
+                  component={CaptureImageScreen}
+                  options={{
+                    title: "",
+                    headerLeft: () => null,
+                  }}
+                />
+                <Stack.Screen
+                  name="ImageCropScreen"
+                  component={ImageCropScreen}
+                  options={{
+                    title: "",
+                    headerLeft: () => null,
+                  }}
+                />
+                <Stack.Screen
+                  name="CallDetails"
+                  component={CallDetails}
+                  options={{
+                    title: "Create call link",
+                    headerTintColor: CHAT_DATA_STATUS_COLOR,
+                  }}
+                />
+                <Stack.Screen
+                  name="CallScreen"
+                  component={CallScreen}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="CallInfo"
+                  component={CallInfo}
+                  options={{
+                    title: "Call Info",
+                  }}
+                />
+                <Stack.Screen name="Settings" component={Settings} />
+                <Stack.Screen
+                  name="MessagesScreen"
+                  component={MessagesScreen}
+                />
+                <Stack.Screen
+                  name="MessagesInfo"
+                  component={MessagesInfo}
+                  options={{ headerTransparent: true }}
+                />
+              </Stack.Group>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </MyProviders>
+      </IntlProvider>
   );
 }
 

@@ -102,7 +102,8 @@ export const MessagesReducer = (state, { type, payload }) => {
         if(msg.key == payload.key){
           return {
             ...msg,
-            messageStatus:"double"
+            messageStatus:"double",
+            readedTime:payload.readedTime,
           }
         }
         return msg;
@@ -113,7 +114,8 @@ export const MessagesReducer = (state, { type, payload }) => {
         if(msg.key == payload.key){
           return {
             ...msg,
-            messageStatus:"triple"
+            messageStatus:"triple",
+            delivered:payload.delivered
           }
         }
         return msg;

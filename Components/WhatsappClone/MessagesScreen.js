@@ -70,6 +70,7 @@ import { Modal } from "react-native";
 import { Share } from "react-native";
 import SingleMessage from "./SingleMessage";
 import { useChatsContext } from "../../App";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const PURPLE = "#765fee";
 const RED = "#fd2e74";
@@ -116,6 +117,9 @@ const MessagesScreen = ({ navigation, route }) => {
   const InfoMessages = messages?.find((msg) => msg.selected);
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
+
+  const replayLength =
+    "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, voluptatum?";
 
   const starScaleAnimation = useRef(new Animated.Value(0)).current;
 
@@ -167,6 +171,10 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  const defferedValueForAnimation = useDeferredValue(value);
+
+  let ChatNameLength = "loremipsumdolor";
+
   const MessagesMenuData = [
     { text: "View contact", onPress: () => {}, key: 1 },
     { text: "Media, links, and docs", onPress: () => {}, key: 2 },
@@ -190,7 +198,7 @@ const MessagesScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    if (value !== "") {
+    if (defferedValueForAnimation !== "") {
       AnimatedFunction(ClipandCameraAnimation, 50, 300);
       AnimatedFunction(sendButtonAnimation, 1, 300);
       setpaddingRight(50);
@@ -199,7 +207,7 @@ const MessagesScreen = ({ navigation, route }) => {
       AnimatedFunction(sendButtonAnimation, 0, 300);
       setpaddingRight(100);
     }
-  }, [value]);
+  }, [defferedValueForAnimation]);
 
   const MessagesRippleButton = ({ children, onPress, ...rest }) => {
     return (
@@ -303,7 +311,9 @@ const MessagesScreen = ({ navigation, route }) => {
                       fontWeight: "bold",
                     }}
                   >
-                    {item.name}
+                    {item.name.length > ChatNameLength.length
+                      ? item.name.slice(0, ChatNameLength.length)
+                      : item.name}
                   </Text>
                   <Text style={{ color: TITLE_COLOR, fontSize: 11 }}>
                     last seen today at 3:26 pm
@@ -382,7 +392,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 ) : null}
                 <RippleButton
                   onPress={() => {
-                    makeStarAnimation()
+                    makeStarAnimation();
                     dispatch({
                       type: ACTIONS.STARRE_MESSAGES,
                     });
@@ -399,7 +409,6 @@ const MessagesScreen = ({ navigation, route }) => {
                     onPress={() => {
                       navigation.navigate("MessagesInfo", {
                         InfoMessages,
-                        item,
                       });
                       dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
                     }}
@@ -473,14 +482,6 @@ const MessagesScreen = ({ navigation, route }) => {
     (msg) => msg % 2 !== 0
   );
 
-  // const time = new Date();
-  // const hours = time.getHours();
-  // const minutes = time.getMinutes();
-  // const Messagehours = hours > 12 ? hours - 12 : hours;
-  // const MessageMinutes = minutes > 9 ? minutes : "0" + minutes;
-  // const am_pm = hours >= 12 ? "PM" : "AM";
-
-
   return (
     <>
       <Modal
@@ -552,7 +553,7 @@ const MessagesScreen = ({ navigation, route }) => {
                       Delete for everyone
                     </Text>
                   </TouchableOpacity>
-                 )}
+                )}
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible((v) => !v);
@@ -709,26 +710,47 @@ const MessagesScreen = ({ navigation, route }) => {
               let ColumnOrRow =
                 item.message?.length > messageLenght.length ? "column" : "row";
               return (
-                <SingleMessage
-                  key={item.key}
-                  isEven={isEven}
-                  index={index}
-                  ColumnOrRow={ColumnOrRow}
-                  dispatch={dispatch}
-                  selected={item.selected}
-                  keyOfMessage={item.key}
-                  message={item.message}
-                  starred={item.starred}
-                  deleteForEveryone={item.deleteForEveryone}
-                  messageStatus={item.messageStatus}
-                  starScaleAnimation={item.starAnimation}
-                  time={item.time}
-                />
-              )
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <SingleMessage
+                    key={item.key}
+                    isEven={isEven}
+                    index={index}
+                    ColumnOrRow={ColumnOrRow}
+                    dispatch={dispatch}
+                    selected={item.selected}
+                    keyOfMessage={item.key}
+                    message={item.message}
+                    starred={item.starred}
+                    deleteForEveryone={item.deleteForEveryone}
+                    messageStatus={item.messageStatus}
+                    starScaleAnimation={item.starAnimation}
+                    time={item.time}
+                  />
+                </GestureHandlerRootView>
+              );
             })}
           </ScrollView>
         </View>
         <View>
+          <View style={[styles.replyContainer,{position:"absolute"}]}>
+            <View style={styles.replayTopTextContainer}>
+              <Text
+                style={{ color: MESSAGE_BACKGROUND_COLOR, fontWeight: "bold" }}
+              >
+                You
+              </Text>
+              <TouchableOpacity>
+                <Text style={{ fontSize: 15, color: EMOJI_BACKGROUND_COLOR }}>
+                  &times;
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.replyText}>
+              <Text style={{ color: EMOJI_BACKGROUND_COLOR }}>
+                Kitni percent ❓ 
+              </Text>
+            </View>
+          </View>
           <View
             style={[
               styles.inputContainer,
@@ -795,15 +817,17 @@ const MessagesScreen = ({ navigation, route }) => {
                 let messagesObject = {
                   message: value,
                   key: Date.now().toString(),
-                  time:Date.now(),
+                  time: Date.now(),
                   messageStatus: "single",
                   selected: false,
                   deleteForEveryone: false,
                   starred: false,
-                  starAnimation:new Animated.Value(0)
+                  starAnimation: new Animated.Value(0),
+                  readedTime: Date.now(),
+                  delivered: Date.now(),
                 };
 
-                if(value == "") return;
+                if (value == "") return;
 
                 dispatch({
                   type: ACTIONS.SEND_MESSAGES,
@@ -814,25 +838,28 @@ const MessagesScreen = ({ navigation, route }) => {
 
                 setTimeout(() => {
                   dispatch({
-                    type:ACTIONS.UPDATE_MESSAGE_STATUS_TO_DOUBLE,
-                    payload:{
-                      key:messagesObject.key
-                    }
-                  })
+                    type: ACTIONS.UPDATE_MESSAGE_STATUS_TO_DOUBLE,
+                    payload: {
+                      key: messagesObject.key,
+                      readedTime: Date.now(),
+                      delivered: Date.now(),
+                    },
+                  });
                 }, 60 * 1000);
 
                 setTimeout(() => {
                   dispatch({
-                    type:ACTIONS.UPDATE_MESSAGE_STATUS_TO_TRIPLE,
-                    payload:{
-                      key:messagesObject.key
-                    }
-                  })
+                    type: ACTIONS.UPDATE_MESSAGE_STATUS_TO_TRIPLE,
+                    payload: {
+                      key: messagesObject.key,
+                      readedTime: Date.now(),
+                      delivered: Date.now(),
+                    },
+                  });
                 }, 3 * 60 * 1000);
 
-                setvalue("")
-              }
-              }
+                setvalue("");
+              }}
             >
               <View style={[styles.sendButton]}>
                 <Animated.View
@@ -915,7 +942,7 @@ const styles = StyleSheet.create({
     flex: 8,
     flexDirection: "row",
     backgroundColor: ANSWER_BACKGROUND_COLOR,
-    borderRadius: 50,
+    borderRadius: 100,
     marginHorizontal: 10,
     marginTop: 5,
     height: 45,
@@ -1023,6 +1050,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginTop: 20,
+  },
+  replyContainer: {
+    backgroundColor: CHAT_BACKROUND_COLOR,
+    width: "83%",
+    marginLeft: 10,
+    borderWidth: 7,
+    borderColor: ANSWER_BACKGROUND_COLOR,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    overflow: "hidden",
+    bottom:0,
+    opacity: 0,
+  },
+  replayTopTextContainer: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    paddingHorizontal: 5,
+    borderLeftWidth: 5,
+    borderLeftColor: MESSAGE_BACKGROUND_COLOR,
+    alignItems: "center",
+  },
+  replyText: {
+    borderLeftWidth: 5,
+    borderLeftColor: MESSAGE_BACKGROUND_COLOR,
+    padding: 5,
   },
 });
 
