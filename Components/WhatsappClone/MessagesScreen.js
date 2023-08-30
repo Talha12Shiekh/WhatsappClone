@@ -161,6 +161,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const ClipandCameraAnimation = useRef(new Animated.Value(0)).current;
 
+  const [draggedMessage,setdraggedMessage] = useState("")
+
   const sendButtonAnimation = useRef(new Animated.Value(0)).current;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -170,8 +172,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const AnimatedView = Animated.createAnimatedComponent(View);
 
   const [modalVisible, setModalVisible] = useState(false);
-
-  const defferedValueForAnimation = useDeferredValue(value);
 
   let ChatNameLength = "loremipsumdolor";
 
@@ -198,7 +198,7 @@ const MessagesScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    if (defferedValueForAnimation !== "") {
+    if (value !== "") {
       AnimatedFunction(ClipandCameraAnimation, 50, 300);
       AnimatedFunction(sendButtonAnimation, 1, 300);
       setpaddingRight(50);
@@ -207,7 +207,7 @@ const MessagesScreen = ({ navigation, route }) => {
       AnimatedFunction(sendButtonAnimation, 0, 300);
       setpaddingRight(100);
     }
-  }, [defferedValueForAnimation]);
+  }, [value]);
 
   const MessagesRippleButton = ({ children, onPress, ...rest }) => {
     return (
@@ -482,6 +482,25 @@ const MessagesScreen = ({ navigation, route }) => {
     (msg) => msg % 2 !== 0
   );
 
+  const replyAnimation = useRef(new Animated.Value(0)).current;
+
+  const replyContainerStyles = {
+    transform:[
+      {
+        translateY:replyAnimation.interpolate({
+          inputRange:[0,1],
+          outputRange:[70,0]
+        })
+      }
+    ],
+    opacity:replyAnimation.interpolate({
+      inputRange:[0,.8,1],
+      outputRange:[0,0,1]
+    })
+  }
+
+  
+
   return (
     <>
       <Modal
@@ -704,7 +723,7 @@ const MessagesScreen = ({ navigation, route }) => {
           onClose={() => setIsOpen(false)}
         />
         <View style={{ flex: 10, paddingTop: 20 }}>
-          <ScrollView >
+          <ScrollView>
             {messages.map((item, index) => {
               const isEven = index % 2 == 0;
               let ColumnOrRow =
@@ -725,6 +744,9 @@ const MessagesScreen = ({ navigation, route }) => {
                     messageStatus={item.messageStatus}
                     starScaleAnimation={item.starAnimation}
                     time={item.time}
+                    replyAnimation={replyAnimation}
+                    messages={messages}
+                    setdraggedMessage={setdraggedMessage}
                   />
                 </GestureHandlerRootView>
               );
@@ -732,25 +754,25 @@ const MessagesScreen = ({ navigation, route }) => {
           </ScrollView>
         </View>
         <View>
-          <View style={[styles.replyContainer,{position:"absolute"}]}>
-            <View style={styles.replayTopTextContainer}>
+          <Animated.View style={[styles.replyContainer,{position:"absolute",...replyContainerStyles}]}>
+            <View style={[styles.replayTopTextContainer,styles.leftBorderGreen]}>
               <Text
                 style={{ color: MESSAGE_BACKGROUND_COLOR, fontWeight: "bold" }}
               >
                 You
               </Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => AnimatedFunction(replyAnimation,0,500)}>
                 <Text style={{ fontSize: 15, color: EMOJI_BACKGROUND_COLOR }}>
                   &times;
                 </Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.replyText}>
+            <View style={[styles.replyText,styles.leftBorderGreen]}>
               <Text style={{ color: EMOJI_BACKGROUND_COLOR }}>
-                Kitni percent ❓ 
+                {draggedMessage.length > replayLength.length ? draggedMessage.slice(0,replayLength.length) + " ..." : draggedMessage}
               </Text>
             </View>
-          </View>
+          </Animated.View>
           <View
             style={[
               styles.inputContainer,
@@ -1053,28 +1075,30 @@ const styles = StyleSheet.create({
   },
   replyContainer: {
     backgroundColor: CHAT_BACKROUND_COLOR,
-    width: "83%",
-    marginLeft: 10,
-    borderWidth: 7,
+    width: "82%",
+    marginLeft: 12,
+    borderWidth: 10,
     borderColor: ANSWER_BACKGROUND_COLOR,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     overflow: "hidden",
+    bottom: 40,
   },
   replayTopTextContainer: {
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
     paddingHorizontal: 5,
-    borderLeftWidth: 5,
-    borderLeftColor: MESSAGE_BACKGROUND_COLOR,
     alignItems: "center",
   },
   replyText: {
-    borderLeftWidth: 5,
-    borderLeftColor: MESSAGE_BACKGROUND_COLOR,
     padding: 5,
+    paddingBottom:15
   },
+  leftBorderGreen:{
+    borderLeftWidth:5,
+    borderLeftColor:MESSAGE_BACKGROUND_COLOR
+  }
 });
 
 export default MessagesScreen;

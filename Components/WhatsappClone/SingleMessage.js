@@ -46,6 +46,9 @@ const SingleMessage = ({
   messageStatus,
   starScaleAnimation,
   time,
+  replyAnimation,
+  messages,
+  setdraggedMessage
 }) => {
   const messageRef = useRef(null);
 
@@ -65,7 +68,7 @@ const SingleMessage = ({
       }
     },
     onEnd: () => {
-        translateX.value = withSpring(0);
+      translateX.value = withSpring(0);
     },
   });
 
@@ -100,6 +103,11 @@ const SingleMessage = ({
           ? questionMessageCornerStyles
           : answerMessageCornerStyles,
     });
+  };
+
+  const handleFindMessage = (key) => {
+    const draggedMessage = messages.find((msg) => msg.key == key);
+    setdraggedMessage(draggedMessage.message);
   };
 
   const handleUnChangeMessageBackground = () => {
@@ -150,9 +158,28 @@ const SingleMessage = ({
         })
       }
     >
-      <PanGestureHandler onGestureEvent={onDrag}>
+      <PanGestureHandler
+        onGestureEvent={onDrag}
+        onEnded={() => {
+          replyAnimation.setValue(1);
+          handleFindMessage(keyOfMessage);
+        }}
+      >
         <AnimatedView style={containerStyle}>
-          <Animated.View style={[styles.arrowIcon, { left: -40 ,width:30,aspectRatio:1,borderRadius:50,backgroundColor:"rgba(0,0,0,.5)",justifyContent:"center",alignItems:"center"}]}>
+          <Animated.View
+            style={[
+              styles.arrowIcon,
+              {
+                left: -40,
+                width: 30,
+                aspectRatio: 1,
+                borderRadius: 50,
+                backgroundColor: "rgba(0,0,0,.5)",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
+          >
             <Ionicons name="arrow-undo-sharp" size={18} color={TITLE_COLOR} />
           </Animated.View>
           <AnimatedView
