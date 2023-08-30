@@ -65,7 +65,7 @@ const SingleMessage = ({
       }
     },
     onEnd: () => {
-        translateX.value = withSpring(0, { damping: 10, stiffness: 150 });
+        translateX.value = withSpring(0);
     },
   });
 
@@ -152,7 +152,7 @@ const SingleMessage = ({
     >
       <PanGestureHandler onGestureEvent={onDrag}>
         <AnimatedView style={containerStyle}>
-          <Animated.View style={[styles.arrowIcon, { left: -40 ,width:30,aspectRatio:1,borderRadius:50,backgroundColor:"black",justifyContent:"center",alignItems:"center"}]}>
+          <Animated.View style={[styles.arrowIcon, { left: -40 ,width:30,aspectRatio:1,borderRadius:50,backgroundColor:"rgba(0,0,0,.5)",justifyContent:"center",alignItems:"center"}]}>
             <Ionicons name="arrow-undo-sharp" size={18} color={TITLE_COLOR} />
           </Animated.View>
           <AnimatedView

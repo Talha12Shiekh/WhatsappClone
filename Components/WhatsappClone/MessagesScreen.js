@@ -704,7 +704,7 @@ const MessagesScreen = ({ navigation, route }) => {
           onClose={() => setIsOpen(false)}
         />
         <View style={{ flex: 10, paddingTop: 20 }}>
-          <ScrollView>
+          <ScrollView >
             {messages.map((item, index) => {
               const isEven = index % 2 == 0;
               let ColumnOrRow =
@@ -1060,8 +1060,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     overflow: "hidden",
-    bottom:0,
-    opacity: 0,
   },
   replayTopTextContainer: {
     flexDirection: "row",
