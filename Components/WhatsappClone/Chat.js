@@ -106,10 +106,10 @@ const Chat = (item) => {
       } else {
         return (
           <View style={{flexDirection:"row",alignItems:"center",gap:5}}>
-            <View>
-              <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>{lastMessage.indexOfMessage % 2 == 0 &&
-              generateSendTick(lastMessage.status, CHAT_DATA_STATUS_COLOR)}</Text>
-            </View>
+            {lastMessage.indexOfMessage % 2 == 0 && <View>
+              <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+              {generateSendTick(lastMessage.status, CHAT_DATA_STATUS_COLOR)}</Text>
+            </View>}
             <View>
             <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
               {lastMessage.message.length > generateAboutLimit().length

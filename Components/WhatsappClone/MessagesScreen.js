@@ -15,7 +15,6 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
-
 import {
   ClosenavbarAnimation,
   RippleButton,
@@ -29,6 +28,7 @@ import {
 } from "react-native-vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import EmojiPicker from "rn-emoji-keyboard";
+import { SwipeListView } from 'react-native-swipe-list-view';
 import {
   MaterialIcons,
   FontAwesome5,
@@ -70,7 +70,6 @@ import { Modal } from "react-native";
 import { Share } from "react-native";
 import SingleMessage from "./SingleMessage";
 import { useChatsContext } from "../../App";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const PURPLE = "#765fee";
 const RED = "#fd2e74";
@@ -161,7 +160,7 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const ClipandCameraAnimation = useRef(new Animated.Value(0)).current;
 
-  const [draggedMessage,setdraggedMessage] = useState("")
+  const [draggedMessage, setdraggedMessage] = useState("");
 
   const sendButtonAnimation = useRef(new Animated.Value(0)).current;
 
@@ -485,21 +484,19 @@ const MessagesScreen = ({ navigation, route }) => {
   const replyAnimation = useRef(new Animated.Value(0)).current;
 
   const replyContainerStyles = {
-    transform:[
+    transform: [
       {
-        translateY:replyAnimation.interpolate({
-          inputRange:[0,1],
-          outputRange:[70,0]
-        })
-      }
+        translateY: replyAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [70, 0],
+        }),
+      },
     ],
-    opacity:replyAnimation.interpolate({
-      inputRange:[0,.8,1],
-      outputRange:[0,0,1]
-    })
-  }
-
-  
+    opacity: replyAnimation.interpolate({
+      inputRange: [0, 0.8, 1],
+      outputRange: [0, 0, 1],
+    }),
+  };
 
   return (
     <>
@@ -723,53 +720,65 @@ const MessagesScreen = ({ navigation, route }) => {
           onClose={() => setIsOpen(false)}
         />
         <View style={{ flex: 10, paddingTop: 20 }}>
-          <ScrollView>
-            {messages.map((item, index) => {
-              const isEven = index % 2 == 0;
-              let ColumnOrRow =
-                item.message?.length > messageLenght.length ? "column" : "row";
+          <SwipeListView
+         
+            data={messages}
+            renderHiddenItem={ (data, rowMap) => <View/>}
+            renderItem={(data,index) => {
+              const isEven = data.index % 2 == 0;
+              let ColumnOrRow = data.item.message?.length > messageLenght.length ? "column" : "row";
+              
               return (
-                <GestureHandlerRootView style={{ flex: 1 }}>
-                  <SingleMessage
-                    key={item.key}
+                <SingleMessage
+                    key={data.item.key}
                     isEven={isEven}
-                    index={index}
+                    index={data.index}
                     ColumnOrRow={ColumnOrRow}
                     dispatch={dispatch}
-                    selected={item.selected}
-                    keyOfMessage={item.key}
-                    message={item.message}
-                    starred={item.starred}
-                    deleteForEveryone={item.deleteForEveryone}
-                    messageStatus={item.messageStatus}
-                    starScaleAnimation={item.starAnimation}
-                    time={item.time}
+                    selected={data.item.selected}
+                    keyOfMessage={data.item.key}
+                    message={data.item.message}
+                    starred={data.item.starred}
+                    deleteForEveryone={data.item.deleteForEveryone}
+                    messageStatus={data.item.messageStatus}
+                    starScaleAnimation={data.item.starAnimation}
+                    time={data.item.time}
                     replyAnimation={replyAnimation}
                     messages={messages}
                     setdraggedMessage={setdraggedMessage}
-                  />
-                </GestureHandlerRootView>
+              />
               );
-            })}
-          </ScrollView>
+            }}
+          />
         </View>
         <View>
-          <Animated.View style={[styles.replyContainer,{position:"absolute",...replyContainerStyles}]}>
-            <View style={[styles.replayTopTextContainer,styles.leftBorderGreen]}>
+          <Animated.View
+            style={[
+              styles.replyContainer,
+              { position: "absolute", ...replyContainerStyles },
+            ]}
+          >
+            <View
+              style={[styles.replayTopTextContainer, styles.leftBorderGreen]}
+            >
               <Text
                 style={{ color: MESSAGE_BACKGROUND_COLOR, fontWeight: "bold" }}
               >
                 You
               </Text>
-              <TouchableOpacity onPress={() => AnimatedFunction(replyAnimation,0,500)}>
+              <TouchableOpacity
+                onPress={() => AnimatedFunction(replyAnimation, 0, 500)}
+              >
                 <Text style={{ fontSize: 15, color: EMOJI_BACKGROUND_COLOR }}>
                   &times;
                 </Text>
               </TouchableOpacity>
             </View>
-            <View style={[styles.replyText,styles.leftBorderGreen]}>
+            <View style={[styles.replyText, styles.leftBorderGreen]}>
               <Text style={{ color: EMOJI_BACKGROUND_COLOR }}>
-                {draggedMessage.length > replayLength.length ? draggedMessage.slice(0,replayLength.length) + " ..." : draggedMessage}
+                {draggedMessage.length > replayLength.length
+                  ? draggedMessage.slice(0, replayLength.length) + " ..."
+                  : draggedMessage}
               </Text>
             </View>
           </Animated.View>
@@ -1093,12 +1102,16 @@ const styles = StyleSheet.create({
   },
   replyText: {
     padding: 5,
-    paddingBottom:15
+    paddingBottom: 15,
   },
-  leftBorderGreen:{
-    borderLeftWidth:5,
-    borderLeftColor:MESSAGE_BACKGROUND_COLOR
-  }
+  arrowIcon: {
+    position: "absolute",
+    top: "10%",
+  },
+  leftBorderGreen: {
+    borderLeftWidth: 5,
+    borderLeftColor: MESSAGE_BACKGROUND_COLOR,
+  },
 });
 
 export default MessagesScreen;

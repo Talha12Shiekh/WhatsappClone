@@ -1,37 +1,17 @@
-import { StyleSheet, Text, View, PanResponder } from "react-native";
-import React, { useImperativeHandle, useState } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import React from "react";
 import { ACTIONS } from "./MessagesReducer";
 import {
   ANSWER_BACKGROUND_COLOR,
   GREEN_MESSAGE_CLICKED_BACKGROUND,
   INACTIVE_TAB_WHITE_COLOR,
   MESSAGE_BACKGROUND_COLOR,
-  TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
   generateSendTick,
 } from "./WhatsappMainScreen";
-import { Pressable } from "react-native";
-import { PanGestureHandler } from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
-import {
-  MaterialIcons,
-  FontAwesome5,
-  MaterialCommunityIcons,
-  Feather,
-  FontAwesome,
-  Fontisto,
-  Entypo,
-  Foundation,
-  Ionicons,
-} from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";
-import { TouchableNativeFeedback } from "react-native";
 
 const SingleMessage = ({
   isEven,
@@ -48,39 +28,39 @@ const SingleMessage = ({
   time,
   replyAnimation,
   messages,
-  setdraggedMessage
+  setdraggedMessage,
 }) => {
   const messageRef = useRef(null);
 
   const cornerRef = useRef(null);
 
-  const translateX = useSharedValue(0);
+  // const translateX = useSharedValue(0);
 
-  const AnimatedView = Animated.createAnimatedComponent(View);
+  // const AnimatedView = Animated.createAnimatedComponent(View);
 
-  const onDrag = useAnimatedGestureHandler({
-    onStart: (event, context) => {
-      context.translateX = translateX.value;
-    },
-    onActive: (event, context) => {
-      if (event.translationX > 0) {
-        translateX.value = event.translationX + context.translateX;
-      }
-    },
-    onEnd: () => {
-      translateX.value = withSpring(0);
-    },
-  });
+  // const onDrag = useAnimatedGestureHandler({
+  //   onStart: (event, context) => {
+  //     context.translateX = translateX.value;
+  //   },
+  //   onActive: (event, context) => {
+  //     if (event.translationX > 0) {
+  //       translateX.value = event.translationX + context.translateX;
+  //     }
+  //   },
+  //   onEnd: () => {
+  //     translateX.value = withSpring(0);
+  //   },
+  // });
 
-  const containerStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: translateX.value,
-        },
-      ],
-    };
-  });
+  // const containerStyle = useAnimatedStyle(() => {
+  //   return {
+  //     transform: [
+  //       {
+  //         translateX: translateX.value,
+  //       },
+  //     ],
+  //   };
+  // });
 
   let messageStyles = [styles.message];
   let questionMessageCornerStyles = [styles.messageCorner];
@@ -158,15 +138,7 @@ const SingleMessage = ({
         })
       }
     >
-      <PanGestureHandler
-        onGestureEvent={onDrag}
-        onEnded={() => {
-          replyAnimation.setValue(1);
-          handleFindMessage(keyOfMessage);
-        }}
-      >
-        <AnimatedView style={containerStyle}>
-          <Animated.View
+          <View
             style={[
               styles.arrowIcon,
               {
@@ -181,8 +153,8 @@ const SingleMessage = ({
             ]}
           >
             <Ionicons name="arrow-undo-sharp" size={18} color={TITLE_COLOR} />
-          </Animated.View>
-          <AnimatedView
+          </View>
+          <View
             style={[
               styles.messagesContainer,
               { alignSelf: isEven ? "flex-end" : "flex-start" },
@@ -314,9 +286,7 @@ const SingleMessage = ({
                 </View>
               </View>
             </View>
-          </AnimatedView>
-        </AnimatedView>
-      </PanGestureHandler>
+          </View>
     </Pressable>
   );
 };
