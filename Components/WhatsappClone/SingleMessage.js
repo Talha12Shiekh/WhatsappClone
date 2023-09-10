@@ -34,34 +34,6 @@ const SingleMessage = ({
 
   const cornerRef = useRef(null);
 
-  // const translateX = useSharedValue(0);
-
-  // const AnimatedView = Animated.createAnimatedComponent(View);
-
-  // const onDrag = useAnimatedGestureHandler({
-  //   onStart: (event, context) => {
-  //     context.translateX = translateX.value;
-  //   },
-  //   onActive: (event, context) => {
-  //     if (event.translationX > 0) {
-  //       translateX.value = event.translationX + context.translateX;
-  //     }
-  //   },
-  //   onEnd: () => {
-  //     translateX.value = withSpring(0);
-  //   },
-  // });
-
-  // const containerStyle = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [
-  //       {
-  //         translateX: translateX.value,
-  //       },
-  //     ],
-  //   };
-  // });
-
   let messageStyles = [styles.message];
   let questionMessageCornerStyles = [styles.messageCorner];
   let answerMessageCornerStyles = [styles.answermessageCorner];
