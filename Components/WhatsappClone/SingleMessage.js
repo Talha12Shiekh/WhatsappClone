@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable,Animated } from "react-native";
 import React from "react";
 import { ACTIONS } from "./MessagesReducer";
 import {
@@ -26,9 +26,10 @@ const SingleMessage = ({
   messageStatus,
   starScaleAnimation,
   time,
-  replyAnimation,
   messages,
   setdraggedMessage,
+  setdraggedIndex,
+  draggedIndex
 }) => {
   const messageRef = useRef(null);
 
@@ -39,6 +40,7 @@ const SingleMessage = ({
   let answerMessageCornerStyles = [styles.answermessageCorner];
 
   const handleChangeMessageBackground = () => {
+    setdraggedIndex(index);
     if (index % 2 == 0) {
       messageStyles.push(styles.green_selected_background);
       questionMessageCornerStyles.push(styles.green_selected_background);
@@ -55,11 +57,6 @@ const SingleMessage = ({
           ? questionMessageCornerStyles
           : answerMessageCornerStyles,
     });
-  };
-
-  const handleFindMessage = (key) => {
-    const draggedMessage = messages.find((msg) => msg.key == key);
-    setdraggedMessage(draggedMessage.message);
   };
 
   const handleUnChangeMessageBackground = () => {
@@ -96,6 +93,7 @@ const SingleMessage = ({
             },
           });
         }
+        
       }}
       style={{
         backgroundColor: selected ? "#00800094" : "transparent",

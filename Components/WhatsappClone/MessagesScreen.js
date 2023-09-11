@@ -3,14 +3,10 @@ import {
   Text,
   Animated,
   StyleSheet,
-  ImageBackground,
   Image,
   TouchableNativeFeedback,
   TouchableOpacity,
   TextInput,
-  KeyboardAvoidingView,
-  Pressable,
-  ScrollView,
   useWindowDimensions,
   TouchableWithoutFeedback,
 } from "react-native";
@@ -41,9 +37,7 @@ import {
 } from "@expo/vector-icons";
 import {
   TAB_BACKGROUND_COLOR,
-  INACTIVE_TAB_WHITE_COLOR,
   TITLE_COLOR,
-  BADGE_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
   MENU_BACKGROUND_COLOR,
@@ -53,12 +47,9 @@ import {
   MESSAGE_BACKGROUND_COLOR,
   MODAL_BACKGROUND_COLOR,
   MODAL_TEXT_COLOR,
-  generateSendTick,
   CHAT_BACKROUND_COLOR,
 } from "./WhatsappMainScreen";
 import {
-  createRef,
-  useDeferredValue,
   useEffect,
   useReducer,
   useRef,
@@ -70,14 +61,9 @@ import { Modal } from "react-native";
 import { Share } from "react-native";
 import SingleMessage from "./SingleMessage";
 import { useChatsContext } from "../../App";
-
-const PURPLE = "#765fee";
-const RED = "#fd2e74";
-const PINK = "#c861fa";
-const ORANGE = "#f96632";
-const GREEN = "#1fa755";
-const BLUE = "#029ce2";
-const LIGHTGREEN = "#01a698";
+import DeleteModal from "./DeleteModal";
+import MessageModal from "./MessageModal";
+import MessageInput from "./MessageInput";
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
@@ -118,7 +104,7 @@ const MessagesScreen = ({ navigation, route }) => {
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
   const replayLength =
-    "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, voluptatum?";
+    "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, voluptatum?  Iste, voluptatum?  Iste, voluptatum? Iste Iste,Iste";
 
   const starScaleAnimation = useRef(new Animated.Value(0)).current;
 
@@ -162,6 +148,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [draggedMessage, setdraggedMessage] = useState("");
 
+  const [draggedIndex,setdraggedIndex] = useState(null)
+
   const sendButtonAnimation = useRef(new Animated.Value(0)).current;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -169,8 +157,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
 
   const AnimatedView = Animated.createAnimatedComponent(View);
-
-  const [modalVisible, setModalVisible] = useState(false);
 
   let ChatNameLength = "loremipsumdolor";
 
@@ -483,12 +469,20 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const replyAnimation = useRef(new Animated.Value(0)).current;
 
+  function AnimateReplyContainer(){
+    return Animated.timing(replyAnimation,{toValue:1,useNativeDriver:true,duration:500}).start()
+  }
+
+  const {width} = useWindowDimensions()
+
+  const [modalVisible, setModalVisible] = useState(false);
+
   const replyContainerStyles = {
     transform: [
       {
         translateY: replyAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [70, 0],
+          outputRange: [width, 0],
         }),
       },
     ],
@@ -500,217 +494,19 @@ const MessagesScreen = ({ navigation, route }) => {
 
   return (
     <>
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "rgba(0,0,0,.5)",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: -1,
-            }}
-          >
-            <View
-              style={{
-                width: "90%",
-                height: !showDeleteforeveryone ? 200 : 120,
-                backgroundColor: MODAL_BACKGROUND_COLOR,
-                zIndex: 999999999,
-                padding: 20,
-              }}
-            >
-              <View>
-                <Text
-                  style={{
-                    color: MODAL_TEXT_COLOR,
-                    fontSize: 17,
-                    marginLeft: 10,
-                  }}
-                >
-                  {selectedMessages?.length > 1
-                    ? "Delete " + selectedMessages.length + " messages"
-                    : handleShowSelectionInAlert()}
-                </Text>
-              </View>
-              <View
-                style={{
-                  alignSelf: "flex-end",
-                  flex: 1,
-                  justifyContent: "space-around",
-                  marginTop: 10,
-                  flexDirection: showDeleteforeveryone ? "row" : "column",
-                  gap: 10,
-                }}
-              >
-                {!showDeleteforeveryone && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setModalVisible((v) => !v);
-                      dispatch({
-                        type: ACTIONS.DELETE_FOR_EVERYONE,
-                      });
-                    }}
-                  >
-                    <Text
-                      style={{
-                        textAlign: "right",
-                        color: ACTIVE_TAB_GREEN_COLOR,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Delete for everyone
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  onPress={() => {
-                    setModalVisible((v) => !v);
-                    dispatch({
-                      type: ACTIONS.DELETE_MESSAGES,
-                    });
-                  }}
-                >
-                  <Text
-                    style={{
-                      textAlign: "right",
-                      color: ACTIVE_TAB_GREEN_COLOR,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Delete for me
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setModalVisible((v) => !v)}>
-                  <Text
-                    style={{
-                      textAlign: "right",
-                      color: ACTIVE_TAB_GREEN_COLOR,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      <DeleteModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        showDeleteforeveryone={showDeleteforeveryone}
+        selectedMessages={selectedMessages}
+        handleShowSelectionInAlert={handleShowSelectionInAlert}
+        dispatch={dispatch}
+      />
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={MenuVisible}
-          onRequestClose={() => setMenuVisible((v) => !v)}
-        >
-          <TouchableWithoutFeedback onPress={() => setMenuVisible((v) => !v)}>
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,.1)" }} />
-          </TouchableWithoutFeedback>
-          <Animated.View
-            style={[
-              styles.messagesMenu,
-              {
-                zIndex: 3333333333333,
-                transform: [{ translateY: -30 }],
-              },
-            ]}
-          >
-            <View style={styles.singleLineOfMenu}>
-              <TouchableOpacity>
-                <View>
-                  <AnimatedView
-                    style={[styles.menuButton, { backgroundColor: PURPLE }]}
-                  >
-                    <Ionicons name="document" size={24} color={TITLE_COLOR} />
-                  </AnimatedView>
-                  <Text style={styles.menuText}>Document</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View>
-                  <AnimatedView
-                    style={[styles.menuButton, { backgroundColor: RED }]}
-                  >
-                    <FontAwesome name="camera" size={24} color={TITLE_COLOR} />
-                  </AnimatedView>
-                  <Text style={styles.menuText}>Camera</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View>
-                  <AnimatedView
-                    style={[styles.menuButton, { backgroundColor: PINK }]}
-                  >
-                    <Foundation name="photo" size={24} color={TITLE_COLOR} />
-                  </AnimatedView>
-                  <Text style={styles.menuText}>Gallery</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.singleLineOfMenu}>
-              <TouchableOpacity>
-                <View>
-                  <AnimatedView
-                    style={[styles.menuButton, { backgroundColor: ORANGE }]}
-                  >
-                    <FontAwesome5
-                      name="headphones"
-                      size={24}
-                      color={TITLE_COLOR}
-                    />
-                  </AnimatedView>
-                  <Text style={styles.menuText}>Audio</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View>
-                  <AnimatedView
-                    style={[styles.menuButton, { backgroundColor: GREEN }]}
-                  >
-                    <Ionicons
-                      name="md-location-sharp"
-                      size={24}
-                      color={TITLE_COLOR}
-                    />
-                  </AnimatedView>
-                  <Text style={styles.menuText}>Location</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View>
-                  <AnimatedView
-                    style={[styles.menuButton, { backgroundColor: BLUE }]}
-                  >
-                    <Feather name="user" size={24} color={TITLE_COLOR} />
-                  </AnimatedView>
-                  <Text style={styles.menuText}>Contact</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity>
-              <View>
-                <AnimatedView
-                  style={[styles.menuButton, { backgroundColor: LIGHTGREEN }]}
-                >
-                  <MaterialCommunityIcons
-                    name="poll"
-                    size={24}
-                    color={TITLE_COLOR}
-                  />
-                </AnimatedView>
-                <Text style={styles.menuText}>Poll</Text>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
-        </Modal>
+        <MessageModal
+        MenuVisible={MenuVisible}
+        setMenuVisible={setMenuVisible}
+        />
 
         <EmojiPicker
           open={isOpen}
@@ -721,34 +517,40 @@ const MessagesScreen = ({ navigation, route }) => {
         />
         <View style={{ flex: 10, paddingTop: 20 }}>
           <SwipeListView
-         
+            swipeGestureEnded={(rowKey) => {
+              AnimateReplyContainer();
+              const {message} = messages.find((msg,ind)  => ind == draggedIndex);
+              setdraggedMessage(message);
+            }}
             data={messages}
             renderHiddenItem={ (data, rowMap) => <View/>}
-            renderItem={(data,index) => {
-              const isEven = data.index % 2 == 0;
-              let ColumnOrRow = data.item.message?.length > messageLenght.length ? "column" : "row";
+            renderItem={({item,index}) => {
+              const isEven = index % 2 == 0;
+              let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
               
               return (
                 <SingleMessage
-                    key={data.item.key}
+                    key={item.key}
                     isEven={isEven}
-                    index={data.index}
+                    index={index}
                     ColumnOrRow={ColumnOrRow}
                     dispatch={dispatch}
-                    selected={data.item.selected}
-                    keyOfMessage={data.item.key}
-                    message={data.item.message}
-                    starred={data.item.starred}
-                    deleteForEveryone={data.item.deleteForEveryone}
-                    messageStatus={data.item.messageStatus}
-                    starScaleAnimation={data.item.starAnimation}
-                    time={data.item.time}
+                    selected={item.selected}
+                    keyOfMessage={item.key}
+                    message={item.message}
+                    starred={item.starred}
+                    deleteForEveryone={item.deleteForEveryone}
+                    messageStatus={item.messageStatus}
+                    starScaleAnimation={item.starScaleAnimation}
+                    time={item.time}
                     replyAnimation={replyAnimation}
                     messages={messages}
                     setdraggedMessage={setdraggedMessage}
+                    setdraggedIndex={setdraggedIndex}
               />
               );
             }}
+            disableLeftSwipe={true}
           />
         </View>
         <View>
@@ -764,7 +566,7 @@ const MessagesScreen = ({ navigation, route }) => {
               <Text
                 style={{ color: MESSAGE_BACKGROUND_COLOR, fontWeight: "bold" }}
               >
-                You
+                {draggedIndex % 2 == 0 ? "You" : item.name}
               </Text>
               <TouchableOpacity
                 onPress={() => AnimatedFunction(replyAnimation, 0, 500)}
@@ -782,156 +584,16 @@ const MessagesScreen = ({ navigation, route }) => {
               </Text>
             </View>
           </Animated.View>
-          <View
-            style={[
-              styles.inputContainer,
-              {
-                overflow: "hidden",
-                marginBottom: 10,
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 50,
-              },
-            ]}
-          >
-            <View style={[styles.emoji, { alignSelf: "flex-end" }]}>
-              <MessagesRippleButton
-                onPress={() => {
-                  setIsOpen((o) => !o);
-                }}
-              >
-                <Fontisto
-                  name="smiley"
-                  size={20}
-                  color={EMOJI_BACKGROUND_COLOR}
-                />
-              </MessagesRippleButton>
-            </View>
-            <View>
-              <TextInput
-                placeholderTextColor={EMOJI_BACKGROUND_COLOR}
-                placeholder="Messages"
-                style={[styles.input, { paddingRight: paddingRight }]}
-                multiline
-                value={value}
-                onChangeText={(value) => setvalue(value)}
-              />
-            </View>
-            <Animated.View
-              style={[
-                styles.camera_and_clip,
-                { transform: [{ translateX: ClipandCameraAnimation }] },
-              ]}
-            >
-              <MessagesRippleButton onPress={() => setMenuVisible((v) => !v)}>
-                <Entypo
-                  name="attachment"
-                  size={20}
-                  color={EMOJI_BACKGROUND_COLOR}
-                />
-              </MessagesRippleButton>
-              <MessagesRippleButton
-                onPress={() => navigation.navigate("Camera")}
-              >
-                <Feather
-                  name="camera"
-                  size={20}
-                  color={EMOJI_BACKGROUND_COLOR}
-                />
-              </MessagesRippleButton>
-            </Animated.View>
-          </View>
-          <View style={{ marginLeft: "86%", marginBottom: 5 }}>
-            <TouchableOpacity
-              onPress={() => {
-                let messagesObject = {
-                  message: value,
-                  key: Date.now().toString(),
-                  time: Date.now(),
-                  messageStatus: "single",
-                  selected: false,
-                  deleteForEveryone: false,
-                  starred: false,
-                  starAnimation: new Animated.Value(0),
-                  readedTime: Date.now(),
-                  delivered: Date.now(),
-                };
-
-                if (value == "") return;
-
-                dispatch({
-                  type: ACTIONS.SEND_MESSAGES,
-                  payload: {
-                    messagesObject,
-                  },
-                });
-
-                setTimeout(() => {
-                  dispatch({
-                    type: ACTIONS.UPDATE_MESSAGE_STATUS_TO_DOUBLE,
-                    payload: {
-                      key: messagesObject.key,
-                      readedTime: Date.now(),
-                      delivered: Date.now(),
-                    },
-                  });
-                }, 60 * 1000);
-
-                setTimeout(() => {
-                  dispatch({
-                    type: ACTIONS.UPDATE_MESSAGE_STATUS_TO_TRIPLE,
-                    payload: {
-                      key: messagesObject.key,
-                      readedTime: Date.now(),
-                      delivered: Date.now(),
-                    },
-                  });
-                }, 3 * 60 * 1000);
-
-                setvalue("");
-              }}
-            >
-              <View style={[styles.sendButton]}>
-                <Animated.View
-                  style={{
-                    position: "absolute",
-                    zIndex: 99999,
-                    transform: [
-                      {
-                        scale: sendButtonAnimation.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [1, 0],
-                        }),
-                      },
-                    ],
-                  }}
-                >
-                  <MaterialIcons
-                    name="keyboard-voice"
-                    size={25}
-                    color={TITLE_COLOR}
-                  />
-                </Animated.View>
-                <Animated.View
-                  style={{
-                    position: "absolute",
-                    zIndex: -1,
-                    transform: [
-                      {
-                        scale: sendButtonAnimation.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0, 1],
-                        }),
-                      },
-                    ],
-                  }}
-                >
-                  <Ionicons name="send" size={24} color={TITLE_COLOR} />
-                </Animated.View>
-              </View>
-            </TouchableOpacity>
-          </View>
+          <MessageInput
+            value={value}
+            setvalue={setvalue}
+            paddingRight={paddingRight}
+            ClipandCameraAnimation={ClipandCameraAnimation}
+            setIsOpen={setIsOpen}
+            sendButtonAnimation={sendButtonAnimation}
+            dispatch={dispatch}
+            setMenuVisible={setMenuVisible}
+          />
         </View>
       </View>
     </>
@@ -969,81 +631,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 100,
   },
-  inputContainer: {
-    flex: 8,
-    flexDirection: "row",
-    backgroundColor: ANSWER_BACKGROUND_COLOR,
-    borderRadius: 100,
-    marginHorizontal: 10,
-    marginTop: 5,
-    height: 45,
-  },
-  sendButton: {
-    // flex:1,
-    backgroundColor: ACTIVE_TAB_GREEN_COLOR,
-    borderRadius: 100,
-    width: 50,
-    height: 50,
-    // marginRight: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emoji: {
-    justifyContent: "center",
-    alignItems: "center",
-    // marginLeft: 10,
-    flex: 1,
-    position: "absolute",
-    left: 0,
-    alignSelf: "center",
-    zIndex: 999999,
-  },
-  input: {
-    flex: 5,
-    color: TITLE_COLOR,
-    fontSize: 18,
-    paddingLeft: 50,
-  },
-  camera_and_clip: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    paddingRight: 10,
-    gap: 10,
-    position: "absolute",
-    right: 0,
-    top: 2,
-    bottom: 0,
-  },
-  messagesMenu: {
-    position: "absolute",
-    width: 350,
-    height: 320,
-    backgroundColor: MENU_BACKGROUND_COLOR,
-    bottom: 56,
-    alignSelf: "center",
-    borderRadius: 10,
-    flexDirection: "row",
-    paddingHorizontal: 50,
-    paddingVertical: 20,
-    flexWrap: "wrap",
-    alignItems: "center",
-    zIndex: 9999999,
-  },
-  menuButton: {
-    width: 60,
-    aspectRatio: 1,
-    backgroundColor: "green",
-    alignSelf: "center",
-    borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  menuText: {
-    textAlign: "center",
-    color: CHAT_DATA_STATUS_COLOR,
-  },
   message: {
     padding: 7,
     borderRadius: 10,
@@ -1075,13 +662,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 100,
     top: 0,
   },
-  singleLineOfMenu: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginTop: 20,
-  },
+
   replyContainer: {
     backgroundColor: CHAT_BACKROUND_COLOR,
     width: "82%",
