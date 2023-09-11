@@ -544,8 +544,6 @@ const MessagesScreen = ({ navigation, route }) => {
                     starScaleAnimation={item.starScaleAnimation}
                     time={item.time}
                     replyAnimation={replyAnimation}
-                    messages={messages}
-                    setdraggedMessage={setdraggedMessage}
                     setdraggedIndex={setdraggedIndex}
               />
               );

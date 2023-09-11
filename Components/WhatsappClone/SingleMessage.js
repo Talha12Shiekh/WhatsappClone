@@ -26,10 +26,7 @@ const SingleMessage = ({
   messageStatus,
   starScaleAnimation,
   time,
-  messages,
-  setdraggedMessage,
   setdraggedIndex,
-  draggedIndex
 }) => {
   const messageRef = useRef(null);
 
