@@ -38,6 +38,8 @@ const CallInfo = ({ route, navigation }) => {
   const { item, repeatedDates } =
     route.params;
 
+    
+
   const {calls,setcalls} = useCallsContext()
 
   const {chats, setchats} = useChatsContext();
@@ -302,7 +304,7 @@ const CallInfo = ({ route, navigation }) => {
                         flexDirection: "row",
                         position: "absolute",
                         alignSelf: "flex-end",
-                        right: 20,
+                        right: -10,
                       }}
                     >
                       <View>

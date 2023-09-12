@@ -74,14 +74,13 @@ const Chat = (item) => {
       const { date, month, hour, minutes, am_pm } = item;
       return (
         <View style={{ flexDirection: "row" }}>
-          <View style={{ transform: [{ translateY: 5 }] }}>
+          <View>
             {generateRandomArrow(item.arrowColor)}
           </View>
           <View>
             <Text
               style={{
                 color: CHAT_DATA_STATUS_COLOR,
-                marginTop: 5,
                 marginLeft: 15,
                 fontSize: 15,
                 fontWeight: "normal",
@@ -173,31 +172,6 @@ const Chat = (item) => {
     }
   }
 
-  {
-    /* <View>
-            <View style={[styles.textContainer, { flex: 1 }]}>
-              <View>{initTitle()}</View>
-              <View style={styles.timeContainer}>
-                {item.NotshowChatMakingDate && initTime()}
-              </View>
-            </View>
-            <View style={{flex:1,backgroundColor:"red",flexDirection:"row"}}>
-              <View
-                style={{
-                  // width: item.NotshowChatMakingDate ? "70%" : "80%",
-                  marginBottom: -5,
-                  backgroundColor:"red",
-                  flex:1
-                }}
-              >
-                {/* {initDescription()} */
-  }
-  //     </View>
-  //     <View style={{flex:1}}>
-  //     <RightPlaceRenderThing />
-  //     </View>
-  //   </View>
-  // </View> */}
 
   return (
     <>

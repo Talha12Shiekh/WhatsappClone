@@ -16,10 +16,7 @@ import {
   navbarAnimation,
   showToast,
 } from "./RippleButton";
-import { AntDesign } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Ionicons } from "react-native-vector-icons";
+import { AntDesign,MaterialIcons ,MaterialCommunityIcons,FontAwesome5,Octicons,Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
 import {
@@ -31,12 +28,10 @@ import {
 } from "./WhatsappMainScreen";
 import Menu from "./Menu";
 import {
-  useFocusEffect,
   useNavigation,
-  useNavigationState,
-  useRoute,
 } from "@react-navigation/native";
 import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
+import SelectedCallNavbar from "./SelectedCallNavbar";
 
 const WhatsAppNavbar = ({
   opensearchBar,
@@ -102,8 +97,6 @@ const WhatsAppNavbar = ({
 
   const [isAllselected, setisAllselected] = useState(false);
 
-  // const [edited,setedited] = useState(false)
-
   // *! DATA OF THE MENU OF THE CHAT WHEN WE SELECT IT
 
   const SelectedChatMenuData = [
@@ -119,6 +112,7 @@ const WhatsAppNavbar = ({
             return {
               ...chat,
               readed: !chat.readed,
+              selected:false
             };
           }
           return chat;
@@ -170,6 +164,13 @@ const WhatsAppNavbar = ({
     navigation.navigate("Profile", { handleChatsMaking });
   }
 
+
+  function getSelectedChat(){
+    const selectedChat = chats?.filter(chat => chat.selected);
+    return selectedChat[selectedChat.length - 1] || null;
+  }
+
+
   // *! USE EFFECT FOR SELECTINNG THE CHAT AND MAKING THE NAVBAR OPENING ANIMATION
 
   useEffect(() => {
@@ -214,7 +215,8 @@ const WhatsAppNavbar = ({
         if (chat.selected) {
           return {
             ...chat,
-            pinned: !chat.pinned,
+            pinned:!chat.pinned,
+            selected:false
           };
         }
         return chat;
@@ -253,6 +255,7 @@ const WhatsAppNavbar = ({
         return {
           ...chat,
           muted: !chat.muted,
+          selected:false
         };
       }
       return chat;
@@ -486,36 +489,11 @@ const WhatsAppNavbar = ({
     <>
       <StatusBar backgroundColor={TAB_BACKGROUND_COLOR} />
 
-      <Animated.View
-        style={[
-          styles.selectedCallNavbar,
-          {
-            backgroundColor: TAB_BACKGROUND_COLOR,
-            transform: [{ scaleX: selectedCallNavbarAnimation }],
-          },
-        ]}
-      >
-        <View style={styles.chatsCountContainer}>
-          <RippleButton
-          onPress={() => ClosenavbarAnimation(selectedCallNavbarAnimation)}
-          >
-            <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
-          </RippleButton>
-          <Text style={{ fontSize: 20, marginLeft: 15, color: TITLE_COLOR }}>
-            {selectedCalls.length}
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.iconContainer,
-            { justifyContent: "center", alignItems: "center" },
-          ]}
-        >
-          <RippleButton onPress={handleCallDelete}>
-            <MaterialIcons name="delete" size={21} color={TITLE_COLOR} />
-          </RippleButton>
-        </View>
-      </Animated.View>
+      <SelectedCallNavbar
+        selectedCallNavbarAnimation={selectedCallNavbarAnimation}
+        selectedCalls={selectedCalls}
+        handleCallDelete={handleCallDelete}
+      />
 
       <Animated.View
         style={[
@@ -566,6 +544,8 @@ const WhatsAppNavbar = ({
           })}
         </View>
       </Animated.View>
+
+      
       <Menu
         animation={SelectChatMenuAnimation}
         menuData={SelectedChatMenuData}
@@ -596,13 +576,13 @@ const WhatsAppNavbar = ({
           ]}
         >
           <RippleButton onPress={handlePinChat}>
-            <AntDesign name="pushpin" size={21} color={TITLE_COLOR} />
+            {(getSelectedChat() !== null && getSelectedChat()?.pinned) ? <MaterialCommunityIcons name="pin-off" size={24} color={TITLE_COLOR} /> : <AntDesign name="pushpin" size={21} color={TITLE_COLOR} />}
           </RippleButton>
           <RippleButton onPress={handleDeleteChat}>
             <MaterialIcons name="delete" size={21} color={TITLE_COLOR} />
           </RippleButton>
           <RippleButton onPress={handleMuteChat}>
-            <FontAwesome5 name="volume-mute" size={21} color={TITLE_COLOR} />
+            {(getSelectedChat() !== null && getSelectedChat()?.muted) ? <Octicons name="unmute" size={24} color={TITLE_COLOR} /> : <FontAwesome5 name="volume-mute" size={21} color={TITLE_COLOR} /> }
           </RippleButton>
           <RippleButton onPress={hanldeArchieveChat}>
             <Ionicons name="archive-outline" size={21} color={TITLE_COLOR} />
@@ -737,15 +717,5 @@ const styles = StyleSheet.create({
   },
   badgeText:{
     flex:2
-  },
-  selectedCallNavbar: {
-    width: "100%",
-    height: "8%",
-    backgroundColor: "red",
-    position: "absolute",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    top: 0,
-    zIndex: 1111,
   },
 });

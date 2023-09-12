@@ -222,6 +222,7 @@ const Calls = ({
               },
               RightPlaceRenderThing: () => {
                 return (
+                  <>
                   <TouchableNativeFeedback
                     onPress={() => {
                       navigation.navigate("CallScreen", { item });
@@ -234,7 +235,7 @@ const Calls = ({
                   >
                     <View
                       style={{
-                        transform: [{ translateX: -32 }, { translateY: -15 }],
+                        transform:  [{ translateY: -15 }],
                         justifyContent: "center",
                         alignItems: "center",
                       }}
@@ -254,6 +255,7 @@ const Calls = ({
                       )}
                     </View>
                   </TouchableNativeFeedback>
+                  </>
                 );
               },
               NotshowChatMakingDate: false,

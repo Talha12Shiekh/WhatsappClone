@@ -172,6 +172,8 @@ const CallDetails = ({ route, navigation }) => {
       count: 0,
       selected: false,
       blocked: false,
+      pinned:true,
+      messages:[]
     };
 
     let callsNames = calls.map((call) => call.name);
