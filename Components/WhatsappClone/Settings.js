@@ -14,24 +14,30 @@ import { useChatsContext } from "../../App";
 const Settings = ({ route ,navigation }) => {
   const { handleChatsMaking  } = route.params;
 
-  const {chats} = useChatsContext();
+  const { chats } = useChatsContext();
 
   const findtItemsToEdit = (id) => {
     const findedChattoEdit = chats.find(chat => chat.key == id);
     navigation.navigate("Profile",{handleChatsMaking,findedChattoEdit,edited:true});
   }
 
+  const [settingChats,setsettingChats] = useState([])
+
   useEffect(() => {
-    navigation.setParams({
-      chats:chats,
+    const pinnedSettingChats = chats.map(chat => {
+      return {
+        ...chat,
+        pinned:true
+      }
     });
-  },[navigation])
-  
+    setsettingChats(pinnedSettingChats);
+  },[chats]);
+
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={chats}
+        data={settingChats}
         keyExtractor={(chat) => chat.key}
         ItemSeparatorComponent={() => {
           return (
@@ -76,8 +82,8 @@ const Settings = ({ route ,navigation }) => {
             },
             RightPlaceRenderThing: () => {
               return (
-                <View style={{ marginTop: -30 }}>
-                  <TouchableOpacity onPress={() => findtItemsToEdit(item.key)}>
+                <View>
+                  <TouchableOpacity style={{flex:1}} onPress={() => findtItemsToEdit(item.key)}>
                     <View style={styles.rightThing}>
                       <AntDesign
                         name="edit"
@@ -105,7 +111,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: CHAT_BACKROUND_COLOR,
   },
-  rightThing: {
-    transform:[{translateX:-25}]
-  },
+  rightThing:{
+    flex:1,
+    transform:[{translateY:-15}]
+  }
 });

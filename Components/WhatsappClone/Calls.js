@@ -263,7 +263,7 @@ const Calls = ({
                 if(item.selected){
                   findItemstoDeSelect(item.key)
                 }else {
-                  navigation.navigate("CallInfo", { item,calls,setcalls,repeatedDates });
+                  navigation.navigate("CallInfo", { item,repeatedDates });
                 }
               },
               onLongPress: () => {

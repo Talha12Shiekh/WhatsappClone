@@ -30,6 +30,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { RippleButton } from "./Components/WhatsappClone/RippleButton";
 import Settings from "./Components/WhatsappClone/Settings";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { FormattedTime } from "react-intl";
 
 import {
   View,
@@ -108,11 +109,7 @@ export default function App() {
 
     const [isscanned, setisscanned] = useState(false);
 
-    const date = new Date();
-    const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-    const miutes =
-      date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes();
-    const am_pm = date.getHours() >= 12 ? "PM" : "AM";
+    const time = Date.now()
 
     return (
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
@@ -186,7 +183,7 @@ export default function App() {
                       Goggle Chrome (Windows)
                     </Text>
                     <Text style={{ color: CHAT_DATA_STATUS_COLOR }}>
-                      Last active today at {hour}:{miutes} {am_pm}
+                      Last active today at <FormattedTime value={new Date(time)} />
                     </Text>
                   </View>
                 </View>

@@ -20,6 +20,7 @@ import {
   TAB_PRESS_ACTIVE_WHITE_COLOR,
 } from "./WhatsappMainScreen";
 import { RippleButton, showToast } from "./RippleButton";
+import { FormattedDate, FormattedTime, FormattedDateParts } from "react-intl";
 import Chat from "./Chat";
 import {
   FontAwesome5,
@@ -35,14 +36,11 @@ import { useRef } from "react";
 import { Alert } from "react-native";
 import { useCallsContext, useChatsContext } from "../../App";
 const CallInfo = ({ route, navigation }) => {
-  const { item, repeatedDates } =
-    route.params;
+  const { item, repeatedDates } = route.params;
 
-    
+  const { calls, setcalls } = useCallsContext();
 
-  const {calls,setcalls} = useCallsContext()
-
-  const {chats, setchats} = useChatsContext();
+  const { chats, setchats } = useChatsContext();
 
   const CallArray = repeatedDates
     .map((element) => {
@@ -50,10 +48,8 @@ const CallInfo = ({ route, navigation }) => {
         key: Date.now().toString(),
         video: element.video,
         type: "call",
-        hour: element.hour,
-        minutes: element.minutes,
-        am_pm: element.am_pm,
         arrowColor: element.arrowColor,
+        time: element.time,
       };
     })
     .reverse()
@@ -246,7 +242,7 @@ const CallInfo = ({ route, navigation }) => {
               )}
               <View>
                 <Text style={{ color: CHAT_DATA_STATUS_COLOR, marginLeft: 10 }}>
-                  {item.hour}:{item.minutes} {item.hour >= 12 ? "am" : "pm"}
+                  <FormattedTime value={new Date(item.time)} />
                 </Text>
               </View>
             </View>
@@ -341,15 +337,26 @@ const CallInfo = ({ route, navigation }) => {
             }}
           />
         </View>
-        <Text
-          style={{
-            color: CHAT_DATA_STATUS_COLOR,
-            marginLeft: 90,
-            marginTop: 10,
-          }}
-        >
-          {item.date} {months[item.month]}
-        </Text>
+        <View>
+          <FormattedDateParts
+            value={new Date(item.time)}
+            year="numeric"
+            month="long"
+            day="2-digit"
+          >
+            {(parts) => (
+              <Text
+                style={{
+                  color: CHAT_DATA_STATUS_COLOR,
+                  marginLeft: 90,
+                  marginTop: 10,
+                }}
+              >
+                {parts[2].value} {parts[0].value}
+              </Text>
+            )}
+          </FormattedDateParts>
+        </View>
         <ScrollView>
           <View style={styles.callStatus}>
             <View style={{ flex: 1 }}>

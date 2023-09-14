@@ -77,16 +77,16 @@ export function generateRandomArrow(arrow) {
     return (
       <Feather
         name="arrow-down-left"
-        size={24}
+        size={22}
         color={ACTIVE_TAB_GREEN_COLOR}
       />
     );
   } else if (arrow == "outgoing") {
     return (
-      <Feather name="arrow-up-right" size={24} color={ACTIVE_TAB_GREEN_COLOR} />
+      <Feather name="arrow-up-right" size={22} color={ACTIVE_TAB_GREEN_COLOR} />
     );
   } else {
-    return <Feather name="arrow-down-left" size={24} color={"red"} />;
+    return <Feather name="arrow-down-left" size={22} color={"red"} />;
   }
 }
 
@@ -102,6 +102,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   const {callFilterChats,setcallFilterChats,storeFilterCalls} = useCallsFilterChatsContext();
 
   const {FileredChats, setFileredChats,storeFilterChats} = useFilterChatsContext()
+
 
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
@@ -185,14 +186,6 @@ const WhatsappMainScreen = ({ isEnabled }) => {
 
   const [activeRoute, setactiveRoute] = useState("Chats");
 
-  const time = new Date();
-
-  const date = time.getDate();
-
-  const month = time.getMonth();
-
-  const year = time.getFullYear();
-
   const timeInMilliseconds = Date.now()
 
   const handleChatsMaking = useCallback(
@@ -228,21 +221,17 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           setchats((chts) => [...chts, ChatInformation]);
           setFileredChats((chts) => [...chts, ChatInformation]);
         } else {
-          let newCalls = [...calls];
           const ChatToEdit = chats.findIndex(
             (chat) => chat.key == editedKey
           );
-          const CallToEdit = newCalls.find(
+          const CallToEdit = calls?.find(
             (call) => call.name == chats[ChatToEdit].name
           );
           chats[ChatToEdit] = {
             name,
             number,
             about,
-            key: chats[ChatToEdit].key,
-            date: chats[ChatToEdit].date,
-            month: chats[ChatToEdit].month,
-            year: chats[ChatToEdit].year,
+            time:chats[ChatToEdit].time,
             photo,
             type: "chat",
             selected: false,

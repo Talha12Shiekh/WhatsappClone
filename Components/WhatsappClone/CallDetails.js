@@ -158,22 +158,17 @@ const CallDetails = ({ route, navigation }) => {
       name: selectedItems ? selectedItems : callChats[0]?.value,
       about: selectedItems ? photoObject?.about : callChats[0]?.about,
       key: Date.now().toString(),
-      date,
-      month,
-      year,
       photo: selectedItems ? photoObject?.photo : callChats[0]?.photo,
       video: Video,
       type: "call",
-      hour,
-      minutes,
-      am_pm,
       number: selectedItems ? photoObject?.number : callChats[0]?.number,
       arrowColor: callStatus,
       count: 0,
       selected: false,
       blocked: false,
       pinned:true,
-      messages:[]
+      messages:[],
+      time:Date.now()
     };
 
     let callsNames = calls.map((call) => call.name);

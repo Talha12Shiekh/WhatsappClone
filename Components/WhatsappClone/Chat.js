@@ -11,7 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { FormattedDate, FormattedTime } from "react-intl";
+import { FormattedDate, FormattedTime, FormattedDateParts } from "react-intl";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   CHAT_BACKROUND_COLOR,
@@ -71,23 +71,37 @@ const Chat = (item) => {
 
   function initDescription() {
     if (item.type == "call") {
-      const { date, month, hour, minutes, am_pm } = item;
       return (
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" ,marginTop:-2 ,marginLeft:-5}}>
+          <View>{generateRandomArrow(item.arrowColor)}</View>
           <View>
-            {generateRandomArrow(item.arrowColor)}
-          </View>
-          <View>
-            <Text
+            
+            <View style={{flexDirection:"row"}}>
+              <Text
               style={{
                 color: CHAT_DATA_STATUS_COLOR,
-                marginLeft: 15,
-                fontSize: 15,
+                marginLeft: 12,
+                fontSize:14,
                 fontWeight: "normal",
               }}
             >
-              {date} {months[month]} , {hour}:{minutes} {am_pm.toLowerCase()}
+              <FormattedDateParts
+                value={new Date(item.time)}
+                year="numeric"
+                month="long"
+                day="2-digit"
+              >
+                {(parts) => (
+                  <>
+                    <Text>{parts[2].value}</Text>
+                    {parts[1].value}
+                    <Text>{parts[0].value}</Text>
+                  </>
+                )}
+              </FormattedDateParts>
+              {" , "}<FormattedTime value={new Date(item.time)} />
             </Text>
+            </View>
           </View>
         </View>
       );
@@ -104,17 +118,23 @@ const Chat = (item) => {
         );
       } else {
         return (
-          <View style={{flexDirection:"row",alignItems:"center",gap:5}}>
-            {lastMessage.indexOfMessage % 2 == 0 && <View>
-              <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-              {generateSendTick(lastMessage.status, CHAT_DATA_STATUS_COLOR)}</Text>
-            </View>}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            {lastMessage.indexOfMessage % 2 == 0 && (
+              <View>
+                <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+                  {generateSendTick(lastMessage.status, CHAT_DATA_STATUS_COLOR)}
+                </Text>
+              </View>
+            )}
             <View>
-            <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-              {lastMessage.message.length > generateAboutLimit().length
-              ? lastMessage.message.slice(0, generateAboutLimit().length - 1) +
-                "..."
-              : lastMessage.message}</Text>
+              <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+                {lastMessage.message.length > generateAboutLimit().length
+                  ? lastMessage.message.slice(
+                      0,
+                      generateAboutLimit().length - 1
+                    ) + "..."
+                  : lastMessage.message}
+              </Text>
             </View>
           </View>
         );
@@ -171,7 +191,6 @@ const Chat = (item) => {
       );
     }
   }
-
 
   return (
     <>

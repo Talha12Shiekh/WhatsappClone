@@ -608,7 +608,7 @@ const WhatsAppNavbar = ({
           <Text
             style={[styles.whatsappText, { color: INACTIVE_TAB_WHITE_COLOR }]}
           >
-            WhatsApp
+            FrontsApp
           </Text>
         </View>
         <View style={styles.iconContainer}>
