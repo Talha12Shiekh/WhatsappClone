@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Pressable,Animated } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View, Pressable, Animated, TouchableOpacityBase, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
 import { ACTIONS } from "./MessagesReducer";
 import {
   ANSWER_BACKGROUND_COLOR,
@@ -12,6 +12,7 @@ import {
 import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const SingleMessage = ({
   isEven,
@@ -24,7 +25,6 @@ const SingleMessage = ({
   message,
   starred,
   messageStatus,
-  starScaleAnimation,
   time,
   setdraggedIndex,
 }) => {
@@ -76,7 +76,41 @@ const SingleMessage = ({
     });
   };
 
+  const starScaleAnimation = useRef(new Animated.Value(0)).current;
+
+  const overlayRef = useRef(null);
+
+  let overlayStyles = [styles.overlay]
+
+  useEffect(() => {
+    messageRef.current.measure((x, y, width, height, pageX, pageY) => {
+      overlayStyles.push({height})
+      overlayRef.current.setNativeProps({
+        style:overlayStyles
+      })
+    })
+  },[message])
+
+  useEffect(() => {
+    Animated.timing(starScaleAnimation,{
+      toValue:1,
+      duration:1000,
+      useNativeDriver:true
+    }).start(() => {
+      Animated.timing(starScaleAnimation,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:true
+      }).start()
+    })
+  },[starred])
+
+
   return (
+    <>
+    <TouchableOpacity style={{zIndex:99999}}>
+      <View pointerEvents={selected ? "auto" : "none"} ref={overlayRef}/>
+    </TouchableOpacity>
     <Pressable
       onPressIn={handleChangeMessageBackground}
       onPressOut={handleUnChangeMessageBackground}
@@ -90,7 +124,6 @@ const SingleMessage = ({
             },
           });
         }
-        
       }}
       style={{
         backgroundColor: selected ? "#00800094" : "transparent",
@@ -105,156 +138,151 @@ const SingleMessage = ({
         })
       }
     >
+      <View
+        style={[
+          styles.arrowIcon,
+          {
+            left: -40,
+            width: 30,
+            aspectRatio: 1,
+            borderRadius: 50,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
+        <Ionicons name="arrow-undo-sharp" size={18} color={TITLE_COLOR} />
+      </View>
+      <View
+        style={[
+          styles.messagesContainer,
+          { alignSelf: isEven ? "flex-end" : "flex-start" },
+        ]}
+      >
+        <View
+          style={isEven ? styles.messageCorner : styles.answermessageCorner}
+          ref={cornerRef}
+        />
+        
+        <View
+          ref={messageRef}
+          style={[
+            styles.message,
+            {
+              transform: [{ translateX: isEven ? -20 : 20 }],
+              flexDirection: "row",
+              backgroundColor: isEven
+                ? MESSAGE_BACKGROUND_COLOR
+                : ANSWER_BACKGROUND_COLOR,
+              position:"relative"
+            },
+          ]}
+        >
           <View
-            style={[
-              styles.arrowIcon,
-              {
-                left: -40,
-                width: 30,
-                aspectRatio: 1,
-                borderRadius: 50,
-                backgroundColor: "rgba(0,0,0,.5)",
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            ]}
+            style={{
+              flexDirection: ColumnOrRow,
+            }}
           >
-            <Ionicons name="arrow-undo-sharp" size={18} color={TITLE_COLOR} />
-          </View>
-          <View
-            style={[
-              styles.messagesContainer,
-              { alignSelf: isEven ? "flex-end" : "flex-start" },
-            ]}
-          >
+            {!deleteForEveryone ? (
+              <View>
+                <Text
+                  style={{
+                    color: TITLE_COLOR,
+                    fontSize: 15,
+                    marginRight: 10,
+                  }}
+                >
+                  {message}
+                </Text>
+              </View>
+            ) : (
+              <View style={{ flexDirection: "row" }}>
+                <Text style={{ marginRight: 5 }}>
+                  <MaterialIcons
+                    name="block-flipped"
+                    size={20}
+                    color={INACTIVE_TAB_WHITE_COLOR}
+                  />
+                </Text>
+                <Text
+                  style={{
+                    color: INACTIVE_TAB_WHITE_COLOR,
+                    fontSize: 15,
+                    marginRight: 10,
+                    fontStyle: "italic",
+                  }}
+                >
+                  You deleted this message
+                </Text>
+              </View>
+            )}
             <View
-              style={isEven ? styles.messageCorner : styles.answermessageCorner}
-              ref={cornerRef}
-            />
-            <View
-              ref={messageRef}
-              style={[
-                styles.message,
-                {
-                  transform: [{ translateX: isEven ? -20 : 20 }],
-                  flexDirection: "row",
-                  backgroundColor: isEven
-                    ? MESSAGE_BACKGROUND_COLOR
-                    : ANSWER_BACKGROUND_COLOR,
-                },
-              ]}
+              style={{
+                alignSelf: "flex-end",
+                marginTop: 5,
+                flexDirection: "row",
+              }}
             >
-              <View
-                style={{
-                  flexDirection: ColumnOrRow,
-                }}
-              >
-                {!deleteForEveryone ? (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
+                  <View
+                    style={{
+                      position: "absolute",
+                      transform: [{ translateX: -35 }],
+                    }}
+                  ></View>
+                  {starred && (
+                    <>
+                      <View style={{ marginRight: 10 }}>
+                        <FontAwesome name="star" size={8} color={TITLE_COLOR} />
+                      </View>
+                      <Animated.View
+                        style={{
+                          position: "absolute",
+                          transform: [
+                            { translateX: -7 },
+                            {
+                              translateY: starScaleAnimation.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0, -50],
+                              }),
+                            },
+                            {
+                              scale: starScaleAnimation.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0, 3.4],
+                              }),
+                            },
+                          ],
+                          opacity: starScaleAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [1, 0],
+                          }),
+                        }}
+                      >
+                        <FontAwesome name="star" size={8} color={"yellow"} />
+                      </Animated.View>
+                    </>
+                  )}
+                  {"  "}
+                  <FormattedTime value={new Date(time)} />
+                  {"  "}
+                </Text>
+                {isEven && !deleteForEveryone && (
                   <View>
-                    <Text
-                      style={{
-                        color: TITLE_COLOR,
-                        fontSize: 15,
-                        marginRight: 10,
-                      }}
-                    >
-                      {message}
-                    </Text>
-                  </View>
-                ) : (
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={{ marginRight: 5 }}>
-                      <MaterialIcons
-                        name="block-flipped"
-                        size={20}
-                        color={INACTIVE_TAB_WHITE_COLOR}
-                      />
-                    </Text>
-                    <Text
-                      style={{
-                        color: INACTIVE_TAB_WHITE_COLOR,
-                        fontSize: 15,
-                        marginRight: 10,
-                        fontStyle: "italic",
-                      }}
-                    >
-                      You deleted this message
+                    <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
+                      {generateSendTick(messageStatus)}
                     </Text>
                   </View>
                 )}
-                <View
-                  style={{
-                    alignSelf: "flex-end",
-                    marginTop: 5,
-                    flexDirection: "row",
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                      <View
-                        style={{
-                          position: "absolute",
-                          transform: [{ translateX: -35 }],
-                        }}
-                      ></View>
-                      {starred && (
-                        <>
-                          <View style={{ position: "absolute" }}>
-                            <FontAwesome
-                              name="star"
-                              size={8}
-                              color={TITLE_COLOR}
-                            />
-                          </View>
-                          <Animated.View
-                            style={{
-                              position: "absolute",
-                              transform: [
-                                {
-                                  translateY: starScaleAnimation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [0, -60],
-                                  }),
-                                },
-                                {
-                                  scale: starScaleAnimation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [0, 3.4],
-                                  }),
-                                },
-                              ],
-                              zIndex: 999999999,
-                              opacity: starScaleAnimation.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, 1],
-                              }),
-                            }}
-                          >
-                            <FontAwesome
-                              style={{ zIndex: 999999999 }}
-                              name="star"
-                              size={8}
-                              color={"yellow"}
-                            />
-                          </Animated.View>
-                        </>
-                      )}
-                      <FormattedTime value={new Date(time)} />
-                      {"  "}
-                    </Text>
-                    {isEven && !deleteForEveryone && (
-                      <View>
-                        <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                          {generateSendTick(messageStatus)}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                </View>
               </View>
             </View>
           </View>
+        </View>
+      </View>
     </Pressable>
+    </>
   );
 };
 
@@ -315,4 +343,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "10%",
   },
+  overlay:{
+    position:"absolute",zIndex:99999999999,width:"100%",
+    backgroundColor:"red"
+  }
 });

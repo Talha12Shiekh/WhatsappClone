@@ -165,6 +165,8 @@ const WhatsAppNavbar = ({
   }
 
 
+
+
   function getSelectedChat(){
     const selectedChat = chats?.filter(chat => chat.selected);
     return selectedChat[selectedChat.length - 1] || null;
@@ -339,6 +341,13 @@ const WhatsAppNavbar = ({
       return chat;
     }
   });
+
+  const [selectedChatForNavbar,setselectedChatForNavbar] = useState(null);
+
+  useEffect(() => {
+    setselectedChatForNavbar(selectedChats[selectedChats.length - 1]);
+  }, [selectedChats])
+  
 
   // *! FUNCTION TO DELETE THE CHAT
 
@@ -576,13 +585,13 @@ const WhatsAppNavbar = ({
           ]}
         >
           <RippleButton onPress={handlePinChat}>
-            {(getSelectedChat() !== null && getSelectedChat()?.pinned) ? <MaterialCommunityIcons name="pin-off" size={24} color={TITLE_COLOR} /> : <AntDesign name="pushpin" size={21} color={TITLE_COLOR} />}
+            {(selectedChatForNavbar !== null && selectedChatForNavbar?.pinned) ? <MaterialCommunityIcons name="pin-off" size={24} color={TITLE_COLOR} /> : <AntDesign name="pushpin" size={21} color={TITLE_COLOR} />}
           </RippleButton>
           <RippleButton onPress={handleDeleteChat}>
             <MaterialIcons name="delete" size={21} color={TITLE_COLOR} />
           </RippleButton>
           <RippleButton onPress={handleMuteChat}>
-            {(getSelectedChat() !== null && getSelectedChat()?.muted) ? <Octicons name="unmute" size={24} color={TITLE_COLOR} /> : <FontAwesome5 name="volume-mute" size={21} color={TITLE_COLOR} /> }
+            {(selectedChatForNavbar !== null && selectedChatForNavbar?.muted) ? <Octicons name="unmute" size={24} color={TITLE_COLOR} /> : <FontAwesome5 name="volume-mute" size={21} color={TITLE_COLOR} /> }
           </RippleButton>
           <RippleButton onPress={hanldeArchieveChat}>
             <Ionicons name="archive-outline" size={21} color={TITLE_COLOR} />

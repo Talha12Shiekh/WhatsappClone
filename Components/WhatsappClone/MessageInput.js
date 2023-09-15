@@ -107,7 +107,6 @@ const MessageInput = ({
           selected: false,
           deleteForEveryone: false,
           starred: false,
-          starAnimation: new Animated.Value(0),
           readedTime: Date.now(),
           delivered: Date.now(),
         };

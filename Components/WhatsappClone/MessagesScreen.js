@@ -78,6 +78,10 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [messages, dispatch] = useReducer(MessagesReducer, item.messages);
 
+  const [online,setonline] = useState(false);
+
+  const [lastMessageTime,setLastMessageTime] = useState(new Date(messages[messages.length - 1]?.time))
+
   useEffect(() => {
     const updatedChats = chats.map((chat) => {
       if (chat.key == item.key) {
@@ -89,6 +93,16 @@ const MessagesScreen = ({ navigation, route }) => {
       return chat;
     });
     setchats(updatedChats);
+
+    let currentTime = new Date().getMinutes();
+    const lastMessage = messages[messages.length - 1];
+    const lastMessageTime = new Date(lastMessage?.time).getMinutes()
+    if(lastMessageTime == currentTime){
+      setonline(true);
+    }else{
+      setonline(false);
+      setLastMessageTime(new Date(lastMessage?.time))
+    }
   }, [messages]);
 
   const [MenuVisible, setMenuVisible] = useState(false);
@@ -105,8 +119,6 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const replayLength =
     "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, voluptatum?  Iste, voluptatum?  Iste, voluptatum? Iste Iste,Iste";
-
-  const starScaleAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (messagesSelected) {
@@ -155,8 +167,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
-
-  const AnimatedView = Animated.createAnimatedComponent(View);
 
   let ChatNameLength = "loremipsumdolor";
 
@@ -224,6 +234,17 @@ const MessagesScreen = ({ navigation, route }) => {
       console.log(error.message);
     }
   };
+
+  const selectedMessage = messages.filter(msg => msg.selected);
+
+  const [selectedStarMessages,setselectedStarMessages] = useState(null)
+
+  useEffect(() => {
+    setselectedStarMessages(selectedMessage[selectedMessage.length -1])
+  },[selectedMessage])
+
+
+
 
   useFocusEffect(() => {
     navigation.setOptions({
@@ -300,9 +321,9 @@ const MessagesScreen = ({ navigation, route }) => {
                       ? item.name.slice(0, ChatNameLength.length)
                       : item.name}
                   </Text>
-                  <Text style={{ color: TITLE_COLOR, fontSize: 11 }}>
-                    last seen today at 3:26 pm
-                  </Text>
+                  {messages.length !== 0 && <Text style={{ color: TITLE_COLOR, fontSize: 11 }}>
+                    {online ? "online" : `last seen today at ${lastMessageTime.getHours() > 12 ? lastMessageTime.getHours() - 12 : lastMessageTime.getHours()}:${lastMessageTime.getMinutes() < 10 ?  "0" + lastMessageTime.getMinutes() : lastMessageTime.getMinutes()} ${lastMessageTime.getHours() > 12 ? "pm" : "am"}`}
+                  </Text>}
                 </View>
               </TouchableNativeFeedback>
               <Menu
@@ -367,7 +388,11 @@ const MessagesScreen = ({ navigation, route }) => {
                 ]}
               >
                 {selectedMessages?.length <= 1 ? (
-                  <RippleButton onPress={() => {}}>
+                  <RippleButton onPress={() => {
+                    const selectedMessage = messages.find(msg => msg.selected);
+                    setdraggedMessage(selectedMessage.message);
+                    AnimateReplyContainer()
+                  }}>
                     <Ionicons
                       name="md-arrow-undo-sharp"
                       size={ICONS_SIZE}
@@ -377,17 +402,16 @@ const MessagesScreen = ({ navigation, route }) => {
                 ) : null}
                 <RippleButton
                   onPress={() => {
-                    makeStarAnimation();
                     dispatch({
                       type: ACTIONS.STARRE_MESSAGES,
                     });
                   }}
                 >
-                  <FontAwesome
+                  {(selectedStarMessages !== null && !selectedStarMessages?.starred) ? <FontAwesome
                     name="star"
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
-                  />
+                  /> : <MaterialCommunityIcons name="star-off" size={ICONS_SIZE} color={TITLE_COLOR} />}
                 </RippleButton>
                 {selectedMessages?.length <= 1 ? (
                   <RippleButton
@@ -448,16 +472,6 @@ const MessagesScreen = ({ navigation, route }) => {
       }
     }
   }
-
-  const makeStarAnimation = () => {
-    return Animated.timing(starScaleAnimation, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start(() => {
-      starScaleAnimation.setValue(0);
-    });
-  };
 
   const selectedMessageIndices = messages
     ?.map((msg, index) => (msg.selected ? index : -1))
@@ -541,7 +555,6 @@ const MessagesScreen = ({ navigation, route }) => {
                     starred={item.starred}
                     deleteForEveryone={item.deleteForEveryone}
                     messageStatus={item.messageStatus}
-                    starScaleAnimation={item.starScaleAnimation}
                     time={item.time}
                     replyAnimation={replyAnimation}
                     setdraggedIndex={setdraggedIndex}

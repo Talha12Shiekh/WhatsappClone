@@ -68,15 +68,6 @@ export const MessagesReducer = (state, { type, payload }) => {
     case ACTIONS.STARRE_MESSAGES: {      
       return state.map((msg) => {
         if (msg.selected) {
-          Animated.timing(msg.starAnimation,{
-            toValue:1,
-            duration:500,
-            useNativeDriver:true
-          }).start(() => {
-            setTimeout(() => {
-              msg.starAnimation.setValue(0)
-            }, 100);
-          })
           return {
             ...msg,
             starred: !msg.starred,
