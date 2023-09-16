@@ -15,7 +15,7 @@ export const ACTIONS = {
   STARRE_MESSAGES: "handleStareMessages",
   COPY_TO_CLIPBOARD: "handleCopyToClipboard",
   UPDATE_MESSAGE_STATUS_TO_DOUBLE:"handleUpdateMessageStatusToDouble",
-  UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple"
+  UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple",
 };
 
 

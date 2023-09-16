@@ -184,6 +184,10 @@ const MessagesScreen = ({ navigation, route }) => {
     },
   ];
 
+  const ReportMenuData = [
+    { text: "Report", onPress: () => {}, key: 1 },
+  ];
+
   const AnimatedFunction = (animation, toValue, duration) => {
     return Animated.timing(animation, {
       toValue,
@@ -204,25 +208,6 @@ const MessagesScreen = ({ navigation, route }) => {
     }
   }, [value]);
 
-  const MessagesRippleButton = ({ children, onPress, ...rest }) => {
-    return (
-      <View style={{ padding: 10, borderRadius: 100 }} {...rest}>
-        <TouchableNativeFeedback
-          onPress={onPress}
-          background={TouchableNativeFeedback.Ripple(
-            TAB_PRESS_ACTIVE_WHITE_COLOR,
-            true,
-            500
-          )}
-        >
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            {children}
-          </View>
-        </TouchableNativeFeedback>
-      </View>
-    );
-  };
-
   const ForwardMessages = async () => {
     let selectedMessages = messages.filter((msgs) => msgs.selected);
     let msgs = selectedMessages.map((msg) => msg.message).join(" ");
@@ -237,12 +222,13 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const selectedMessage = messages.filter(msg => msg.selected);
 
-  const [selectedStarMessages,setselectedStarMessages] = useState(null)
+  const [selectedStarMessages,setselectedStarMessages] = useState(null);
+
+  const reportMenuAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     setselectedStarMessages(selectedMessage[selectedMessage.length -1])
   },[selectedMessage])
-
 
 
 
@@ -358,6 +344,10 @@ const MessagesScreen = ({ navigation, route }) => {
                 </RippleButton>
               </View>
             </View>
+            <Menu
+                animation={reportMenuAnimation}
+                menuData={ReportMenuData}
+              />
             <Animated.View
               style={[
                 styles.selectedChatNavbar,
@@ -413,7 +403,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   /> : <MaterialCommunityIcons name="star-off" size={ICONS_SIZE} color={TITLE_COLOR} />}
                 </RippleButton>
-                {selectedMessages?.length <= 1 ? (
+                {(selectedMessages?.length <= 1 && selectedMessageIndices % 2 == 0) ? (
                   <RippleButton
                     onPress={() => {
                       navigation.navigate("MessagesInfo", {
@@ -454,6 +444,13 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
+                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => AnimatedFunction(reportMenuAnimation,1,1000)}>
+                  <SimpleLineIcons
+                    name="options-vertical"
+                    color={TITLE_COLOR}
+                    size={18}
+                  />
+                </RippleButton>}
               </View>
             </Animated.View>
           </>
@@ -482,6 +479,7 @@ const MessagesScreen = ({ navigation, route }) => {
   );
 
   const replyAnimation = useRef(new Animated.Value(0)).current;
+
 
   function AnimateReplyContainer(){
     return Animated.timing(replyAnimation,{toValue:1,useNativeDriver:true,duration:500}).start()
@@ -529,12 +527,14 @@ const MessagesScreen = ({ navigation, route }) => {
           }}
           onClose={() => setIsOpen(false)}
         />
+       
         <View style={{ flex: 10, paddingTop: 20 }}>
           <SwipeListView
             swipeGestureEnded={(rowKey) => {
               AnimateReplyContainer();
-              const {message} = messages.find((msg,ind)  => ind == draggedIndex);
+              const {message,key} = messages.find((msg,ind)  => ind == draggedIndex);
               setdraggedMessage(message);
+
             }}
             data={messages}
             renderHiddenItem={ (data, rowMap) => <View/>}
@@ -556,7 +556,6 @@ const MessagesScreen = ({ navigation, route }) => {
                     deleteForEveryone={item.deleteForEveryone}
                     messageStatus={item.messageStatus}
                     time={item.time}
-                    replyAnimation={replyAnimation}
                     setdraggedIndex={setdraggedIndex}
               />
               );
