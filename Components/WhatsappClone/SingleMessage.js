@@ -7,7 +7,7 @@ import {
   TouchableOpacityBase,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
 import {
   ANSWER_BACKGROUND_COLOR,
@@ -35,12 +35,11 @@ const SingleMessage = ({
   messageStatus,
   time,
   setdraggedIndex,
-  // replied,
+  replied
 }) => {
   const messageRef = useRef(null);
 
   const cornerRef = useRef(null);
-
 
   let messageStyles = [styles.message];
   let questionMessageCornerStyles = [styles.messageCorner];
@@ -98,27 +97,27 @@ const SingleMessage = ({
 
   useEffect(() => {
     messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-      overlayStyles.push({
+      overlayStyles?.push({
         height,
         backgroundColor: selected ? "#00800094" : "transparent",
       });
-      overlayRef.current.setNativeProps({
+      overlayRef?.current?.setNativeProps({
         style: overlayStyles,
       });
     });
   }, [selected]);
 
 
-  // useEffect(() => {
-  //   if(replied){
-  //     messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-  //       replyMsgstyles.push({width,transform:[{translateX:pageX},{translateY:8}],borderRadius:5})
-  //       msgReplyRef?.current?.setNativeProps({
-  //         style: replyMsgstyles,
-  //       });
-  //     });
-  //   }
-  // },[replied])
+  useEffect(() => {
+    if(replied){
+      messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
+        replyMsgstyles.push({width,transform:[{translateX:pageX},{translateY:8}],borderRadius:5})
+        msgReplyRef?.current?.setNativeProps({
+          style: replyMsgstyles,
+        });
+      });
+    }
+  },[replied])
 
   useEffect(() => {
     Animated.timing(starScaleAnimation, {
@@ -133,7 +132,6 @@ const SingleMessage = ({
       }).start();
     });
   }, [starred]);
-
 
   return (
     <>
@@ -153,9 +151,11 @@ const SingleMessage = ({
       >
         <View pointerEvents={selected ? "auto" : "none"} ref={overlayRef} />
       </TouchableOpacity>
-      {/* {replied && <View style={{backgroundColor:"red"}} ref={msgReplyRef}>
+      {/* here is the reply Container that i have */}
+      {replied && <View style={{backgroundColor:"red"}} ref={msgReplyRef}>
           
-      </View>} */}
+      </View>}
+      {/*  */}
       <Pressable
         onPressIn={handleChangeMessageBackground}
         onPressOut={handleUnChangeMessageBackground}

@@ -16,6 +16,7 @@ export const ACTIONS = {
   COPY_TO_CLIPBOARD: "handleCopyToClipboard",
   UPDATE_MESSAGE_STATUS_TO_DOUBLE:"handleUpdateMessageStatusToDouble",
   UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple",
+  REPLY_MESSAGE:"handleReplyMessage"
 };
 
 
@@ -110,6 +111,17 @@ export const MessagesReducer = (state, { type, payload }) => {
           }
         }
         return msg;
+      })
+    }
+    case ACTIONS.REPLY_MESSAGE :{
+      return state.map((msg,index) => {
+        if(index == payload.key){
+          return {
+            ...msg,
+            replied:payload.replied
+          }
+        }
+        return msg
       })
     }
     default: {

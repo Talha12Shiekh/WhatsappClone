@@ -45,8 +45,21 @@ const MessageInput = ({
   setIsOpen,
   sendButtonAnimation,
   dispatch,
-  setMenuVisible
+  setMenuVisible,
+  replyAnimation,
+  draggedIndex
 }) => {
+
+  const handleShowReplyContainer = (key) => {
+    replyAnimation.addListener(({value}) => {
+      if(Math.round(value) === 1){
+        dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:true}})
+      }else{
+        dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:false}})
+      }
+    })
+  } 
+
   return (
     <>
     <View
@@ -109,6 +122,7 @@ const MessageInput = ({
           starred: false,
           readedTime: Date.now(),
           delivered: Date.now(),
+          replied:false
         };
 
         if (value == "") return;
@@ -143,6 +157,8 @@ const MessageInput = ({
         }, 3 * 60 * 1000);
 
         setvalue("");
+
+        handleShowReplyContainer(messagesObject.key)
       }}
     >
       <View style={[styles.sendButton]}>

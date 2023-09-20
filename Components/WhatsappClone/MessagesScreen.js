@@ -230,8 +230,6 @@ const MessagesScreen = ({ navigation, route }) => {
     setselectedStarMessages(selectedMessage[selectedMessage.length -1])
   },[selectedMessage])
 
-
-
   useFocusEffect(() => {
     navigation.setOptions({
       header: () => {
@@ -534,7 +532,6 @@ const MessagesScreen = ({ navigation, route }) => {
               AnimateReplyContainer();
               const {message,key} = messages.find((msg,ind)  => ind == draggedIndex);
               setdraggedMessage(message);
-
             }}
             data={messages}
             renderHiddenItem={ (data, rowMap) => <View/>}
@@ -557,6 +554,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     messageStatus={item.messageStatus}
                     time={item.time}
                     setdraggedIndex={setdraggedIndex}
+                    replied={item.replied}
               />
               );
             }}
@@ -603,6 +601,8 @@ const MessagesScreen = ({ navigation, route }) => {
             sendButtonAnimation={sendButtonAnimation}
             dispatch={dispatch}
             setMenuVisible={setMenuVisible}
+            replyAnimation={replyAnimation}
+            draggedIndex={draggedIndex}
           />
         </View>
       </View>
