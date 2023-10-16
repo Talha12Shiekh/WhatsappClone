@@ -35,7 +35,6 @@ const SingleMessage = ({
   messageStatus,
   time,
   setdraggedIndex,
-  replied
 }) => {
   const messageRef = useRef(null);
 
@@ -46,7 +45,7 @@ const SingleMessage = ({
   let answerMessageCornerStyles = [styles.answermessageCorner];
 
   const handleChangeMessageBackground = () => {
-    setdraggedIndex(index);
+    // setdraggedIndex(index);
     if (index % 2 == 0) {
       messageStyles.push(styles.green_selected_background);
       questionMessageCornerStyles.push(styles.green_selected_background);
@@ -108,16 +107,16 @@ const SingleMessage = ({
   }, [selected]);
 
 
-  useEffect(() => {
-    if(replied){
-      messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-        replyMsgstyles.push({width,transform:[{translateX:pageX},{translateY:8}],borderRadius:5})
-        msgReplyRef?.current?.setNativeProps({
-          style: replyMsgstyles,
-        });
-      });
-    }
-  },[replied])
+  // useEffect(() => {
+  //   if(replied){
+  //     messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
+  //       replyMsgstyles.push({width,transform:[{translateX:pageX},{translateY:8}],borderRadius:5})
+  //       msgReplyRef?.current?.setNativeProps({
+  //         style: replyMsgstyles,
+  //       });
+  //     });
+  //   }
+  // },[replied])
 
   useEffect(() => {
     Animated.timing(starScaleAnimation, {
@@ -152,9 +151,9 @@ const SingleMessage = ({
         <View pointerEvents={selected ? "auto" : "none"} ref={overlayRef} />
       </TouchableOpacity>
       {/* here is the reply Container that i have */}
-      {replied && <View style={{backgroundColor:"red"}} ref={msgReplyRef}>
+      {/* {replied && <View style={{backgroundColor:"red"}} ref={msgReplyRef}>
           
-      </View>}
+      </View>} */}
       {/*  */}
       <Pressable
         onPressIn={handleChangeMessageBackground}

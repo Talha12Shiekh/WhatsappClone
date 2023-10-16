@@ -158,7 +158,7 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const ClipandCameraAnimation = useRef(new Animated.Value(0)).current;
 
-  const [draggedMessage, setdraggedMessage] = useState("");
+  // const [draggedMessage, setdraggedMessage] = useState("");
 
   const [draggedIndex,setdraggedIndex] = useState(null)
 
@@ -377,9 +377,9 @@ const MessagesScreen = ({ navigation, route }) => {
               >
                 {selectedMessages?.length <= 1 ? (
                   <RippleButton onPress={() => {
-                    const selectedMessage = messages.find(msg => msg.selected);
-                    setdraggedMessage(selectedMessage.message);
-                    AnimateReplyContainer()
+                    // const selectedMessage = messages.find(msg => msg.selected);
+                    // setdraggedMessage(selectedMessage.message);
+                    // AnimateReplyContainer()
                   }}>
                     <Ionicons
                       name="md-arrow-undo-sharp"
@@ -479,28 +479,28 @@ const MessagesScreen = ({ navigation, route }) => {
   const replyAnimation = useRef(new Animated.Value(0)).current;
 
 
-  function AnimateReplyContainer(){
-    return Animated.timing(replyAnimation,{toValue:1,useNativeDriver:true,duration:500}).start()
-  }
+  // function AnimateReplyContainer(){
+  //   return Animated.timing(replyAnimation,{toValue:1,useNativeDriver:true,duration:500}).start()
+  // }
 
   const {width} = useWindowDimensions()
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const replyContainerStyles = {
-    transform: [
-      {
-        translateY: replyAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [width, 0],
-        }),
-      },
-    ],
-    opacity: replyAnimation.interpolate({
-      inputRange: [0, 0.8, 1],
-      outputRange: [0, 0, 1],
-    }),
-  };
+  // const replyContainerStyles = {
+  //   transform: [
+  //     {
+  //       translateY: replyAnimation.interpolate({
+  //         inputRange: [0, 1],
+  //         outputRange: [width, 0],
+  //       }),
+  //     },
+  //   ],
+  //   opacity: replyAnimation.interpolate({
+  //     inputRange: [0, 0.8, 1],
+  //     outputRange: [0, 0, 1],
+  //   }),
+  // };
 
   return (
     <>
@@ -528,11 +528,11 @@ const MessagesScreen = ({ navigation, route }) => {
        
         <View style={{ flex: 10, paddingTop: 20 }}>
           <SwipeListView
-            swipeGestureEnded={(rowKey) => {
-              AnimateReplyContainer();
-              const {message,key} = messages.find((msg,ind)  => ind == draggedIndex);
-              setdraggedMessage(message);
-            }}
+            // swipeGestureEnded={(rowKey) => {
+              // AnimateReplyContainer();
+              // const {message,key} = messages.find((msg,ind)  => ind == draggedIndex);
+              // setdraggedMessage(message);
+            // }}
             data={messages}
             renderHiddenItem={ (data, rowMap) => <View/>}
             renderItem={({item,index}) => {
@@ -554,7 +554,6 @@ const MessagesScreen = ({ navigation, route }) => {
                     messageStatus={item.messageStatus}
                     time={item.time}
                     setdraggedIndex={setdraggedIndex}
-                    replied={item.replied}
               />
               );
             }}
@@ -562,7 +561,7 @@ const MessagesScreen = ({ navigation, route }) => {
           />
         </View>
         <View>
-          <Animated.View
+          {/* <Animated.View
             style={[
               styles.replyContainer,
               { position: "absolute", ...replyContainerStyles },
@@ -577,7 +576,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 {draggedIndex % 2 == 0 ? "You" : item.name}
               </Text>
               <TouchableOpacity
-                onPress={() => AnimatedFunction(replyAnimation, 0, 500)}
+                onPress={() => {AnimatedFunction(replyAnimation, 0, 500);}}
               >
                 <Text style={{ fontSize: 15, color: EMOJI_BACKGROUND_COLOR }}>
                   &times;
@@ -591,7 +590,7 @@ const MessagesScreen = ({ navigation, route }) => {
                   : draggedMessage}
               </Text>
             </View>
-          </Animated.View>
+          </Animated.View> */}
           <MessageInput
             value={value}
             setvalue={setvalue}

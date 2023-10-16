@@ -295,11 +295,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 12,
   },
-  timeContainer: {
-    position: "absolute",
-    right: -300,
-    bottom: 10,
-  },
   chatTextContainer: {
     flex: 1,
     marginLeft: 20,
@@ -310,7 +305,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   timeContainer: {
-    flex: 1,
+    flex: 2,
     justifyContent: "flex-end",
     flexDirection: "row",
   },
