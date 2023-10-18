@@ -64,6 +64,7 @@ import { useChatsContext } from "../../App";
 import DeleteModal from "./DeleteModal";
 import MessageModal from "./MessageModal";
 import MessageInput from "./MessageInput";
+import ReactEmojiModal from "./ReactEmojiModal";
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
@@ -512,6 +513,7 @@ const MessagesScreen = ({ navigation, route }) => {
         handleShowSelectionInAlert={handleShowSelectionInAlert}
         dispatch={dispatch}
       />
+      <ReactEmojiModal/>
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
         <MessageModal
         MenuVisible={MenuVisible}
