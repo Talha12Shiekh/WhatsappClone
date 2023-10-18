@@ -47,20 +47,30 @@ const EmojiButton = ({ children, onPress, ...rest }) => {
     )
 }
 
-const ReactEmojiModal = () => {
+const ReactEmojiModal = ({ emojiModalPositon }) => {
 
+    const { x, y, opacity } = emojiModalPositon
 
     const Emojis = ["👍", "❤", "😂", "😮", "😥", "🙏"];
 
     return (
-        <View style={styles.emojiContainer}>
+        <View style={[styles.emojiContainer, {
+            opacity, transform: [
+                {
+                    translateX: x
+                },
+                {
+                    translateX: y
+                }
+            ]
+        }]}>
             {
                 Emojis.map(emoji => {
                     return <EmojiButton onPress={() => { }} key={emoji}>{emoji}</EmojiButton>
                 })
             }
             <TouchableOpacity>
-                <View style={[styles.emojiButtonStyles,{backgroundColor:TAB_PRESS_ACTIVE_WHITE_COLOR}]}>
+                <View style={[styles.emojiButtonStyles, { backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR }]}>
                     <Text style={styles.plus}>+</Text>
                 </View>
             </TouchableOpacity>
@@ -74,14 +84,13 @@ const styles = StyleSheet.create({
     emojiContainer: {
         width: "80%",
         height: 50, backgroundColor: ANSWER_BACKGROUND_COLOR,
-        borderRadius: 15,
+        borderRadius: 20,
         position: "absolute",
         zIndex: 999999999,
         flexDirection: "row",
-        justifyContent: "space-between",
-        top: 200,
-        left: 50,
         alignItems: "center",
+        gap: 5,
+        padding: 10
     },
     emoji: {
         fontSize: 25,
@@ -93,5 +102,5 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    plus:{fontSize:40,marginTop:-10}
+    plus: { fontSize: 40, marginTop: -10 }
 })

@@ -4,10 +4,9 @@ import {
   View,
   Pressable,
   Animated,
-  TouchableOpacityBase,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
 import {
   ANSWER_BACKGROUND_COLOR,
@@ -20,7 +19,6 @@ import {
 import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const SingleMessage = ({
   isEven,
@@ -35,6 +33,7 @@ const SingleMessage = ({
   messageStatus,
   time,
   setdraggedIndex,
+  setemojiModalPositon
 }) => {
   const messageRef = useRef(null);
 
@@ -44,7 +43,7 @@ const SingleMessage = ({
   let questionMessageCornerStyles = [styles.messageCorner];
   let answerMessageCornerStyles = [styles.answermessageCorner];
 
-  const handleChangeMessageBackground = () => {
+  const handleChangeMessageBackground = (event) => {
     // setdraggedIndex(index);
     if (index % 2 == 0) {
       messageStyles.push(styles.green_selected_background);
@@ -94,16 +93,42 @@ const SingleMessage = ({
 
   let replyMsgstyles = [styles.replyMessageStyles];
 
+  const [heightofMessage, setheightofMessage] = useState(null);
+
+  const messageContainerRef = useRef(null);
+
+  overlayStyles?.push({
+    height: heightofMessage,
+    backgroundColor: selected ? "#00800094" : "transparent",
+  });
+
+  overlayRef?.current?.setNativeProps({
+    style: overlayStyles,
+  });
+
   useEffect(() => {
-    messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-      overlayStyles?.push({
-        height,
-        backgroundColor: selected ? "#00800094" : "transparent",
-      });
-      overlayRef?.current?.setNativeProps({
-        style: overlayStyles,
-      });
-    });
+
+    // messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
+    //   overlayStyles?.push({
+    //     height,
+    //     backgroundColor: selected ? "#00800094" : "transparent",
+    //   });
+    //   overlayRef?.current?.setNativeProps({
+    //     style: overlayStyles,
+    //   });
+    //   setemojiModalPositon({ x: pageX, y: pageY, opacity: 1 })
+    // });
+    if (selected) {
+
+      messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
+        setheightofMessage(height);
+        //! setemojiModalPositon({ x : x, y, opacity: 1 })
+      })
+    } else {
+      setheightofMessage(null);
+      //! setemojiModalPositon({ x:0, y:0, opacity: 0 })
+    }
+
   }, [selected]);
 
 
@@ -148,7 +173,7 @@ const SingleMessage = ({
         }}
         style={{ zIndex: 99999 }}
       >
-        <View pointerEvents={selected ? "auto" : "none"} ref={overlayRef} />
+        <Animated.View pointerEvents={selected ? "auto" : "none"} ref={overlayRef} />
       </TouchableOpacity>
       {/* here is the reply Container that i have */}
       {/* {replied && <View style={{backgroundColor:"red"}} ref={msgReplyRef}>
@@ -156,15 +181,17 @@ const SingleMessage = ({
       </View>} */}
       {/*  */}
       <Pressable
+        
         onPressIn={handleChangeMessageBackground}
         onPressOut={handleUnChangeMessageBackground}
-        onLongPress={() =>
+        onLongPress={() => {
           dispatch({
             type: ACTIONS.SELECT_MESSAGES,
             payload: {
               key: keyOfMessage,
             },
           })
+        }
         }
       >
         <View
@@ -188,6 +215,7 @@ const SingleMessage = ({
             styles.messagesContainer,
             { alignSelf: isEven ? "flex-end" : "flex-start" },
           ]}
+          ref={messageContainerRef}
         >
           <View
             style={isEven ? styles.messageCorner : styles.answermessageCorner}
@@ -382,9 +410,9 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "red",
   },
-  
-  replyMessageStyles:{
-    height:50,
-    backgroundColor:"red"
+
+  replyMessageStyles: {
+    height: 50,
+    backgroundColor: "red"
   }
 });

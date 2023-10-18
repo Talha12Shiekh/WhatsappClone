@@ -488,6 +488,10 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [emojiModalPositon,setemojiModalPositon] = useState({
+    x:0,y:0,opacity:0
+  })
+
   // const replyContainerStyles = {
   //   transform: [
   //     {
@@ -513,7 +517,7 @@ const MessagesScreen = ({ navigation, route }) => {
         handleShowSelectionInAlert={handleShowSelectionInAlert}
         dispatch={dispatch}
       />
-      <ReactEmojiModal/>
+      <ReactEmojiModal emojiModalPositon={emojiModalPositon}/>
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
         <MessageModal
         MenuVisible={MenuVisible}
@@ -556,6 +560,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     messageStatus={item.messageStatus}
                     time={item.time}
                     setdraggedIndex={setdraggedIndex}
+                    setemojiModalPositon={setemojiModalPositon}
               />
               );
             }}
