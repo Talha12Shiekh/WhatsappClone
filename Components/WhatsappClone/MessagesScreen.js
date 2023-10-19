@@ -490,7 +490,24 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [emojiModalPositon,setemojiModalPositon] = useState({
     x:0,y:0,opacity:0
-  })
+  });
+
+  const EmojiContainerAnimation = useRef(new Animated.Value(.2)).current;
+
+    const AnimateContainer = () => {
+        return Animated.timing(EmojiContainerAnimation,{
+            toValue:1,
+            duration:1500,
+            useNativeDriver:true
+        }).start()
+    }
+    const CloseContainer = () => {
+        return Animated.timing(EmojiContainerAnimation,{
+            toValue:0,
+            duration:1500,
+            useNativeDriver:true
+        }).start()
+    }
 
   // const replyContainerStyles = {
   //   transform: [
@@ -507,6 +524,8 @@ const MessagesScreen = ({ navigation, route }) => {
   //   }),
   // };
 
+  const [checkSelection,setcheckSelection] = useState(false);
+
   return (
     <>
       <DeleteModal
@@ -517,7 +536,7 @@ const MessagesScreen = ({ navigation, route }) => {
         handleShowSelectionInAlert={handleShowSelectionInAlert}
         dispatch={dispatch}
       />
-      <ReactEmojiModal emojiModalPositon={emojiModalPositon}/>
+      <ReactEmojiModal checkSelection={checkSelection}  containerAnimation={EmojiContainerAnimation} emojiModalPositon={emojiModalPositon}/>
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
         <MessageModal
         MenuVisible={MenuVisible}
@@ -561,6 +580,9 @@ const MessagesScreen = ({ navigation, route }) => {
                     time={item.time}
                     setdraggedIndex={setdraggedIndex}
                     setemojiModalPositon={setemojiModalPositon}
+                    AnimateContainer={AnimateContainer}
+                    CloseContainer={CloseContainer}
+                    setcheckSelection={setcheckSelection}
               />
               );
             }}

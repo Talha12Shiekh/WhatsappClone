@@ -33,7 +33,10 @@ const SingleMessage = ({
   messageStatus,
   time,
   setdraggedIndex,
-  setemojiModalPositon
+  setemojiModalPositon,
+  AnimateContainer,
+  CloseContainer,
+  setcheckSelection
 }) => {
   const messageRef = useRef(null);
 
@@ -119,14 +122,17 @@ const SingleMessage = ({
     //   setemojiModalPositon({ x: pageX, y: pageY, opacity: 1 })
     // });
     if (selected) {
-
+      AnimateContainer()
+      setcheckSelection(true)
       messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
         setheightofMessage(height);
-        //! setemojiModalPositon({ x : x, y, opacity: 1 })
-      })
+        ! setemojiModalPositon({ x : pageX, y:pageY, opacity: 1 })
+      });
     } else {
+      setcheckSelection(false)
       setheightofMessage(null);
-      //! setemojiModalPositon({ x:0, y:0, opacity: 0 })
+      ! setemojiModalPositon({ x:0, y:0, opacity: 0 })
+      CloseContainer()
     }
 
   }, [selected]);

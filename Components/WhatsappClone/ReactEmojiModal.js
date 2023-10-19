@@ -2,8 +2,9 @@ import { Animated, StyleSheet, Text, TouchableNativeFeedback, View } from 'react
 import React, { useRef } from 'react'
 import { ANSWER_BACKGROUND_COLOR, MESSAGE_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './WhatsappMainScreen';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useEffect } from 'react';
 
-const EmojiButton = ({ children, onPress, ...rest }) => {
+const EmojiButton = ({ children, onPress,animation, ...rest }) => {
     const EmojiScaleAnimation = useRef(new Animated.Value(1)).current;
 
     const finishAnimation = () => {
@@ -40,41 +41,47 @@ const EmojiButton = ({ children, onPress, ...rest }) => {
             }
             }>
                 <Animated.View style={EmojiScaleStyles} {...rest}>
-                    <Text style={styles.emoji}>{children}</Text>
+                    <Animated.Text style={[styles.emoji,{transform:[{scale:animation}]}]}>{children}</Animated.Text>
                 </Animated.View>
             </TouchableNativeFeedback>
         </View>
     )
 }
 
-const ReactEmojiModal = ({ emojiModalPositon }) => {
+const ReactEmojiModal = ({ emojiModalPositon, containerAnimation,checkSelection }) => {
 
     const { x, y, opacity } = emojiModalPositon
 
-    const Emojis = ["👍", "❤", "😂", "😮", "😥", "🙏"];
+    const Emojis = [{ emoji: "👍", animation: new Animated.Value(0) }, { emoji: "❤", animation: new Animated.Value(0) }, { emoji: "😂", animation: new Animated.Value(0) }, { emoji: "😮", animation: new Animated.Value(0) }, { emoji: "😥", animation: new Animated.Value(0) }, { emoji: "🙏", animation: new Animated.Value(0) }];
+
+    if(checkSelection){
+       Emojis.map(({animation},index) => {
+            Animated.sequence([
+                Animated.timing(animation,{
+                    toValue:1,
+                    duration:index * 200,
+                    useNativeDriver:true
+                })
+            ]).start()
+       })
+    }
 
     return (
-        <View style={[styles.emojiContainer, {
-            opacity, transform: [
-                {
-                    translateX: x
-                },
-                {
-                    translateX: y
-                }
-            ]
+        <Animated.View style={[styles.emojiContainer, {
+            opacity, top: y, left: x,
+            transform:[{scaleX:containerAnimation}]
         }]}>
             {
-                Emojis.map(emoji => {
-                    return <EmojiButton onPress={() => { }} key={emoji}>{emoji}</EmojiButton>
+                Emojis.map(({emoji,animation}) => {
+                    return <EmojiButton onPress={() => { }} animation={animation} key={emoji}>{emoji}</EmojiButton>
                 })
             }
-            <TouchableOpacity>
+            <TouchableNativeFeedback>
                 <View style={[styles.emojiButtonStyles, { backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR }]}>
                     <Text style={styles.plus}>+</Text>
                 </View>
-            </TouchableOpacity>
-        </View>
+            </TouchableNativeFeedback>
+        </Animated.View>
     )
 }
 
