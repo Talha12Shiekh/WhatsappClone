@@ -122,7 +122,8 @@ const MessageInput = ({
           starred: false,
           readedTime: Date.now(),
           delivered: Date.now(),
-          replied:false
+          replied:false,
+          reactions:[]
         };
 
         if (value == "") return;

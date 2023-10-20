@@ -16,7 +16,8 @@ export const ACTIONS = {
   COPY_TO_CLIPBOARD: "handleCopyToClipboard",
   UPDATE_MESSAGE_STATUS_TO_DOUBLE:"handleUpdateMessageStatusToDouble",
   UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple",
-  REPLY_MESSAGE:"handleReplyMessage"
+  REPLY_MESSAGE:"handleReplyMessage",
+  UPDATE_REACTIONS:"handleReactionsUpdate"
 };
 
 
@@ -123,6 +124,9 @@ export const MessagesReducer = (state, { type, payload }) => {
         }
         return msg
       })
+    }
+    case ACTIONS.UPDATE_REACTIONS:{
+      return payload.reactedMessages
     }
     default: {
       return state;

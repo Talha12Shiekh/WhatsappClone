@@ -5,14 +5,19 @@ import {
   Pressable,
   Animated,
   TouchableOpacity,
+  TouchableHighlight,
+  TouchableNativeFeedback
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
 import {
   ANSWER_BACKGROUND_COLOR,
+  CHAT_BACKROUND_COLOR,
+  CHAT_DATA_STATUS_COLOR,
   GREEN_MESSAGE_CLICKED_BACKGROUND,
   INACTIVE_TAB_WHITE_COLOR,
   MESSAGE_BACKGROUND_COLOR,
+  TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
   generateSendTick,
 } from "./WhatsappMainScreen";
@@ -36,7 +41,8 @@ const SingleMessage = ({
   setemojiModalPositon,
   AnimateContainer,
   CloseContainer,
-  setcheckSelection
+  setcheckSelection,
+  reactions
 }) => {
   const messageRef = useRef(null);
 
@@ -126,12 +132,12 @@ const SingleMessage = ({
       setcheckSelection(true)
       messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
         setheightofMessage(height);
-        ! setemojiModalPositon({ x : pageX, y:pageY, opacity: 1 })
+        !setemojiModalPositon({ x: pageX, y: pageY, opacity: 1 })
       });
     } else {
       setcheckSelection(false)
       setheightofMessage(null);
-      ! setemojiModalPositon({ x:0, y:0, opacity: 0 })
+      !setemojiModalPositon({ x: 0, y: 0, opacity: 0 })
       CloseContainer()
     }
 
@@ -187,7 +193,7 @@ const SingleMessage = ({
       </View>} */}
       {/*  */}
       <Pressable
-        
+
         onPressIn={handleChangeMessageBackground}
         onPressOut={handleUnChangeMessageBackground}
         onLongPress={() => {
@@ -232,6 +238,7 @@ const SingleMessage = ({
             ref={messageRef}
             style={[
               styles.message,
+
               {
                 transform: [{ translateX: isEven ? -20 : 20 }],
                 flexDirection: "row",
@@ -242,6 +249,27 @@ const SingleMessage = ({
               },
             ]}
           >
+            <TouchableNativeFeedback
+              background={TouchableNativeFeedback.Ripple(
+                "black",
+                false
+              )}
+            >
+              <View>
+                {reactions.length !== 0 && <View style={styles.reactions_container}>
+                  {
+                    reactions.map(reaction => {
+                      return (
+                      <View key={reaction}><Text style={[styles.reacted_emoji]}>{reaction}</Text></View>
+                      )
+                    })
+                  }
+                  <View>
+                    <Text style={{ color: CHAT_DATA_STATUS_COLOR, fontWeight: 'bold' }}>{reactions.length}</Text>
+                  </View>
+                </View>}
+              </View>
+            </TouchableNativeFeedback>
             <View
               style={{
                 flexDirection: ColumnOrRow,
@@ -359,7 +387,7 @@ const styles = StyleSheet.create({
   message: {
     padding: 7,
     borderRadius: 10,
-    marginBottom: 5,
+    marginBottom: 30,
   },
   messagesContainer: {
     flex: 1,
@@ -420,5 +448,25 @@ const styles = StyleSheet.create({
   replyMessageStyles: {
     height: 50,
     backgroundColor: "red"
+  },
+  reactions_container: {
+    height: 30,
+    backgroundColor: ANSWER_BACKGROUND_COLOR,
+    position: "absolute",
+    bottom: -30,
+    zIndex: 9999999,
+    left: 10,
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    gap: 10,
+    borderColor: CHAT_BACKROUND_COLOR,
+    borderWidth: 1,
+  },
+  reacted_emoji: {
+    fontSize: 17,
+
   }
 });
