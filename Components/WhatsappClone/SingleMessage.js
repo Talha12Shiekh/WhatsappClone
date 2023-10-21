@@ -6,7 +6,8 @@ import {
   Animated,
   TouchableOpacity,
   TouchableHighlight,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
+  useWindowDimensions
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
@@ -106,6 +107,8 @@ const SingleMessage = ({
 
   const messageContainerRef = useRef(null);
 
+  const {width,height} = useWindowDimensions()
+
   overlayStyles?.push({
     height: heightofMessage,
     backgroundColor: selected ? "#00800094" : "transparent",
@@ -130,14 +133,22 @@ const SingleMessage = ({
     if (selected) {
       AnimateContainer()
       setcheckSelection(true)
-      messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-        setheightofMessage(height);
-        !setemojiModalPositon({ x: pageX, y: pageY, opacity: 1 })
+      messageRef?.current?.measure((x, y, Mwidth, Mheight, pageX, pageY) => {
+        setheightofMessage(Mheight);
+
+        const maxX = width - Mwidth; // Calculate the maximum X position
+        const maxY = height - Mheight; // Calculate the maximum Y position
+
+        // Adjust the X and Y values to stay within the screen bounds
+        const adjustedX = Math.min(pageX, maxX);
+        const adjustedY = Math.min(pageY, maxY);
+
+        setemojiModalPositon({ x: adjustedX, y: adjustedY, opacity: 1 })
       });
     } else {
       setcheckSelection(false)
       setheightofMessage(null);
-      !setemojiModalPositon({ x: 0, y: 0, opacity: 0 })
+      setemojiModalPositon({ x: 0, y: 0, opacity: 0 })
       CloseContainer()
     }
 
@@ -249,27 +260,29 @@ const SingleMessage = ({
               },
             ]}
           >
-            <TouchableNativeFeedback
+            {reactions.length !== 0 && <TouchableNativeFeedback
               background={TouchableNativeFeedback.Ripple(
                 "black",
                 false
               )}
             >
-              <View>
-                {reactions.length !== 0 && <View style={styles.reactions_container}>
-                  {
-                    reactions.map(reaction => {
-                      return (
+              <View style={styles.reactions_container}>
+                {
+                  reactions.length >= 5 ? reactions.slice(0, 5).map(reaction => {
+                    return (
                       <View key={reaction}><Text style={[styles.reacted_emoji]}>{reaction}</Text></View>
-                      )
-                    })
-                  }
-                  <View>
-                    <Text style={{ color: CHAT_DATA_STATUS_COLOR, fontWeight: 'bold' }}>{reactions.length}</Text>
-                  </View>
-                </View>}
+                    )
+                  }) : reactions.map(reaction => {
+                    return (
+                      <View key={reaction}><Text style={[styles.reacted_emoji]}>{reaction}</Text></View>
+                    )
+                  })
+                }
+                <View>
+                  <Text style={{ color: CHAT_DATA_STATUS_COLOR, fontWeight: 'bold' }}>{reactions.length}</Text>
+                </View>
               </View>
-            </TouchableNativeFeedback>
+            </TouchableNativeFeedback>}
             <View
               style={{
                 flexDirection: ColumnOrRow,
@@ -453,7 +466,7 @@ const styles = StyleSheet.create({
     height: 30,
     backgroundColor: ANSWER_BACKGROUND_COLOR,
     position: "absolute",
-    bottom: -30,
+    bottom: -25,
     zIndex: 9999999,
     left: 10,
     borderRadius: 10,

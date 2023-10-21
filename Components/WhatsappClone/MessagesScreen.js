@@ -497,7 +497,7 @@ const MessagesScreen = ({ navigation, route }) => {
     const AnimateContainer = () => {
         return Animated.timing(EmojiContainerAnimation,{
             toValue:1,
-            duration:500,
+            duration:1000,
             useNativeDriver:true
         }).start()
     }
@@ -536,7 +536,7 @@ const MessagesScreen = ({ navigation, route }) => {
         handleShowSelectionInAlert={handleShowSelectionInAlert}
         dispatch={dispatch}
       />
-      <ReactEmojiModal CloseContainer={CloseContainer} dispatch={dispatch} messages={messages} checkSelection={checkSelection}  containerAnimation={EmojiContainerAnimation} emojiModalPositon={emojiModalPositon}/>
+      <ReactEmojiModal setIsOpen={setIsOpen} CloseContainer={CloseContainer} dispatch={dispatch} messages={messages} checkSelection={checkSelection}  containerAnimation={EmojiContainerAnimation} emojiModalPositon={emojiModalPositon}/>
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
         <MessageModal
         MenuVisible={MenuVisible}

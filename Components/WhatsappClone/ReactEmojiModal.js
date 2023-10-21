@@ -1,9 +1,8 @@
 import { Animated, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native'
-import React, { useRef } from 'react'
-import { ANSWER_BACKGROUND_COLOR, MESSAGE_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './WhatsappMainScreen';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useEffect } from 'react';
+import React, { useRef,useState } from 'react'
+import { ANSWER_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './WhatsappMainScreen';
 import { ACTIONS } from './MessagesReducer';
+import EmojiPicker from "rn-emoji-keyboard";
 
 const EmojiButton = ({ children, onPress, animation, ...rest }) => {
     const EmojiScaleAnimation = useRef(new Animated.Value(1)).current;
@@ -49,9 +48,11 @@ const EmojiButton = ({ children, onPress, animation, ...rest }) => {
     )
 }
 
-const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection, messages, dispatch,CloseContainer }) => {
+const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection, messages, dispatch, CloseContainer}) => {
 
-    const { x, y, opacity } = emojiModalPositon
+    const { x, y, opacity } = emojiModalPositon;
+
+    const [open,setisopen] = useState(false)
 
     const Emojis = [{ emoji: "👍", animation: new Animated.Value(0) }, { emoji: "❤", animation: new Animated.Value(0) }, { emoji: "😂", animation: new Animated.Value(0) }, { emoji: "😮", animation: new Animated.Value(0) }, { emoji: "😥", animation: new Animated.Value(0) }, { emoji: "🙏", animation: new Animated.Value(0) }];
 
@@ -60,7 +61,7 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
             Animated.sequence([
                 Animated.timing(animation, {
                     toValue: 1,
-                    duration: index * 200,
+                    duration: index * 100,
                     useNativeDriver: true
                 })
             ]).start()
@@ -75,13 +76,13 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
                     return {
                         ...msg,
                         reactions: msg.reactions.filter(reaction => reaction !== emoji),
-                        selected:false
+                        selected: false
                     }
                 } else {
                     return {
                         ...msg,
                         reactions: [...msg.reactions, emoji],
-                        selected:false
+                        selected: false
                     }
                 }
 
@@ -97,6 +98,14 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
     }
 
     return (
+        <>
+        <EmojiPicker
+          open={open}
+          onEmojiSelected={(emojiObject) => {
+            handleReaction(emojiObject.emoji)
+          }}
+          onClose={() => setisopen(false)}
+        />
         <Animated.View style={[styles.emojiContainer, {
             opacity, top: y, left: x,
             transform: [{ scaleX: containerAnimation }]
@@ -106,12 +115,13 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
                     return <EmojiButton onPress={() => handleReaction(emoji)} animation={animation} key={emoji}>{emoji}</EmojiButton>
                 })
             }
-            <TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={() => { ;CloseContainer();setisopen(p => !p) }}>
                 <View style={[styles.emojiButtonStyles, { backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR }]}>
                     <Text style={styles.plus}>+</Text>
                 </View>
             </TouchableNativeFeedback>
         </Animated.View>
+        </>
     )
 }
 
