@@ -12,6 +12,11 @@ import {
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+import React, { useCallback, useMemo } from "react";
+import {
   ClosenavbarAnimation,
   RippleButton,
   navbarAnimation,
@@ -79,9 +84,9 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [messages, dispatch] = useReducer(MessagesReducer, item.messages);
 
-  const [online,setonline] = useState(false);
+  const [online, setonline] = useState(false);
 
-  const [lastMessageTime,setLastMessageTime] = useState(new Date(messages[messages.length - 1]?.time))
+  const [lastMessageTime, setLastMessageTime] = useState(new Date(messages[messages.length - 1]?.time))
 
   useEffect(() => {
     const updatedChats = chats.map((chat) => {
@@ -98,9 +103,9 @@ const MessagesScreen = ({ navigation, route }) => {
     let currentTime = new Date().getMinutes();
     const lastMessage = messages[messages.length - 1];
     const lastMessageTime = new Date(lastMessage?.time).getMinutes()
-    if(lastMessageTime == currentTime){
+    if (lastMessageTime == currentTime) {
       setonline(true);
-    }else{
+    } else {
       setonline(false);
       setLastMessageTime(new Date(lastMessage?.time))
     }
@@ -161,7 +166,7 @@ const MessagesScreen = ({ navigation, route }) => {
 
   // const [draggedMessage, setdraggedMessage] = useState("");
 
-  const [draggedIndex,setdraggedIndex] = useState(null)
+  const [draggedIndex, setdraggedIndex] = useState(null)
 
   const sendButtonAnimation = useRef(new Animated.Value(0)).current;
 
@@ -172,21 +177,21 @@ const MessagesScreen = ({ navigation, route }) => {
   let ChatNameLength = "loremipsumdolor";
 
   const MessagesMenuData = [
-    { text: "View contact", onPress: () => {}, key: 1 },
-    { text: "Media, links, and docs", onPress: () => {}, key: 2 },
-    { text: "Search", onPress: () => {}, key: 3 },
-    { text: "Mute notifications", onPress: () => {}, key: 4 },
-    { text: "Dissappearing messages", onPress: () => {}, key: 5 },
-    { text: "Wallpaper", onPress: () => {}, key: 6 },
+    { text: "View contact", onPress: () => { }, key: 1 },
+    { text: "Media, links, and docs", onPress: () => { }, key: 2 },
+    { text: "Search", onPress: () => { }, key: 3 },
+    { text: "Mute notifications", onPress: () => { }, key: 4 },
+    { text: "Dissappearing messages", onPress: () => { }, key: 5 },
+    { text: "Wallpaper", onPress: () => { }, key: 6 },
     {
       text: "More                                    >",
-      onPress: () => {},
+      onPress: () => { },
       key: 7,
     },
   ];
 
   const ReportMenuData = [
-    { text: "Report", onPress: () => {}, key: 1 },
+    { text: "Report", onPress: () => { }, key: 1 },
   ];
 
   const AnimatedFunction = (animation, toValue, duration) => {
@@ -223,13 +228,13 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const selectedMessage = messages.filter(msg => msg.selected);
 
-  const [selectedStarMessages,setselectedStarMessages] = useState(null);
+  const [selectedStarMessages, setselectedStarMessages] = useState(null);
 
   const reportMenuAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    setselectedStarMessages(selectedMessage[selectedMessage.length -1])
-  },[selectedMessage])
+    setselectedStarMessages(selectedMessage[selectedMessage.length - 1])
+  }, [selectedMessage])
 
   useFocusEffect(() => {
     navigation.setOptions({
@@ -307,7 +312,7 @@ const MessagesScreen = ({ navigation, route }) => {
                       : item.name}
                   </Text>
                   {messages.length !== 0 && <Text style={{ color: TITLE_COLOR, fontSize: 11 }}>
-                    {online ? "online" : `last seen today at ${lastMessageTime.getHours() > 12 ? lastMessageTime.getHours() - 12 : lastMessageTime.getHours()}:${lastMessageTime.getMinutes() < 10 ?  "0" + lastMessageTime.getMinutes() : lastMessageTime.getMinutes()} ${lastMessageTime.getHours() > 12 ? "pm" : "am"}`}
+                    {online ? "online" : `last seen today at ${lastMessageTime.getHours() > 12 ? lastMessageTime.getHours() - 12 : lastMessageTime.getHours()}:${lastMessageTime.getMinutes() < 10 ? "0" + lastMessageTime.getMinutes() : lastMessageTime.getMinutes()} ${lastMessageTime.getHours() > 12 ? "pm" : "am"}`}
                   </Text>}
                 </View>
               </TouchableNativeFeedback>
@@ -344,9 +349,9 @@ const MessagesScreen = ({ navigation, route }) => {
               </View>
             </View>
             <Menu
-                animation={reportMenuAnimation}
-                menuData={ReportMenuData}
-              />
+              animation={reportMenuAnimation}
+              menuData={ReportMenuData}
+            />
             <Animated.View
               style={[
                 styles.selectedChatNavbar,
@@ -443,7 +448,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => AnimatedFunction(reportMenuAnimation,1,1000)}>
+                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => AnimatedFunction(reportMenuAnimation, 1, 1000)}>
                   <SimpleLineIcons
                     name="options-vertical"
                     color={TITLE_COLOR}
@@ -484,30 +489,30 @@ const MessagesScreen = ({ navigation, route }) => {
   //   return Animated.timing(replyAnimation,{toValue:1,useNativeDriver:true,duration:500}).start()
   // }
 
-  const {width} = useWindowDimensions()
+  const { width } = useWindowDimensions()
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [emojiModalPositon,setemojiModalPositon] = useState({
-    x:0,y:0,opacity:0
+  const [emojiModalPositon, setemojiModalPositon] = useState({
+    x: 0, y: 0, opacity: 0
   });
 
   const EmojiContainerAnimation = useRef(new Animated.Value(.2)).current;
 
-    const AnimateContainer = () => {
-        return Animated.timing(EmojiContainerAnimation,{
-            toValue:1,
-            duration:1000,
-            useNativeDriver:true
-        }).start()
-    }
-    const CloseContainer = () => {
-        return Animated.timing(EmojiContainerAnimation,{
-            toValue:0,
-            duration:500,
-            useNativeDriver:true
-        }).start()
-    }
+  const AnimateContainer = () => {
+    return Animated.timing(EmojiContainerAnimation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true
+    }).start()
+  }
+  const CloseContainer = () => {
+    return Animated.timing(EmojiContainerAnimation, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true
+    }).start()
+  }
 
   // const replyContainerStyles = {
   //   transform: [
@@ -524,10 +529,20 @@ const MessagesScreen = ({ navigation, route }) => {
   //   }),
   // };
 
-  const [checkSelection,setcheckSelection] = useState(false);
+  const [checkSelection, setcheckSelection] = useState(false);
+
+  const bottomSheetRef = useRef(null);
+
+  // variables
+  const snapPoints = useMemo(() => ['25%', '50%'], []);
+
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
 
   return (
-    <>
+    <BottomSheetModalProvider>
+
       <DeleteModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -536,11 +551,11 @@ const MessagesScreen = ({ navigation, route }) => {
         handleShowSelectionInAlert={handleShowSelectionInAlert}
         dispatch={dispatch}
       />
-      <ReactEmojiModal setIsOpen={setIsOpen} CloseContainer={CloseContainer} dispatch={dispatch} messages={messages} checkSelection={checkSelection}  containerAnimation={EmojiContainerAnimation} emojiModalPositon={emojiModalPositon}/>
+      <ReactEmojiModal setIsOpen={setIsOpen} CloseContainer={CloseContainer} dispatch={dispatch} messages={messages} checkSelection={checkSelection} containerAnimation={EmojiContainerAnimation} emojiModalPositon={emojiModalPositon} />
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
         <MessageModal
-        MenuVisible={MenuVisible}
-        setMenuVisible={setMenuVisible}
+          MenuVisible={MenuVisible}
+          setMenuVisible={setMenuVisible}
         />
 
         <EmojiPicker
@@ -550,41 +565,54 @@ const MessagesScreen = ({ navigation, route }) => {
           }}
           onClose={() => setIsOpen(false)}
         />
-       
+
+        <BottomSheetModal
+          enablePanDownToClose={true}
+          ref={bottomSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          backgroundStyle={{backgroundColor:CHAT_BACKROUND_COLOR}}
+        >
+          <View style={{ height: 100 }}>
+            <Text>Awesome 🎉</Text>
+          </View>
+        </BottomSheetModal>
+
         <View style={{ flex: 10, paddingTop: 20 }}>
           <SwipeListView
             // swipeGestureEnded={(rowKey) => {
-              // AnimateReplyContainer();
-              // const {message,key} = messages.find((msg,ind)  => ind == draggedIndex);
-              // setdraggedMessage(message);
+            // AnimateReplyContainer();
+            // const {message,key} = messages.find((msg,ind)  => ind == draggedIndex);
+            // setdraggedMessage(message);
             // }}
             data={messages}
-            renderHiddenItem={ (data, rowMap) => <View/>}
-            renderItem={({item,index}) => {
+            renderHiddenItem={(data, rowMap) => <View />}
+            renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
               let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
-              
+
               return (
                 <SingleMessage
-                    key={item.key}
-                    isEven={isEven}
-                    index={index}
-                    ColumnOrRow={ColumnOrRow}
-                    dispatch={dispatch}
-                    selected={item.selected}
-                    keyOfMessage={item.key}
-                    message={item.message}
-                    starred={item.starred}
-                    reactions={item.reactions}
-                    deleteForEveryone={item.deleteForEveryone}
-                    messageStatus={item.messageStatus}
-                    time={item.time}
-                    setdraggedIndex={setdraggedIndex}
-                    setemojiModalPositon={setemojiModalPositon}
-                    AnimateContainer={AnimateContainer}
-                    CloseContainer={CloseContainer}
-                    setcheckSelection={setcheckSelection}
-              />
+                  key={item.key}
+                  isEven={isEven}
+                  index={index}
+                  ColumnOrRow={ColumnOrRow}
+                  dispatch={dispatch}
+                  selected={item.selected}
+                  keyOfMessage={item.key}
+                  message={item.message}
+                  starred={item.starred}
+                  reactions={item.reactions}
+                  deleteForEveryone={item.deleteForEveryone}
+                  messageStatus={item.messageStatus}
+                  time={item.time}
+                  setdraggedIndex={setdraggedIndex}
+                  setemojiModalPositon={setemojiModalPositon}
+                  AnimateContainer={AnimateContainer}
+                  CloseContainer={CloseContainer}
+                  setcheckSelection={setcheckSelection}
+                  handlePresentModalPress={handlePresentModalPress}
+                />
               );
             }}
             disableLeftSwipe={true}
@@ -635,7 +663,7 @@ const MessagesScreen = ({ navigation, route }) => {
           />
         </View>
       </View>
-    </>
+    </BottomSheetModalProvider>
   );
 };
 

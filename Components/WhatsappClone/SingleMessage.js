@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
+
 import {
   ANSWER_BACKGROUND_COLOR,
   CHAT_BACKROUND_COLOR,
@@ -43,7 +44,8 @@ const SingleMessage = ({
   AnimateContainer,
   CloseContainer,
   setcheckSelection,
-  reactions
+  reactions,
+  handlePresentModalPress
 }) => {
   const messageRef = useRef(null);
 
@@ -180,8 +182,10 @@ const SingleMessage = ({
     });
   }, [starred]);
 
+
   return (
     <>
+     
       <TouchableOpacity
         onPress={() => {
           if (selected) {
@@ -261,6 +265,7 @@ const SingleMessage = ({
             ]}
           >
             {reactions.length !== 0 && <TouchableNativeFeedback
+              onPress={handlePresentModalPress}
               background={TouchableNativeFeedback.Ripple(
                 "black",
                 false
