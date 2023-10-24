@@ -10,6 +10,7 @@ import {
   useWindowDimensions,
   TouchableWithoutFeedback,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import * as Clipboard from "expo-clipboard";
 import {
   BottomSheetModal,
@@ -169,6 +170,12 @@ const MessagesScreen = ({ navigation, route }) => {
   const [draggedIndex, setdraggedIndex] = useState(null)
 
   const sendButtonAnimation = useRef(new Animated.Value(0)).current;
+
+  const [clickedMessageReactions, setClickedMessageReactions] = useState([]);
+
+  const TotalReactions = clickedMessageReactions.reduce((ac,it) => {
+    return ac += it.count;
+  },0);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -533,11 +540,13 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const bottomSheetRef = useRef(null);
 
-  // variables
-  const snapPoints = useMemo(() => ['25%', '50%'], []);
+  const snapPoints = useMemo(() => ['45%', '50%'], []);
 
-  const handlePresentModalPress = useCallback(() => {
+  // variables
+  const handlePresentModalPress = useCallback((reactions) => {
     bottomSheetRef.current?.present();
+
+    setClickedMessageReactions(reactions)
   }, []);
 
   return (
@@ -568,13 +577,32 @@ const MessagesScreen = ({ navigation, route }) => {
 
         <BottomSheetModal
           enablePanDownToClose={true}
+          handleIndicatorStyle={{ backgroundColor: CHAT_DATA_STATUS_COLOR }}
           ref={bottomSheetRef}
-          index={1}
+          index={0}
           snapPoints={snapPoints}
-          backgroundStyle={{backgroundColor:CHAT_BACKROUND_COLOR}}
+          backgroundStyle={{ backgroundColor: CHAT_BACKROUND_COLOR}}
         >
-          <View style={{ height: 100 }}>
-            <Text>Awesome 🎉</Text>
+          <View style={{ height: "100%", width: "100%" }}>
+            <Text style={{ color: TITLE_COLOR, fontSize: 25, fontWeight: "500",margin:15,marginHorizontal:25}}>{TotalReactions} reaction{TotalReactions > 1 ? "s" : ""}</Text>
+            <ScrollView contentContainerStyle={{paddingBottom:10}}>
+                {
+                  clickedMessageReactions.map(reaction => {
+                    return (
+                      <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR,false)}>
+                        <View style={{ flexDirection: "row", marginBottom: 10, gap: 20, alignItems: "center",paddingHorizontal:40,paddingVertical:8 }}>
+                          <View>
+                            <Text style={{ fontSize: 25 }}>{reaction.emoji}</Text>
+                          </View>
+                          <View>
+                            <Text style={{ color: TITLE_COLOR, fontSize: 20 }}>{reaction.count}</Text>
+                          </View>
+                        </View>
+                      </TouchableNativeFeedback>
+                    )
+                  })
+                }
+            </ScrollView>
           </View>
         </BottomSheetModal>
 
@@ -612,6 +640,7 @@ const MessagesScreen = ({ navigation, route }) => {
                   CloseContainer={CloseContainer}
                   setcheckSelection={setcheckSelection}
                   handlePresentModalPress={handlePresentModalPress}
+                  setClickedMessageReactions={setClickedMessageReactions}
                 />
               );
             }}

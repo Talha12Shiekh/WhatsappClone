@@ -26,6 +26,7 @@ import {
 import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const SingleMessage = ({
   isEven,
@@ -45,7 +46,7 @@ const SingleMessage = ({
   CloseContainer,
   setcheckSelection,
   reactions,
-  handlePresentModalPress
+  handlePresentModalPress,
 }) => {
   const messageRef = useRef(null);
 
@@ -54,6 +55,8 @@ const SingleMessage = ({
   let messageStyles = [styles.message];
   let questionMessageCornerStyles = [styles.messageCorner];
   let answerMessageCornerStyles = [styles.answermessageCorner];
+
+  const EmojiViewerRef = useRef(null)
 
   const handleChangeMessageBackground = (event) => {
     // setdraggedIndex(index);
@@ -109,7 +112,7 @@ const SingleMessage = ({
 
   const messageContainerRef = useRef(null);
 
-  const {width,height} = useWindowDimensions()
+  const { width, height } = useWindowDimensions()
 
   overlayStyles?.push({
     height: heightofMessage,
@@ -166,7 +169,10 @@ const SingleMessage = ({
   //       });
   //     });
   //   }
-  // },[replied])
+  // },[replied]);
+
+
+  
 
   useEffect(() => {
     Animated.timing(starScaleAnimation, {
@@ -182,10 +188,18 @@ const SingleMessage = ({
     });
   }, [starred]);
 
+  let reactionContainerStyles = [styles.reactions_container];
+
+  function changeEmojiViewerStyles(addedStyle) {
+    reactionContainerStyles.push(addedStyle);
+    EmojiViewerRef.current.setNativeProps({
+      style: reactionContainerStyles
+    })
+  }
 
   return (
     <>
-     
+
       <TouchableOpacity
         onPress={() => {
           if (selected) {
@@ -264,30 +278,28 @@ const SingleMessage = ({
               },
             ]}
           >
-            {reactions.length !== 0 && <TouchableNativeFeedback
-              onPress={handlePresentModalPress}
-              background={TouchableNativeFeedback.Ripple(
-                "black",
-                false
-              )}
+            {reactions.length !== 0 && <Pressable
+              onPress={() => handlePresentModalPress(reactions)}
+              onPressIn={() => changeEmojiViewerStyles(styles.black)}
+              onPressOut={() => changeEmojiViewerStyles(styles.usual)}
             >
-              <View style={styles.reactions_container}>
+              <View style={styles.reactions_container} ref={EmojiViewerRef}>
                 {
-                  reactions.length >= 5 ? reactions.slice(0, 5).map(reaction => {
+                  reactions.length >= 5 ? reactions.reverse().slice(0, 5).map(reaction => {
                     return (
-                      <View key={reaction}><Text style={[styles.reacted_emoji]}>{reaction}</Text></View>
+                      <View key={reaction.key}><Text style={[styles.reacted_emoji]}>{reaction.emoji}</Text></View>
                     )
-                  }) : reactions.map(reaction => {
+                  }) : reactions.reverse().map(reaction => {
                     return (
-                      <View key={reaction}><Text style={[styles.reacted_emoji]}>{reaction}</Text></View>
+                      <View key={reaction.key}><Text style={[styles.reacted_emoji]}>{reaction.emoji}</Text></View>
                     )
                   })
                 }
-                <View>
+                {reactions.length !== 1 && <View>
                   <Text style={{ color: CHAT_DATA_STATUS_COLOR, fontWeight: 'bold' }}>{reactions.length}</Text>
-                </View>
+                </View>}
               </View>
-            </TouchableNativeFeedback>}
+            </Pressable>}
             <View
               style={{
                 flexDirection: ColumnOrRow,
@@ -485,6 +497,11 @@ const styles = StyleSheet.create({
   },
   reacted_emoji: {
     fontSize: 17,
-
+  },
+  black: {
+    backgroundColor: "black"
+  },
+  usual: {
+    backgroundColor: ANSWER_BACKGROUND_COLOR
   }
 });
