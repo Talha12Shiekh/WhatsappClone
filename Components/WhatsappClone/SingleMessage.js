@@ -112,7 +112,16 @@ const SingleMessage = ({
 
   const messageContainerRef = useRef(null);
 
-  const { width, height } = useWindowDimensions()
+  const { width, height } = useWindowDimensions();
+
+  const modalWidthPercentage = 80; // 80% width
+  const modalHeightPercentage = 50; // 50% height
+
+  const modalWidth = (modalWidthPercentage / 100) * width;
+  const modalHeight = (modalHeightPercentage / 100) * height;
+
+  const maxX = width - modalWidth;
+  const maxY = height - modalHeight;
 
   overlayStyles?.push({
     height: heightofMessage,
@@ -124,31 +133,18 @@ const SingleMessage = ({
   });
 
   useEffect(() => {
-
-    // messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-    //   overlayStyles?.push({
-    //     height,
-    //     backgroundColor: selected ? "#00800094" : "transparent",
-    //   });
-    //   overlayRef?.current?.setNativeProps({
-    //     style: overlayStyles,
-    //   });
-    //   setemojiModalPositon({ x: pageX, y: pageY, opacity: 1 })
-    // });
     if (selected) {
       AnimateContainer()
       setcheckSelection(true)
       messageRef?.current?.measure((x, y, Mwidth, Mheight, pageX, pageY) => {
         setheightofMessage(Mheight);
-
-        const maxX = width - Mwidth; // Calculate the maximum X position
-        const maxY = height - Mheight; // Calculate the maximum Y position
-
         // Adjust the X and Y values to stay within the screen bounds
         const adjustedX = Math.min(pageX, maxX);
         const adjustedY = Math.min(pageY, maxY);
 
         setemojiModalPositon({ x: adjustedX, y: adjustedY, opacity: 1 })
+
+        
       });
     } else {
       setcheckSelection(false)
@@ -267,7 +263,6 @@ const SingleMessage = ({
             ref={messageRef}
             style={[
               styles.message,
-
               {
                 transform: [{ translateX: isEven ? -20 : 20 }],
                 flexDirection: "row",
@@ -275,6 +270,7 @@ const SingleMessage = ({
                   ? MESSAGE_BACKGROUND_COLOR
                   : ANSWER_BACKGROUND_COLOR,
                 position: "relative",
+                marginBottom:reactions.length !== 0 ? 30 : 10
               },
             ]}
           >
@@ -417,7 +413,6 @@ const styles = StyleSheet.create({
   message: {
     padding: 7,
     borderRadius: 10,
-    marginBottom: 30,
   },
   messagesContainer: {
     flex: 1,
@@ -483,7 +478,7 @@ const styles = StyleSheet.create({
     height: 30,
     backgroundColor: ANSWER_BACKGROUND_COLOR,
     position: "absolute",
-    bottom: -25,
+    bottom: -32,
     zIndex: 9999999,
     left: 10,
     borderRadius: 10,

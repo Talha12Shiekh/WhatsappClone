@@ -72,6 +72,14 @@ import MessageModal from "./MessageModal";
 import MessageInput from "./MessageInput";
 import ReactEmojiModal from "./ReactEmojiModal";
 
+export const AnimatedFunction = (animation, toValue, duration) => {
+  return Animated.timing(animation, {
+    toValue,
+    duration,
+    useNativeDriver: true,
+  }).start();
+};
+
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
 
@@ -173,9 +181,9 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [clickedMessageReactions, setClickedMessageReactions] = useState([]);
 
-  const TotalReactions = clickedMessageReactions.reduce((ac,it) => {
+  const TotalReactions = clickedMessageReactions.reduce((ac, it) => {
     return ac += it.count;
-  },0);
+  }, 0);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -200,26 +208,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const ReportMenuData = [
     { text: "Report", onPress: () => { }, key: 1 },
   ];
-
-  const AnimatedFunction = (animation, toValue, duration) => {
-    return Animated.timing(animation, {
-      toValue,
-      duration,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  useEffect(() => {
-    if (value !== "") {
-      AnimatedFunction(ClipandCameraAnimation, 50, 300);
-      AnimatedFunction(sendButtonAnimation, 1, 300);
-      setpaddingRight(50);
-    } else {
-      AnimatedFunction(ClipandCameraAnimation, 0, 300);
-      AnimatedFunction(sendButtonAnimation, 0, 300);
-      setpaddingRight(100);
-    }
-  }, [value]);
 
   const ForwardMessages = async () => {
     let selectedMessages = messages.filter((msgs) => msgs.selected);
@@ -406,6 +394,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     dispatch({
                       type: ACTIONS.STARRE_MESSAGES,
                     });
+                    CloseContainer()
                   }}
                 >
                   {(selectedStarMessages !== null && !selectedStarMessages?.starred) ? <FontAwesome
@@ -421,6 +410,7 @@ const MessagesScreen = ({ navigation, route }) => {
                         InfoMessages,
                       });
                       dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
+                      CloseContainer()
                     }}
                   >
                     <Feather
@@ -433,6 +423,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 <RippleButton
                   onPress={() => {
                     setModalVisible(true);
+                    CloseContainer()
                   }}
                 >
                   <MaterialCommunityIcons
@@ -441,21 +432,21 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                <RippleButton onPress={handleCopyMessages}>
+                <RippleButton onPress={() => { handleCopyMessages(); CloseContainer() }}>
                   <MaterialIcons
                     name="content-copy"
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                <RippleButton onPress={ForwardMessages}>
+                <RippleButton onPress={() => { ForwardMessages(); CloseContainer() }}>
                   <Ionicons
                     name="md-arrow-redo-sharp"
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => AnimatedFunction(reportMenuAnimation, 1, 1000)}>
+                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => { AnimatedFunction(reportMenuAnimation, 1, 1000); CloseContainer() }}>
                   <SimpleLineIcons
                     name="options-vertical"
                     color={TITLE_COLOR}
@@ -540,7 +531,7 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const bottomSheetRef = useRef(null);
 
-  const snapPoints = useMemo(() => ['45%', '50%'], []);
+  const snapPoints = useMemo(() => ['50%', '51%'], []);
 
   // variables
   const handlePresentModalPress = useCallback((reactions) => {
@@ -581,27 +572,28 @@ const MessagesScreen = ({ navigation, route }) => {
           ref={bottomSheetRef}
           index={0}
           snapPoints={snapPoints}
-          backgroundStyle={{ backgroundColor: CHAT_BACKROUND_COLOR}}
+          backgroundStyle={{ backgroundColor: CHAT_BACKROUND_COLOR }}
+          backdropComponent={() => <View style={{ position: "absolute", backgroundColor: "rgba(0,0,0,.5)", ...StyleSheet.absoluteFill }} />}
         >
           <View style={{ height: "100%", width: "100%" }}>
-            <Text style={{ color: TITLE_COLOR, fontSize: 25, fontWeight: "500",margin:15,marginHorizontal:25}}>{TotalReactions} reaction{TotalReactions > 1 ? "s" : ""}</Text>
-            <ScrollView contentContainerStyle={{paddingBottom:10}}>
-                {
-                  clickedMessageReactions.map(reaction => {
-                    return (
-                      <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR,false)}>
-                        <View style={{ flexDirection: "row", marginBottom: 10, gap: 20, alignItems: "center",paddingHorizontal:40,paddingVertical:8 }}>
-                          <View>
-                            <Text style={{ fontSize: 25 }}>{reaction.emoji}</Text>
-                          </View>
-                          <View>
-                            <Text style={{ color: TITLE_COLOR, fontSize: 20 }}>{reaction.count}</Text>
-                          </View>
+            <Text style={{ color: TITLE_COLOR, fontSize: 25, fontWeight: "500", margin: 15, marginHorizontal: 25 }}>{TotalReactions} reaction{TotalReactions > 1 ? "s" : ""}</Text>
+            <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+              {
+                clickedMessageReactions.map(reaction => {
+                  return (
+                    <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR, false)}>
+                      <View style={{ flexDirection: "row", marginBottom: 10, gap: 20, alignItems: "center", paddingHorizontal: 40, paddingVertical: 8 }}>
+                        <View>
+                          <Text style={{ fontSize: 25 }}>{reaction.emoji}</Text>
                         </View>
-                      </TouchableNativeFeedback>
-                    )
-                  })
-                }
+                        <View>
+                          <Text style={{ color: TITLE_COLOR, fontSize: 20 }}>{reaction.count}</Text>
+                        </View>
+                      </View>
+                    </TouchableNativeFeedback>
+                  )
+                })
+              }
             </ScrollView>
           </View>
         </BottomSheetModal>
@@ -689,6 +681,7 @@ const MessagesScreen = ({ navigation, route }) => {
             setMenuVisible={setMenuVisible}
             replyAnimation={replyAnimation}
             draggedIndex={draggedIndex}
+            setpaddingRight={setpaddingRight}
           />
         </View>
       </View>

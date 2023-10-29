@@ -6,7 +6,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
 import {
   ACTIVE_TAB_GREEN_COLOR,
@@ -47,18 +47,27 @@ const MessageInput = ({
   dispatch,
   setMenuVisible,
   replyAnimation,
-  draggedIndex
+  draggedIndex,
+  setpaddingRight
 }) => {
 
-  const handleShowReplyContainer = (key) => {
-    replyAnimation.addListener(({value}) => {
-      if(Math.round(value) === 1){
-        dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:true}})
-      }else{
-        dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:false}})
-      }
-    })
-  } 
+  // const handleShowReplyContainer = (key) => {
+  //   replyAnimation.addListener(({value}) => {
+  //     if(Math.round(value) === 1){
+  //       dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:true}})
+  //     }else{
+  //       dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:false}})
+  //     }
+  //   })
+  // } 
+
+  const AnimatedFunction = (animation, toValue, duration) => {
+    return Animated.timing(animation, {
+      toValue,
+      duration,
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
     <>
@@ -91,7 +100,19 @@ const MessageInput = ({
           style={[styles.input, { paddingRight: paddingRight }]}
           multiline
           value={value}
-          onChangeText={(value) => setvalue(value)}
+          onChangeText={(value) => {
+            setvalue(value);
+            if (value !== "") {
+              AnimatedFunction(ClipandCameraAnimation, 50, 300);
+              AnimatedFunction(sendButtonAnimation, 1, 300);
+              setpaddingRight(50);
+              
+            } else {
+              AnimatedFunction(ClipandCameraAnimation, 0, 300);
+              AnimatedFunction(sendButtonAnimation, 0, 300);
+              setpaddingRight(100);
+            }
+          }}
         />
       </View>
       <Animated.View
@@ -113,7 +134,7 @@ const MessageInput = ({
     <TouchableOpacity
       onPress={() => {
         let messagesObject = {
-          message: value,
+          message:value,
           key: Date.now().toString(),
           time: Date.now(),
           messageStatus: "single",
@@ -159,7 +180,11 @@ const MessageInput = ({
 
         setvalue("");
 
-        handleShowReplyContainer(messagesObject.key)
+        AnimatedFunction(ClipandCameraAnimation, 0, 300);
+        AnimatedFunction(sendButtonAnimation, 0, 300);
+        setpaddingRight(100);
+
+        // handleShowReplyContainer(messagesObject.key)
       }}
     >
       <View style={[styles.sendButton]}>

@@ -53,7 +53,7 @@ const DeleteModal = ({modalVisible,setModalVisible,selectedMessages,handleShowSe
                 alignSelf: "flex-end",
                 flex: 1,
                 justifyContent: "space-around",
-                marginTop: 10,
+                marginTop: !showDeleteforeveryone ? 10 : 30,
                 flexDirection: showDeleteforeveryone ? "row" : "column",
                 gap: 10,
               }}

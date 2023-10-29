@@ -17,7 +17,7 @@ const EmojiButton = ({ children, onPress, animation, ...rest }) => {
 
     const scaleEmoji = () => {
         return Animated.timing(EmojiScaleAnimation, {
-            toValue: 1.3,
+            toValue: 1.5,
             duration: 200,
             useNativeDriver: true
         }).start(() => {
@@ -37,7 +37,7 @@ const EmojiButton = ({ children, onPress, animation, ...rest }) => {
     return (
         <View style={styles.emojiButtonStyles}>
             <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR, true, 50)} onPress={() => {
-                onPress(), scaleEmoji()
+               scaleEmoji(), onPress()
             }
             }>
                 <Animated.View style={EmojiScaleStyles} {...rest}>
@@ -73,29 +73,29 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
         let newMessages = [...messages];
         let EmojiObject = { key: Date.now(), emoji, count: 1 }
         const reactedMessages = newMessages.map(msg => {
-            if(msg.selected){
+            if (msg.selected) {
                 const updatedReactions = msg.reactions.map(reaction => {
-                    if(reaction.emoji == EmojiObject.emoji){
+                    if (reaction.emoji == EmojiObject.emoji) {
                         emojiMatched = true
                         return {
                             ...reaction,
-                            count : reaction.count + 1
+                            count: reaction.count + 1
                         }
                     }
                     return reaction
                 })
 
-                if(emojiMatched){
+                if (emojiMatched) {
                     return {
                         ...msg,
-                        reactions:updatedReactions,
-                        selected:false
+                        reactions: updatedReactions,
+                        selected: false
                     }
-                }else {
+                } else {
                     return {
                         ...msg,
-                        reactions:[...msg.reactions,EmojiObject],
-                        selected:false
+                        reactions: [...msg.reactions, EmojiObject],
+                        selected: false
                     }
                 }
             }
