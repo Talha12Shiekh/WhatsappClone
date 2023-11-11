@@ -1,5 +1,4 @@
-import { createRef } from "react";
-import { Animated, StyleSheet } from "react-native";
+import {  StyleSheet } from "react-native";
 import {
   GREEN_MESSAGE_CLICKED_BACKGROUND,
   MESSAGE_BACKGROUND_COLOR,

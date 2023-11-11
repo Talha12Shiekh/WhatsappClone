@@ -29,9 +29,10 @@ import CommunityComponent from "./CommunityComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ACTIVE_TAB_GREEN_COLOR } from "./WhatsappMainScreen";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { showToast } from "./RippleButton";
+import { showToast } from "./Helpers";
 import { DummyChats } from "./DummyChats";
 import { useArchivedContext, useChatsContext } from "../../App";
+import {MakeAnimation} from "./Helpers"
 
 if (
   Platform.OS === "android" &&
@@ -57,21 +58,10 @@ const Chats = ({
   const checkedAnimaton = new Animated.Value(0);
   const [margin, setmargin] = useState(0);
 
-  const makeTickAnmation = () => {
-    Animated.spring(checkedAnimaton, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
 
   function ToggleOpen() {
     const toValue = open ? 0 : 1;
-    Animated.timing(animation, {
-      toValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    MakeAnimation(animation,toValue,500)
     setopen(!open);
   }
 
@@ -108,7 +98,7 @@ const Chats = ({
     ToggleOpen();
   };
 
-  useEffect(() => {
+   useEffect(() => {
     if (opensearchBar) {
       setmargin(80);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
@@ -116,7 +106,7 @@ const Chats = ({
       setmargin(0);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     }
-  }, [opensearchBar]);
+   }, [opensearchBar]);
 
   const isFocused = useIsFocused()
 
@@ -220,7 +210,7 @@ const Chats = ({
                           zIndex: 111,
                           transform: [{ scale: checkedAnimaton }],
                         }}
-                        onLayout={item.selected ? makeTickAnmation() : () => {}}
+                        onLayout={item.selected ? MakeAnimation(checkedAnimaton,1,200) : () => {}}
                       >
                         {item.selected ? (
                           <Ionicons

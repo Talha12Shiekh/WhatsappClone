@@ -3,17 +3,10 @@ import React, { useRef, useState } from 'react'
 import { ANSWER_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './WhatsappMainScreen';
 import { ACTIONS } from './MessagesReducer';
 import EmojiPicker from "rn-emoji-keyboard";
+import {MakeAnimation} from "./Helpers"
 
 const EmojiButton = ({ children, onPress, animation, ...rest }) => {
     const EmojiScaleAnimation = useRef(new Animated.Value(1)).current;
-
-    const finishAnimation = () => {
-        return Animated.timing(EmojiScaleAnimation, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true
-        }).start()
-    }
 
     const scaleEmoji = () => {
         return Animated.timing(EmojiScaleAnimation, {
@@ -21,7 +14,7 @@ const EmojiButton = ({ children, onPress, animation, ...rest }) => {
             duration: 200,
             useNativeDriver: true
         }).start(() => {
-            finishAnimation()
+            MakeAnimation(EmojiScaleAnimation,1,200)
         })
     }
 
@@ -59,11 +52,8 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
     if (checkSelection) {
         Emojis.map(({ animation }, index) => {
             Animated.sequence([
-                Animated.timing(animation, {
-                    toValue: 1,
-                    duration: index * 100,
-                    useNativeDriver: true
-                })
+                
+                MakeAnimation(animation,1,index * 100)
             ]).start()
         })
     }

@@ -42,11 +42,11 @@ export const RippleButton = ({ children, onPress }) => {
   );
 };
 
-export const PopupIconsRippleButton = ({ children,onPress }) => {
+export const PopupIconsRippleButton = ({ children, onPress }) => {
   return (
     <View style={{ borderRadius: 200, padding: 10 }}>
       <TouchableNativeFeedback
-      onPress={onPress}
+        onPress={onPress}
         background={TouchableNativeFeedback.Ripple(
           TAB_PRESS_ACTIVE_WHITE_COLOR,
           true
@@ -62,7 +62,7 @@ export const showToast = (message) => {
   ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.CENTER);
 };
 
-export const ModelComponent = ({ name, photo, onPress ,item}) => {
+export const ModelComponent = ({ name, photo, onPress, item }) => {
   const navigation = useNavigation();
 
   const [currentItem, setCurrentItem] = useState({
@@ -152,20 +152,25 @@ export const ModelComponent = ({ name, photo, onPress ,item}) => {
   );
 };
 
-export const ClosenavbarAnimation = (closeanim) => {
-  return Animated.timing(closeanim, {
-    toValue: 0,
-    duration: 300,
-    useNativeDriver: true,
-  }).start();
-};
 
-export const navbarAnimation = (openanim) => {
-  Animated.timing(openanim, {
-    toValue: 1,
-    duration: 300,
+export const MakeAnimation = (animation, toValue, duration, ...rest) => {
+  return Animated.timing(animation, {
+    toValue,
+    duration,
     useNativeDriver: true,
+    ...rest
   }).start();
+}
+
+export const Button = ({ color, onPress, children, width }) => {
+  return (
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: color, width: width }]}
+      onPress={onPress}
+    >
+      {children}
+    </TouchableOpacity>
+  );
 };
 
 export const ChatGreenLeftComponent = ({ children }) => {
@@ -184,6 +189,31 @@ export const ChatGreenLeftComponent = ({ children }) => {
     </View>
   );
 };
+
+// const selectedChats = newchats.map((chat) => {
+//   if (chat.selected) {
+//     return {
+//       ...chat,
+//       muted: !chat.muted,
+//       selected:false
+//     };
+//   }
+//   return chat;
+// });
+
+export const ChangeProperty = (array, property, value, valuefromitem, ...rest) => {
+  let CopyOfArray = [...array];
+  return CopyOfArray.map(item => {
+    if (item[selected]) {
+      return {
+        ...item,
+        [property]: value !== null ? value : !item[valuefromitem],
+        ...rest
+      }
+    }
+    return item
+  })
+}
 
 
 
@@ -275,5 +305,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 40,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center"
   },
 });

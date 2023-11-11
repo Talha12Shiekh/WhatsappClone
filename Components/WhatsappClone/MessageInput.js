@@ -15,6 +15,7 @@ import {
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
+import {MakeAnimation} from "./Helpers"
 import { Feather, Fontisto, Entypo,MaterialIcons,Ionicons } from "@expo/vector-icons";
 import { ACTIONS } from "./MessagesReducer";
 
@@ -61,13 +62,6 @@ const MessageInput = ({
   //   })
   // } 
 
-  const AnimatedFunction = (animation, toValue, duration) => {
-    return Animated.timing(animation, {
-      toValue,
-      duration,
-      useNativeDriver: true,
-    }).start();
-  };
 
   return (
     <>
@@ -103,13 +97,13 @@ const MessageInput = ({
           onChangeText={(value) => {
             setvalue(value);
             if (value !== "") {
-              AnimatedFunction(ClipandCameraAnimation, 50, 300);
-              AnimatedFunction(sendButtonAnimation, 1, 300);
+              MakeAnimation(ClipandCameraAnimation, 50, 300);
+              MakeAnimation(sendButtonAnimation, 1, 300);
               setpaddingRight(50);
               
             } else {
-              AnimatedFunction(ClipandCameraAnimation, 0, 300);
-              AnimatedFunction(sendButtonAnimation, 0, 300);
+              MakeAnimation(ClipandCameraAnimation, 0, 300);
+              MakeAnimation(sendButtonAnimation, 0, 300);
               setpaddingRight(100);
             }
           }}
@@ -180,8 +174,8 @@ const MessageInput = ({
 
         setvalue("");
 
-        AnimatedFunction(ClipandCameraAnimation, 0, 300);
-        AnimatedFunction(sendButtonAnimation, 0, 300);
+        MakeAnimation(ClipandCameraAnimation, 0, 300);
+        MakeAnimation(sendButtonAnimation, 0, 300);
         setpaddingRight(100);
 
         // handleShowReplyContainer(messagesObject.key)

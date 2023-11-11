@@ -21,7 +21,7 @@ import {
 } from "./WhatsappMainScreen";
 import * as ImagePicker from "expo-image-picker";
 import { Feather, Ionicons } from "react-native-vector-icons";
-import Button from "./Button";
+import {Button} from "./Helpers";
 
 const Profile = ({ route, navigation }) => {
   const { handleChatsMaking,findedChattoEdit,edited } = route.params;

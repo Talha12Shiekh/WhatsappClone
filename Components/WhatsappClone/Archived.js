@@ -23,11 +23,9 @@ import {
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
 import {
-  ClosenavbarAnimation,
   RippleButton,
-  navbarAnimation,
-  showToast,
-} from "./RippleButton";
+  MakeAnimation
+} from "./Helpers";
 import { useFocusEffect } from "@react-navigation/native";
 import Menu from "./Menu";
 import { useArchivedContext, useChatsContext } from "../../App";
@@ -41,17 +39,13 @@ const Archived = ({ route, navigation }) => {
 
   const archivedNavbarAnimation = useRef(new Animated.Value(0)).current;
 
-  // const [archived, setArchived] = useState(route.params.archived);
-
   const selected = archived.some((chat) => chat.selected);
 
-  useEffect(() => {
     if (selected) {
-      navbarAnimation(archivedNavbarAnimation);
+      MakeAnimation(archivedNavbarAnimation,1,300)
     } else {
-      ClosenavbarAnimation(archivedNavbarAnimation);
+      MakeAnimation(archivedNavbarAnimation,0,300)
     }
-  }, [selected]);
 
   let newChats = [...archived];
 
@@ -113,21 +107,21 @@ const Archived = ({ route, navigation }) => {
       text: "Add chat shortcut",
       key: 1,
       onPress: () => {
-        resetAnimation();
+        MakeAnimation(archiveChatMenuAnimation,0,1000);
       },
     },
     {
       text: "View Contact",
       key: 2,
       onPress: () => {
-        resetAnimation();
+        MakeAnimation(archiveChatMenuAnimation,0,1000);
       },
     },
     {
       text: `Mark as ${archivereaded ? "read" : "unread"}`,
       key: 3,
       onPress: () => {
-        resetAnimation();
+        MakeAnimation(archiveChatMenuAnimation,0,1000);
         const newChats = [...archived];
         const readedChats = newChats.map((chat) => {
           setreaded(!archivereaded)
@@ -149,19 +143,11 @@ const Archived = ({ route, navigation }) => {
       text: "Archive Settings",
       key: 1,
       onPress: () => {
-        resetAnimation();
+        MakeAnimation(archiveChatMenuAnimation,0,1000);
         navigation.navigate("ArchiveSettings")
       },
     },
   ];
-
-  const resetAnimation = () => {
-    Animated.timing(archiveChatMenuAnimation, {
-      toValue: 0,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  };
 
   useFocusEffect(() => {
     navigation.setOptions({
@@ -198,12 +184,7 @@ const Archived = ({ route, navigation }) => {
               />
               <View style={{ position: "absolute", right: 0 }}>
                 <RippleButton
-                  onPress={() => Animated.timing(archiveChatMenuAnimation,{
-                    toValue:1,
-                    duration:1000,
-                    useNativeDriver:true
-                  }).start()
-                }
+                  onPress={() => MakeAnimation(archiveChatMenuAnimation,1,1000)}
                 >
                   <SimpleLineIcons
                     name="options-vertical"
@@ -230,7 +211,8 @@ const Archived = ({ route, navigation }) => {
             >
               <View style={styles.chatsCountContainer}>
                 <RippleButton
-                  onPress={() => ClosenavbarAnimation(archivedNavbarAnimation)}
+                  onPress={() => MakeAnimation(archivedNavbarAnimation,0,300)
+                  }
                 >
                   <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
                 </RippleButton>
@@ -257,12 +239,7 @@ const Archived = ({ route, navigation }) => {
                   />
                 </RippleButton>
                 <RippleButton
-                  onPress={() =>
-                    Animated.timing(selectedarchiveChatMenuAnimation,{
-                      toValue:1,
-                      duration:1000,
-                      useNativeDriver:true
-                    }).start()
+                  onPress={() => MakeAnimation(selectedarchiveChatMenuAnimation,1,1000)
                   }
                 >
                   <SimpleLineIcons
@@ -279,13 +256,6 @@ const Archived = ({ route, navigation }) => {
     });
   });
 
-  const makeTickAnmation = () => {
-    Animated.timing(checkedAnimaton, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  };
 
   const findArchiveItemsToSelect = (key) => {
     let newChats = [...archived];
@@ -350,7 +320,7 @@ const Archived = ({ route, navigation }) => {
                         transform: [{ scale: checkedAnimaton }],
                       }}
                       onLayout={
-                        item.selected ? () => makeTickAnmation() : () => {}
+                        item.selected ? () => MakeAnimation(checkedAnimaton,1,500) : () => {}
                       }
                     >
                       {item.selected ? (
@@ -410,7 +380,7 @@ const Archived = ({ route, navigation }) => {
               NotshowChatMakingDate: true,
               onLongPress: () => {
                 findArchiveItemsToSelect(item.key);
-                makeTickAnmation();
+                MakeAnimation(checkedAnimaton,1,500)
               },
               onPress: () => {
                 findArchiveItemsToDeSelect(item.key);

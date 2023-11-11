@@ -35,7 +35,7 @@ import {
   MaterialIcons,
   Feather,
 } from "@expo/vector-icons";
-import { RippleButton } from "./RippleButton";
+import { RippleButton } from "./Helpers";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ImageBackground } from "react-native";
 import { Audio } from "expo-av";

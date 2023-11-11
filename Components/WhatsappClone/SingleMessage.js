@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
+import {MakeAnimation} from "./Helpers";
 
 import {
   ANSWER_BACKGROUND_COLOR,
@@ -176,12 +177,9 @@ const SingleMessage = ({
       duration: 1000,
       useNativeDriver: true,
     }).start(() => {
-      Animated.timing(starScaleAnimation, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
+      MakeAnimation(starScaleAnimation,0,500)
     });
+
   }, [starred]);
 
   let reactionContainerStyles = [styles.reactions_container];

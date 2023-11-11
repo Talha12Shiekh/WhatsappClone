@@ -19,7 +19,7 @@ import {
   generateRandomArrow,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
 } from "./WhatsappMainScreen";
-import { RippleButton, showToast } from "./RippleButton";
+import { RippleButton, showToast } from "./Helpers";
 import { FormattedDate, FormattedTime, FormattedDateParts } from "react-intl";
 import Chat from "./Chat";
 import {
@@ -137,14 +137,6 @@ const CallInfo = ({ route, navigation }) => {
     },
   ];
 
-  const handleOpenMenu = () => {
-    Animated.timing(selectedCallsAnimation, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  };
-
   useFocusEffect(() => {
     navigation.setOptions({
       headerRight: () => {
@@ -161,7 +153,8 @@ const CallInfo = ({ route, navigation }) => {
                 </RippleButton>
               </View>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <RippleButton onPress={handleOpenMenu}>
+    
+                <RippleButton onPress={() => MakeAnimation(selectedCallsAnimation,1,1000)}>
                   <SimpleLineIcons
                     name="options-vertical"
                     color={TITLE_COLOR}

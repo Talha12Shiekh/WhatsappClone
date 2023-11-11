@@ -10,7 +10,7 @@ import {
   TITLE_COLOR,
 } from "./WhatsappMainScreen";
 import { FlatList } from "react-native";
-import { ChatGreenLeftComponent } from "./RippleButton";
+import { ChatGreenLeftComponent } from "./Helpers";
 import Chat from "./Chat";
 import { Zocial, Feather, MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAvoidingView } from "react-native";

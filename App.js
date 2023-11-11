@@ -27,7 +27,7 @@ import CallDetails from "./Components/WhatsappClone/CallDetails";
 import CallInfo from "./Components/WhatsappClone/CallInfo";
 import MessagesScreen from "./Components/WhatsappClone/MessagesScreen";
 import { MaterialIcons } from "@expo/vector-icons";
-import { RippleButton } from "./Components/WhatsappClone/RippleButton";
+import { RippleButton } from "./Components/WhatsappClone/Helpers";
 import Settings from "./Components/WhatsappClone/Settings";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FormattedTime } from "react-intl";

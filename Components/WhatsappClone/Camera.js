@@ -8,6 +8,7 @@ import {
   View,
   Animated,
 } from "react-native";
+import {MakeAnimation} from "./Helpers"
 import {
   BADGE_BACKGROUND_COLOR,
   CHAT_BACKROUND_COLOR,
@@ -49,21 +50,14 @@ export default function CameraComponent({ navigation }) {
   const [video, setvideo] = useState(false);
 
   const handleRotation = () => {
-    const toValue = !isrotated ? 1 : 0;
-    Animated.timing(rotateAnimation, {
-      toValue,
-      duration: 1500,
-      useNativeDriver: true,
-    }).start();
+    const RotationToValue = !isrotated ? 1 : 0;
+    MakeAnimation(rotateAnimation,RotationToValue,1500)
   };
+  
 
   const handleMoveFlash = () => {
     const toValue = !istranslated ? 1 : 0;
-    Animated.timing(flashAnimation, {
-      toValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    MakeAnimation(flashAnimation,toValue,500)
     setistranslated((istranslted) => !istranslted);
     setFlash((flsh) => !flsh);
   };

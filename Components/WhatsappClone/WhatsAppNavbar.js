@@ -11,11 +11,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Camera from "react-native-vector-icons/Feather";
 import Search from "react-native-vector-icons/Fontisto";
 import {
-  ClosenavbarAnimation,
+  MakeAnimation,
   RippleButton,
-  navbarAnimation,
   showToast,
-} from "./RippleButton";
+} from "./Helpers";
 import { AntDesign,MaterialIcons ,MaterialCommunityIcons,FontAwesome5,Octicons,Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
@@ -175,23 +174,23 @@ const WhatsAppNavbar = ({
 
   // *! USE EFFECT FOR SELECTINNG THE CHAT AND MAKING THE NAVBAR OPENING ANIMATION
 
-  useEffect(() => {
+  // useEffect(() => {
     if (selected) {
-      navbarAnimation(selectedNavbarAnimation);
+      MakeAnimation(selectedNavbarAnimation,1,300)
     } else {
-      ClosenavbarAnimation(selectedNavbarAnimation);
+      MakeAnimation(selectedNavbarAnimation,0,300)
     }
-  }, [selected]);
+  // }, [selected]);
 
   // *! USE EFFECT FOR OPENING THE SEARCH BAR
 
-  useEffect(() => {
+  // useEffect(() => {
     if (opensearchBar) {
-      navbarAnimation(searchNavbarAnimation);
+      MakeAnimation(searchNavbarAnimation,1,300)
     } else {
-      ClosenavbarAnimation(searchNavbarAnimation);
+      MakeAnimation(searchNavbarAnimation,0,300)
     }
-  }, [opensearchBar]);
+  // }, [opensearchBar]);
 
   const handleOpenSearchBar = () => {
     setopensearchBar(!opensearchBar);
@@ -237,16 +236,6 @@ const WhatsAppNavbar = ({
       showToast("You can not pin more than 3 chats");
     }
   }, [setchats, chats, setFileredChats]);
-
-  // *! FUNCTION TO SHOW THE MENU
-
-  const handleShowMenu = () => {
-    Animated.timing(MenuAnimation, {
-      toValue: 1,
-      duration: 1100,
-      useNativeDriver: true,
-    }).start();
-  };
 
   // *! FUNCTON TO MUTE THE CHAT
 
@@ -408,15 +397,6 @@ const WhatsAppNavbar = ({
 
   }, [chats, setchats, setFileredChats, callChats,calls]);
 
-  // *! FUNCTION TO OPEN THE SELECTEDCHAT MENU
-
-  const hanldeOpenMenu = () => {
-    Animated.timing(SelectChatMenuAnimation, {
-      toValue: 1,
-      duration: 1500,
-      useNativeDriver: true,
-    }).start();
-  };
 
   // *! FUNCTION TO CHANGE THE DATA OF THE MENU
 
@@ -468,13 +448,13 @@ const WhatsAppNavbar = ({
 
  
 
-  useEffect(() => {
+  // useEffect(() => {
     if(isCallSelected){
-      navbarAnimation(selectedCallNavbarAnimation)
+      MakeAnimation(selectedCallNavbarAnimation,1,300)
     }else {
-      ClosenavbarAnimation(selectedCallNavbarAnimation)
+      MakeAnimation(selectedCallNavbarAnimation,0,300)
     }
-  },[isCallSelected]);
+  // },[isCallSelected]);
 
   useEffect(() => {
     if(activeRoute == "Chats"){
@@ -570,7 +550,8 @@ const WhatsAppNavbar = ({
       >
         <View style={styles.chatsCountContainer}>
           <RippleButton
-            onPress={() => ClosenavbarAnimation(selectedNavbarAnimation)}
+          
+            onPress={() => MakeAnimation(selectedNavbarAnimation,0,300)}
           >
             <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
           </RippleButton>
@@ -596,7 +577,7 @@ const WhatsAppNavbar = ({
           <RippleButton onPress={hanldeArchieveChat}>
             <Ionicons name="archive-outline" size={21} color={TITLE_COLOR} />
           </RippleButton>
-          <RippleButton onPress={hanldeOpenMenu}>
+          <RippleButton onPress={() => MakeAnimation(SelectChatMenuAnimation,1,1500)}>
             <SimpleLineIcons
               name="options-vertical"
               color={TITLE_COLOR}
@@ -633,7 +614,9 @@ const WhatsAppNavbar = ({
               />
             </RippleButton>
           )}
-          <RippleButton onPress={handleShowMenu}>
+          <RippleButton onPress={() => {
+            MakeAnimation(MenuAnimation,1,1100)
+          }}>
             <SimpleLineIcons
               name="options-vertical"
               color={INACTIVE_TAB_WHITE_COLOR}

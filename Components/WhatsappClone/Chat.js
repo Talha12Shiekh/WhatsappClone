@@ -7,7 +7,7 @@ import {
   Image,
   Modal,
   ToastAndroid,
-  TouchableWithoutFeedback,
+TouchableWithoutFeedback,
   Pressable,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
@@ -30,7 +30,7 @@ import {
   ModelComponent,
   PopupIconsRippleButton,
   showToast,
-} from "./RippleButton";
+} from "./Helpers";
 
 const Chat = (item) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -42,7 +42,7 @@ const Chat = (item) => {
     time: "",
   });
 
-  useEffect(() => {
+   useEffect(() => {
     if (item.messages && item.messages.length > 0) {
       setLastMessage({
         indexOfMessage: item.messages.length - 1,
@@ -51,7 +51,7 @@ const Chat = (item) => {
         status: item.messages[item.messages.length - 1].messageStatus,
       });
     }
-  }, [item.messages]);
+   }, [item.messages]);
 
   const { RightPlaceRenderThing, LeftPlaceRenderThing } = item;
 
