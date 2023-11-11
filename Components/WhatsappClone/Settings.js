@@ -4,7 +4,7 @@ import {
   ACTIVE_TAB_GREEN_COLOR,
   CHAT_BACKROUND_COLOR,
   TAB_BACKGROUND_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import Chat from "./Chat";
 import { FlatList } from "react-native";
 import { Image } from "react-native";

@@ -8,15 +8,16 @@ import {
   View,
   Animated,
   TouchableOpacity,
+  Keyboard
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   TAB_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
   CHAT_DATA_STATUS_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import {
   Feather,
   Ionicons,
@@ -29,28 +30,12 @@ export const center = {
   alignItems: "center",
 };
 
-export const RippleButton = ({ children, onPress }) => {
+export const RippleButton = ({ children, onPress,borderRadius = 50,padding = 15 }) => {
   return (
-    <View style={{ padding: 15, borderRadius: 50 }}>
+    <View style={{ padding, borderRadius }}>
       <TouchableNativeFeedback
         onPress={onPress}
-        background={TouchableNativeFeedback.Ripple("#4d565d", true, 100)}
-      >
-        <View>{children}</View>
-      </TouchableNativeFeedback>
-    </View>
-  );
-};
-
-export const PopupIconsRippleButton = ({ children,onPress }) => {
-  return (
-    <View style={{ borderRadius: 200, padding: 10 }}>
-      <TouchableNativeFeedback
-      onPress={onPress}
-        background={TouchableNativeFeedback.Ripple(
-          TAB_PRESS_ACTIVE_WHITE_COLOR,
-          true
-        )}
+        background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR, true, 100)}
       >
         <View>{children}</View>
       </TouchableNativeFeedback>
@@ -126,31 +111,72 @@ export const ModelComponent = ({ name, photo, onPress ,item}) => {
             { backgroundColor: TAB_BACKGROUND_COLOR },
           ]}
         >
-          <PopupIconsRippleButton onPress={handleOpenCallScreen}>
+          <RippleButton onPress={handleOpenCallScreen} borderRadius={200} padding={10}>
             <Ionicons name="call" color={ACTIVE_TAB_GREEN_COLOR} size={23} />
-          </PopupIconsRippleButton>
-          <PopupIconsRippleButton>
+          </RippleButton>
+          <RippleButton borderRadius={200} padding={10}>
             <MaterialCommunityIcons
               name="message-text-outline"
               color={ACTIVE_TAB_GREEN_COLOR}
               size={23}
             />
-          </PopupIconsRippleButton>
-          <PopupIconsRippleButton>
+          </RippleButton>
+          <RippleButton borderRadius={200} padding={10}>
             <Feather name="info" color={ACTIVE_TAB_GREEN_COLOR} size={23} />
-          </PopupIconsRippleButton>
-          <PopupIconsRippleButton onPress={handleOpenVideoScreen}>
+          </RippleButton>
+          <RippleButton onPress={handleOpenVideoScreen} borderRadius={200} padding={10}>
             <Ionicons
               name="videocam"
               color={ACTIVE_TAB_GREEN_COLOR}
               size={23}
             />
-          </PopupIconsRippleButton>
+          </RippleButton>
         </View>
       </View>
     </Pressable>
   );
 };
+
+export const useKeyboardOffsetHeight = () => {
+  const [keyBoardOffsetHeight, setKeyboardOffsetHeight] = useState(0);
+
+  useEffect(() => {
+    const keyboardWillShowListener = Keyboard.addListener(
+      "keyboardWillShow",
+      (e) => {
+        setKeyboardOffsetHeight(e.endCoordinates.height);
+      }
+    );
+    const keyboardWillHideListener = Keyboard.addListener(
+      "keyboardWillHide",
+      () => {
+        setKeyboardOffsetHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardWillHideListener.remove();
+      keyboardWillShowListener.remove();
+    };
+  }, []);
+
+  return keyBoardOffsetHeight;
+}
+
+export const getMessageHeightOffset = (
+  heightOfMessageBox,
+  windowHeight
+) => {
+  const maxHeightOfMessageBox = windowHeight * 0.3;
+  if (heightOfMessageBox > maxHeightOfMessageBox) {
+    return maxHeightOfMessageBox - windowHeight * 0.05;
+  }
+  if (heightOfMessageBox > 24) {
+    return heightOfMessageBox - windowHeight * 0.035;
+  }
+  return 0;
+};
+
 
 export const ClosenavbarAnimation = (closeanim) => {
   return Animated.timing(closeanim, {
@@ -182,6 +208,18 @@ export const ChatGreenLeftComponent = ({ children }) => {
         {children}
       </View>
     </View>
+  );
+};
+
+
+export const Button = ({color,onPress,children,width}) => {
+  return (
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: color,width:width }]}
+      onPress={onPress}
+    >
+      {children}
+    </TouchableOpacity>
   );
 };
 
@@ -275,5 +313,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 40,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+    justifyContent:"center",
+    alignItems:"center",
+    alignSelf:"center"
   },
 });

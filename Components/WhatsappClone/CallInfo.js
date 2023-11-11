@@ -18,8 +18,8 @@ import {
   TITLE_COLOR,
   generateRandomArrow,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
-} from "./WhatsappMainScreen";
-import { RippleButton, showToast } from "./RippleButton";
+} from "./Variables";
+import { RippleButton, showToast } from "./Helpers";
 import { FormattedDate, FormattedTime, FormattedDateParts } from "react-intl";
 import Chat from "./Chat";
 import {

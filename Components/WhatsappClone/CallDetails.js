@@ -4,18 +4,16 @@ import {
   StyleSheet,
   Share,
   Modal,
-  Pressable,
-  Button,
 } from "react-native";
-import { CallReusableComponent, showToast } from "./RippleButton";
+import { CallReusableComponent, showToast } from "./Helpers";
 import {
   TAB_BACKGROUND_COLOR,
   CHAT_BACKROUND_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
   TITLE_COLOR,
   CHAT_DATA_STATUS_COLOR,
-} from "./WhatsappMainScreen";
-import { ChatGreenLeftComponent } from "./RippleButton";
+} from "./Variables";
+import { ChatGreenLeftComponent } from "./Helpers";
 import { Feather, MaterialIcons, Entypo } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useState, useEffect } from "react";
@@ -25,7 +23,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
-import CallButton from "./Button";
+import {Button} from "./Helpers";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext } from "../../App";
 

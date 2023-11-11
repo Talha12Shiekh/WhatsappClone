@@ -19,7 +19,7 @@ import {
   CHAT_DATA_STATUS_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import {
   Entypo,
   FontAwesome,
@@ -28,7 +28,7 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import Chat from "./Chat";
-import { ChatGreenLeftComponent, ClosenavbarAnimation, RippleButton, navbarAnimation } from "./RippleButton";
+import { ChatGreenLeftComponent, ClosenavbarAnimation, RippleButton, navbarAnimation } from "./Helpers";
 import { useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext } from "../../App";
 
 const CALLS_BUTTON = [

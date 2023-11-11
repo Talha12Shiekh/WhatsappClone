@@ -21,13 +21,13 @@ import {
   CHAT_DATA_STATUS_COLOR,
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import {
   ClosenavbarAnimation,
   RippleButton,
   navbarAnimation,
   showToast,
-} from "./RippleButton";
+} from "./Helpers";
 import { useFocusEffect } from "@react-navigation/native";
 import Menu from "./Menu";
 import { useArchivedContext, useChatsContext } from "../../App";

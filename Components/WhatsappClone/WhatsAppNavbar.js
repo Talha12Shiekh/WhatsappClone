@@ -15,7 +15,7 @@ import {
   RippleButton,
   navbarAnimation,
   showToast,
-} from "./RippleButton";
+} from "./Helpers";
 import { AntDesign,MaterialIcons ,MaterialCommunityIcons,FontAwesome5,Octicons,Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
@@ -25,7 +25,7 @@ import {
   TITLE_COLOR,
   CHAT_DATA_STATUS_COLOR,
   BADGE_BACKGROUND_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import Menu from "./Menu";
 import {
   useNavigation,

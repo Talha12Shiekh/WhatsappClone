@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Text } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { ACTIONS } from "./MessagesReducer";
-import { ACTIVE_TAB_GREEN_COLOR,MODAL_BACKGROUND_COLOR,MODAL_TEXT_COLOR } from "./WhatsappMainScreen";
+import { ACTIVE_TAB_GREEN_COLOR,MODAL_BACKGROUND_COLOR,MODAL_TEXT_COLOR } from "./Variables";
 
 const DeleteModal = ({modalVisible,setModalVisible,selectedMessages,handleShowSelectionInAlert,showDeleteforeveryone,dispatch}) => {
   

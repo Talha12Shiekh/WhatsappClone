@@ -1,18 +1,13 @@
 import { StyleSheet, Text, View, Image } from "react-native";
-import React, { useEffect } from "react";
-import Button from "./Button";
+import React from "react";
+import { Button } from "./Helpers";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   CHAT_BACKROUND_COLOR,
   CHAT_DATA_STATUS_COLOR,
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+} from "./Variables";
 
 const CommunityComponent = ({
   title,

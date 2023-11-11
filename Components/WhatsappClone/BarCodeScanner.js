@@ -7,7 +7,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useState, useEffect } from "react";
 

@@ -22,7 +22,7 @@ import {
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
   generateSendTick,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";

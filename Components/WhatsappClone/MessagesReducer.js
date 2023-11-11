@@ -4,7 +4,7 @@ import {
   GREEN_MESSAGE_CLICKED_BACKGROUND,
   MESSAGE_BACKGROUND_COLOR,
   ANSWER_BACKGROUND_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 
 export const ACTIONS = {
   SEND_MESSAGES: "handleSendMessages",

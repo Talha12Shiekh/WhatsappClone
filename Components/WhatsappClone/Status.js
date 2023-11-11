@@ -8,9 +8,9 @@ import {
   TAB_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { FlatList } from "react-native";
-import { ChatGreenLeftComponent } from "./RippleButton";
+import { ChatGreenLeftComponent } from "./Helpers";
 import Chat from "./Chat";
 import { Zocial, Feather, MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAvoidingView } from "react-native";

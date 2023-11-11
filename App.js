@@ -1,18 +1,6 @@
 import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import WhatsappMainScreen, {
-  CHAT_DATA_STATUS_COLOR,
-  INACTIVE_TAB_WHITE_COLOR,
-  TAB_BACKGROUND_COLOR,
-  TITLE_COLOR,
-  CHAT_BACKROUND_COLOR,
-  ACTIVE_TAB_GREEN_COLOR,
-  TAB_PRESS_ACTIVE_WHITE_COLOR,
-  STORAGE_KEY,
-  FILTER_STORAGE_KEY,
-  ARCHIVED_STORAGE_KEY,
-  CALLS_STORAGE_KEY,
-  CALLS_KEY,
-  FILTER_CALLS_STORAGE_KEY,
+  
 } from "./Components/WhatsappClone/WhatsappMainScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -26,11 +14,11 @@ import Camera from "./Components/WhatsappClone/Camera";
 import CallDetails from "./Components/WhatsappClone/CallDetails";
 import CallInfo from "./Components/WhatsappClone/CallInfo";
 import MessagesScreen from "./Components/WhatsappClone/MessagesScreen";
-import { MaterialIcons } from "@expo/vector-icons";
-import { RippleButton } from "./Components/WhatsappClone/RippleButton";
 import Settings from "./Components/WhatsappClone/Settings";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FormattedTime } from "react-intl";
+
+
+
 
 import {
   View,
@@ -43,12 +31,27 @@ import {
   LogBox,
 } from "react-native";
 import { createContext, useCallback, useContext, useState } from "react";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import BarCodeScannerScreen from "./Components/WhatsappClone/BarCodeScanner";
 import CaptureImageScreen from "./Components/WhatsappClone/CaptureImageScreen";
 import ImageCropScreen from "./Components/WhatsappClone/ImageCropScreen";
 import CallScreen from "./Components/WhatsappClone/CallScreen";
 import MessagesInfo from "./Components/WhatsappClone/MessagesInfo";
+
+import {
+  CHAT_DATA_STATUS_COLOR,
+  INACTIVE_TAB_WHITE_COLOR,
+  TAB_BACKGROUND_COLOR,
+  TITLE_COLOR,
+  CHAT_BACKROUND_COLOR,
+  ACTIVE_TAB_GREEN_COLOR,
+  TAB_PRESS_ACTIVE_WHITE_COLOR,
+  STORAGE_KEY,
+  FILTER_STORAGE_KEY,
+  ARCHIVED_STORAGE_KEY,
+  CALLS_STORAGE_KEY,
+  CALLS_KEY,
+  FILTER_CALLS_STORAGE_KEY,
+} from "./Components/WhatsappClone/Variables"
 
 LogBox.ignoreLogs([
   "Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",

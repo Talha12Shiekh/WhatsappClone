@@ -23,14 +23,13 @@ import {
   STORAGE_KEY,
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { useNavigation, useRoute,useFocusEffect, useIsFocused } from "@react-navigation/native";
 import CommunityComponent from "./CommunityComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ACTIVE_TAB_GREEN_COLOR } from "./WhatsappMainScreen";
+import { ACTIVE_TAB_GREEN_COLOR } from "./Variables";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { showToast } from "./RippleButton";
-import { DummyChats } from "./DummyChats";
+import { showToast } from "./Helpers";
 import { useArchivedContext, useChatsContext } from "../../App";
 
 if (

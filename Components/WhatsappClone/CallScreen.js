@@ -18,7 +18,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import UpperArrow from "react-native-vector-icons/MaterialIcons";
 import { FlatList, PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
@@ -35,7 +35,7 @@ import {
   MaterialIcons,
   Feather,
 } from "@expo/vector-icons";
-import { RippleButton } from "./RippleButton";
+import { RippleButton } from "./Helpers";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ImageBackground } from "react-native";
 import { Audio } from "expo-av";

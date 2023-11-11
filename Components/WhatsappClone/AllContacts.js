@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   View,
   SectionList,
@@ -8,13 +7,12 @@ import {
 } from "react-native";
 import React from "react";
 import Chat from "./Chat";
-import { AntDesign } from "react-native-vector-icons";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   CHAT_BACKROUND_COLOR,
   CHAT_DATA_STATUS_COLOR,
   TAB_BACKGROUND_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { useChatsContext } from "../../App";
 
 

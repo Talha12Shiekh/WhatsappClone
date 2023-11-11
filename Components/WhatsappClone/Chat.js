@@ -25,12 +25,12 @@ import {
   generateRandomArrow,
   generateSendTick,
   months,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import {
   ModelComponent,
   PopupIconsRippleButton,
   showToast,
-} from "./RippleButton";
+} from "./Helpers";
 
 const Chat = (item) => {
   const [modalVisible, setModalVisible] = useState(false);

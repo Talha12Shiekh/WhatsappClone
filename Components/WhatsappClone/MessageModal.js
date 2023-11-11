@@ -19,7 +19,7 @@ import {
   Foundation,
   Ionicons
 } from "@expo/vector-icons";
-import { CHAT_DATA_STATUS_COLOR, MENU_BACKGROUND_COLOR, TITLE_COLOR } from "./WhatsappMainScreen";
+import { CHAT_DATA_STATUS_COLOR, MENU_BACKGROUND_COLOR, TITLE_COLOR } from "./Variables";
 
 const PURPLE = "#765fee";
 const RED = "#fd2e74";

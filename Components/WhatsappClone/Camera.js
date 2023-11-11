@@ -13,7 +13,7 @@ import {
   CHAT_BACKROUND_COLOR,
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { Entypo, MaterialIcons, Foundation, Feather } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";

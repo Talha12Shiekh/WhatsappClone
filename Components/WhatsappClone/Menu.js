@@ -15,7 +15,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { useRoute } from "@react-navigation/native";
 
 const Menu = ({ animation, menuData }) => {

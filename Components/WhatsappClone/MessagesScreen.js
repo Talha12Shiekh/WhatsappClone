@@ -22,7 +22,7 @@ import {
   RippleButton,
   navbarAnimation,
   showToast,
-} from "./RippleButton";
+} from "./Helpers";
 import {
   AntDesign,
   SimpleLineIcons,
@@ -54,7 +54,7 @@ import {
   MODAL_BACKGROUND_COLOR,
   MODAL_TEXT_COLOR,
   CHAT_BACKROUND_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import {
   useEffect,
   useReducer,
@@ -69,8 +69,9 @@ import SingleMessage from "./SingleMessage";
 import { useChatsContext } from "../../App";
 import DeleteModal from "./DeleteModal";
 import MessageModal from "./MessageModal";
-import MessageInput from "./MessageInput";
+import MessageInput1 from "./MessageInput1";
 import ReactEmojiModal from "./ReactEmojiModal";
+import { useKeyboardOffsetHeight, getMessageHeightOffset } from "./Helpers"
 
 export const AnimatedFunction = (animation, toValue, duration) => {
   return Animated.timing(animation, {
@@ -226,6 +227,14 @@ const MessagesScreen = ({ navigation, route }) => {
   const [selectedStarMessages, setselectedStarMessages] = useState(null);
 
   const reportMenuAnimation = useRef(new Animated.Value(0)).current;
+
+  // doing keyboard work 
+
+  const keyBoardOffsetHeight = useKeyboardOffsetHeight();
+
+  const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45)
+
+  const { height: windowHeight } = useWindowDimensions()
 
   useEffect(() => {
     setselectedStarMessages(selectedMessage[selectedMessage.length - 1])
@@ -598,7 +607,10 @@ const MessagesScreen = ({ navigation, route }) => {
           </View>
         </BottomSheetModal>
 
-        <View style={{ flex: 10, paddingTop: 20 }}>
+        <View style={{
+          flex: 10,
+          paddingTop: 20,
+        }}>
           <SwipeListView
             // swipeGestureEnded={(rowKey) => {
             // AnimateReplyContainer();
@@ -670,7 +682,7 @@ const MessagesScreen = ({ navigation, route }) => {
               </Text>
             </View>
           </Animated.View> */}
-          <MessageInput
+          <MessageInput1
             value={value}
             setvalue={setvalue}
             paddingRight={paddingRight}
@@ -682,10 +694,12 @@ const MessagesScreen = ({ navigation, route }) => {
             replyAnimation={replyAnimation}
             draggedIndex={draggedIndex}
             setpaddingRight={setpaddingRight}
+            setHeightOfMessageBox={setHeightOfMessageBox}
+            HeightOfMessageBox={HeightOfMessageBox}
           />
         </View>
       </View>
-    </BottomSheetModalProvider>
+    </BottomSheetModalProvider >
   );
 };
 

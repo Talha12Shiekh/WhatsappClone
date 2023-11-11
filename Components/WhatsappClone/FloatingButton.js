@@ -14,7 +14,7 @@ import {
   CHAT_BACKROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { useNavigation } from "@react-navigation/native";
 
 const FloatingButton = ({ onPress, ToggleOpen, animation,handleChatsMaking }) => {

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -12,96 +12,27 @@ import People from "react-native-vector-icons/Ionicons";
 import CommunityComponent from "./CommunityComponent";
 import {
   useNavigation,
-  useFocusEffect,
   useIsFocused,
 } from "@react-navigation/native";
-import { showToast } from "./RippleButton";
-import { FontAwesome5, Ionicons, Feather,MaterialIcons } from "@expo/vector-icons";
-import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
-import { useDeferredValue } from "react";
+import { showToast } from "./Helpers";
+import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext, useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
+import { ACTIVE_TAB_GREEN_COLOR, INACTIVE_TAB_WHITE_COLOR, TAB_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR, CHAT_DATA_STATUS_COLOR, STORAGE_KEY, CALLS_STORAGE_KEY, CALLS_KEY, FILTER_STORAGE_KEY, ARCHIVED_STORAGE_KEY, FILTER_CALLS_STORAGE_KEY } from "./Variables"
 
 const Tab = createMaterialTopTabNavigator();
 
-export const ACTIVE_TAB_GREEN_COLOR = "#00a884";
-export const INACTIVE_TAB_WHITE_COLOR = "#88959e";
-export const TAB_BACKGROUND_COLOR = "#1f2c34";
-export const TAB_PRESS_ACTIVE_WHITE_COLOR = "#4d565d";
-export const CHAT_BACKROUND_COLOR = "#121b22";
-export const CHAT_HEIGHT = 90;
-export const TITLE_COLOR = "white";
-export const CHAT_DATA_STATUS_COLOR = "#75828a";
-export const STORAGE_KEY = "items";
-export const ARCHIVED_STORAGE_KEY = "archived_items";
-export const CHAT_SELECTION_BACKGROUND = "#182329";
-export const BADGE_BACKGROUND_COLOR = "#27343d";
-export const MENU_BACKGROUND_COLOR = "#233239";
-export const CALLS_STORAGE_KEY = "call_items";
-export const CALLS_KEY = "call_chats";
-export const CALLS_ICONS_COLOR = "#787f87";
-export const FILTER_STORAGE_KEY = "filter_items";
-export const FILTER_CALLS_STORAGE_KEY = "filter_calls";
-export const ANSWER_BACKGROUND_COLOR = "#1f2c34";
-export const EMOJI_BACKGROUND_COLOR = "#86949d";
-export const MESSAGE_BACKGROUND_COLOR = "#005b49";
-export const GREEN_MESSAGE_CLICKED_BACKGROUND = "#024033";
-export const MODAL_BACKGROUND_COLOR = "#2a3b45";
-export const MODAL_TEXT_COLOR = "#7e8f99";
-export const BLUE_TICK_BACKGROUND = "#53bdeb";
-const TICK_SIZE = 16
-export const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-export const generateSendTick = (messageStatus,COLOR = TITLE_COLOR) => {
-  if (messageStatus == "single") {
-    return <MaterialIcons name="done" size={TICK_SIZE} color={COLOR} />;
-  } else if (messageStatus == "double") {
-    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={COLOR} />;
-  } else {
-    return <Ionicons name="checkmark-done" size={TICK_SIZE} color={BLUE_TICK_BACKGROUND} />;
-  }
-};
-
-export function generateRandomArrow(arrow) {
-  if (arrow == "incoming") {
-    return (
-      <Feather
-        name="arrow-down-left"
-        size={22}
-        color={ACTIVE_TAB_GREEN_COLOR}
-      />
-    );
-  } else if (arrow == "outgoing") {
-    return (
-      <Feather name="arrow-up-right" size={22} color={ACTIVE_TAB_GREEN_COLOR} />
-    );
-  } else {
-    return <Feather name="arrow-down-left" size={22} color={"red"} />;
-  }
-}
 
 const WhatsappMainScreen = ({ isEnabled }) => {
-  const {chats,setchats,storeChats} = useChatsContext();
+  const { chats, setchats, storeChats } = useChatsContext();
 
-  const {calls,setcalls,storeCalls} = useCallsContext();
+  const { calls, setcalls, storeCalls } = useCallsContext();
 
-  const {archived,setarchived,storeArchivedChats} = useArchivedContext();
+  const { archived, setarchived, storeArchivedChats } = useArchivedContext();
 
-  const {callChats,setcallChats,storeCallChats} = useCallsChatsContext();  
+  const { callChats, setcallChats, storeCallChats } = useCallsChatsContext();
 
-  const {callFilterChats,setcallFilterChats,storeFilterCalls} = useCallsFilterChatsContext();
+  const { callFilterChats, setcallFilterChats, storeFilterCalls } = useCallsFilterChatsContext();
 
-  const {FileredChats, setFileredChats,storeFilterChats} = useFilterChatsContext()
+  const { FileredChats, setFileredChats, storeFilterChats } = useFilterChatsContext()
 
 
   const getChats = async () => {
@@ -198,7 +129,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           number,
           about,
           key: Date.now().toString(),
-          time:timeInMilliseconds,
+          time: timeInMilliseconds,
           photo,
           type: "chat",
           selected: false,
@@ -206,7 +137,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           muted: false,
           readed: false,
           blocked: false,
-          messages:[]
+          messages: []
         };
         const callInformation = {
           name,
@@ -231,7 +162,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             name,
             number,
             about,
-            time:chats[ChatToEdit].time,
+            time: chats[ChatToEdit].time,
             photo,
             type: "chat",
             selected: false,

@@ -1,7 +1,7 @@
 import { Animated, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { ClosenavbarAnimation, RippleButton } from "./RippleButton";
-import { TAB_BACKGROUND_COLOR, TITLE_COLOR } from "./WhatsappMainScreen";
+import { ClosenavbarAnimation, RippleButton } from "./Helpers";
+import { TAB_BACKGROUND_COLOR, TITLE_COLOR } from "./Variables";
 import { AntDesign,MaterialIcons } from "@expo/vector-icons";
 
 const SelectedCallNavbar = ({selectedCallNavbarAnimation,selectedCalls,handleCallDelete}) => {

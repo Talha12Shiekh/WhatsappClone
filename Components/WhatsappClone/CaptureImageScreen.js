@@ -24,7 +24,7 @@ import {
   ACTIVE_TAB_GREEN_COLOR,
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import {
   AntDesign,
   Feather,
@@ -32,7 +32,7 @@ import {
   FontAwesome,
   Foundation,
 } from "@expo/vector-icons";
-import { showToast } from "./RippleButton";
+import { showToast } from "./Helpers";
 import * as MediaLibrary from "expo-media-library";
 import EmojiShower from "./EmojiShower";
 import TextEditor from "./TextEditor";

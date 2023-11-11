@@ -12,7 +12,7 @@ import {
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
   generateSendTick,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { FormattedTime,FormattedDateParts } from "react-intl";
 import {
   FontAwesome5,

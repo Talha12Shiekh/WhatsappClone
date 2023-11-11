@@ -5,16 +5,16 @@ import {
   View,
   Animated,
   TouchableOpacity,
+  TextInput
 } from "react-native";
 import React, { useState } from "react";
-import { TextInput } from "react-native-gesture-handler";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   ANSWER_BACKGROUND_COLOR,
   EMOJI_BACKGROUND_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
-} from "./WhatsappMainScreen";
+} from "./Variables";
 import { Feather, Fontisto, Entypo,MaterialIcons,Ionicons } from "@expo/vector-icons";
 import { ACTIONS } from "./MessagesReducer";
 
@@ -48,8 +48,12 @@ const MessageInput = ({
   setMenuVisible,
   replyAnimation,
   draggedIndex,
-  setpaddingRight
+  setpaddingRight,
+  HeightOfMessageBox,
+  setHeightOfMessageBox
 }) => {
+
+  // const [HeightOfMessageBox,setHeightOfMessageBox]
 
   // const handleShowReplyContainer = (key) => {
   //   replyAnimation.addListener(({value}) => {
@@ -69,6 +73,8 @@ const MessageInput = ({
     }).start();
   };
 
+  
+
   return (
     <>
     <View
@@ -81,6 +87,7 @@ const MessageInput = ({
           bottom: 0,
           left: 0,
           right: 50,
+          height:HeightOfMessageBox < 45 ? 45 : HeightOfMessageBox
         },
       ]}
     >
@@ -100,6 +107,9 @@ const MessageInput = ({
           style={[styles.input, { paddingRight: paddingRight }]}
           multiline
           value={value}
+          onContentSizeChange={(e) => {
+            setHeightOfMessageBox(e.nativeEvent.contentSize.height);
+          }}
           onChangeText={(value) => {
             setvalue(value);
             if (value !== "") {
@@ -238,10 +248,11 @@ const styles = StyleSheet.create({
     flex: 8,
     flexDirection: "row",
     backgroundColor: ANSWER_BACKGROUND_COLOR,
-    borderRadius: 100,
+    borderRadius: 10,
     marginHorizontal: 10,
     marginTop: 5,
     height: 45,
+    maxHeight:130
   },
   sendButton: {
     // flex:1,
@@ -272,7 +283,7 @@ const styles = StyleSheet.create({
   camera_and_clip: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-end",
     flexDirection: "row",
     paddingRight: 10,
     gap: 10,

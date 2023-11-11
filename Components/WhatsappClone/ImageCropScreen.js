@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { TITLE_COLOR } from "./WhatsappMainScreen";
+import { TITLE_COLOR } from "./Variables";
 import { ImageManipulator } from "expo-image-crop";
 
 const ImageCropScreen = ({ route, navigation }) => {
