@@ -9,8 +9,10 @@ import {
   TextInput,
   useWindowDimensions,
   TouchableWithoutFeedback,
+  FlatList,
+  ScrollView
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Swipeable } from "react-native-gesture-handler";
 import * as Clipboard from "expo-clipboard";
 import {
   BottomSheetModal,
@@ -228,13 +230,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const reportMenuAnimation = useRef(new Animated.Value(0)).current;
 
-  // doing keyboard work 
 
-  const keyBoardOffsetHeight = useKeyboardOffsetHeight();
 
-  const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45)
-
-  const { height: windowHeight } = useWindowDimensions()
 
   useEffect(() => {
     setselectedStarMessages(selectedMessage[selectedMessage.length - 1])
@@ -521,6 +518,32 @@ const MessagesScreen = ({ navigation, route }) => {
     }).start()
   }
 
+  const swipeableMessageRef = useRef(null)
+
+  const renderLeftActions = (progressAnimatedValue,dragX) => {
+    console.log(dragX)
+    // if(Math.floor(dragX) > 150){
+    //   console.log("talha shiekh")
+    // }
+    const trans = progressAnimatedValue.interpolate({
+      inputRange: [0, 2],
+      outputRange: [0, 280],
+    });
+
+    return <Animated.View style={[styles.messageContainer,
+    {
+      transform: [
+        { translateX: trans }
+      ],
+
+    }
+    ]}>
+      <View style={[styles.replyImageWrapper]}>
+        <Entypo name="reply" size={20} color={TITLE_COLOR} />
+      </View>
+    </Animated.View>
+  }
+
   // const replyContainerStyles = {
   //   transform: [
   //     {
@@ -611,77 +634,47 @@ const MessagesScreen = ({ navigation, route }) => {
           flex: 10,
           paddingTop: 20,
         }}>
-          <SwipeListView
-            // swipeGestureEnded={(rowKey) => {
-            // AnimateReplyContainer();
-            // const {message,key} = messages.find((msg,ind)  => ind == draggedIndex);
-            // setdraggedMessage(message);
-            // }}
+          <FlatList
             data={messages}
-            renderHiddenItem={(data, rowMap) => <View />}
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
               let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
 
               return (
-                <SingleMessage
-                  key={item.key}
-                  isEven={isEven}
-                  index={index}
-                  ColumnOrRow={ColumnOrRow}
-                  dispatch={dispatch}
-                  selected={item.selected}
-                  keyOfMessage={item.key}
-                  message={item.message}
-                  starred={item.starred}
-                  reactions={item.reactions}
-                  deleteForEveryone={item.deleteForEveryone}
-                  messageStatus={item.messageStatus}
-                  time={item.time}
-                  setdraggedIndex={setdraggedIndex}
-                  setemojiModalPositon={setemojiModalPositon}
-                  AnimateContainer={AnimateContainer}
-                  CloseContainer={CloseContainer}
-                  setcheckSelection={setcheckSelection}
-                  handlePresentModalPress={handlePresentModalPress}
-                  setClickedMessageReactions={setClickedMessageReactions}
-                />
-              );
+                <Swipeable
+                  friction={2}
+                  leftThreshold={40}
+                  renderLeftActions={renderLeftActions}
+                  ref={swipeableMessageRef}
+                >
+                  <SingleMessage
+                    key={item.key}
+                    isEven={isEven}
+                    index={index}
+                    ColumnOrRow={ColumnOrRow}
+                    dispatch={dispatch}
+                    selected={item.selected}
+                    keyOfMessage={item.key}
+                    message={item.message}
+                    starred={item.starred}
+                    reactions={item.reactions}
+                    deleteForEveryone={item.deleteForEveryone}
+                    messageStatus={item.messageStatus}
+                    time={item.time}
+                    setdraggedIndex={setdraggedIndex}
+                    setemojiModalPositon={setemojiModalPositon}
+                    AnimateContainer={AnimateContainer}
+                    CloseContainer={CloseContainer}
+                    setcheckSelection={setcheckSelection}
+                    handlePresentModalPress={handlePresentModalPress}
+                    setClickedMessageReactions={setClickedMessageReactions}
+                  />
+                </Swipeable>
+              )
             }}
-            disableLeftSwipe={true}
           />
         </View>
         <View>
-          {/* <Animated.View
-            style={[
-              styles.replyContainer,
-              { position: "absolute", ...replyContainerStyles },
-            ]}
-          >
-            <View
-              style={[styles.replayTopTextContainer, styles.leftBorderGreen]}
-            >
-              <Text
-                style={{ color: MESSAGE_BACKGROUND_COLOR, fontWeight: "bold" }}
-              >
-                {draggedIndex % 2 == 0 ? "You" : item.name}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {AnimatedFunction(replyAnimation, 0, 500);}}
-              >
-                <Text style={{ fontSize: 15, color: EMOJI_BACKGROUND_COLOR }}>
-                  &times;
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={[styles.replyText, styles.leftBorderGreen]}>
-              <Text style={{ color: EMOJI_BACKGROUND_COLOR }}>
-                {draggedMessage.length > replayLength.length
-                  ? draggedMessage.slice(0, replayLength.length) + " ..."
-                  : draggedMessage}
-              </Text>
-            </View>
-          </Animated.View> */}
           <MessageInput1
             value={value}
             setvalue={setvalue}
@@ -694,8 +687,6 @@ const MessagesScreen = ({ navigation, route }) => {
             replyAnimation={replyAnimation}
             draggedIndex={draggedIndex}
             setpaddingRight={setpaddingRight}
-            setHeightOfMessageBox={setHeightOfMessageBox}
-            HeightOfMessageBox={HeightOfMessageBox}
           />
         </View>
       </View>
@@ -796,6 +787,21 @@ const styles = StyleSheet.create({
     borderLeftWidth: 5,
     borderLeftColor: MESSAGE_BACKGROUND_COLOR,
   },
+  messageContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  replyImageWrapper: {
+    width: 30,
+    height: 30,
+    backgroundColor: "rgba(0,0,0,.5)",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: 'center',
+    alignSelf: "center"
+  }
 });
 
 export default MessagesScreen;

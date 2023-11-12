@@ -233,22 +233,6 @@ const SingleMessage = ({
       >
         <View
           style={[
-            styles.arrowIcon,
-            {
-              left: -40,
-              width: 30,
-              aspectRatio: 1,
-              borderRadius: 50,
-              backgroundColor: "rgba(0,0,0,.5)",
-              justifyContent: "center",
-              alignItems: "center",
-            },
-          ]}
-        >
-          <Ionicons name="arrow-undo-sharp" size={18} color={TITLE_COLOR} />
-        </View>
-        <View
-          style={[
             styles.messagesContainer,
             { alignSelf: isEven ? "flex-end" : "flex-start" },
           ]}

@@ -49,21 +49,10 @@ const MessageInput = ({
   replyAnimation,
   draggedIndex,
   setpaddingRight,
-  HeightOfMessageBox,
-  setHeightOfMessageBox
 }) => {
 
-  // const [HeightOfMessageBox,setHeightOfMessageBox]
+  const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45)
 
-  // const handleShowReplyContainer = (key) => {
-  //   replyAnimation.addListener(({value}) => {
-  //     if(Math.round(value) === 1){
-  //       dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:true}})
-  //     }else{
-  //       dispatch({type:ACTIONS.REPLY_MESSAGE,payload:{key:draggedIndex,replied:false}})
-  //     }
-  //   })
-  // } 
 
   const AnimatedFunction = (animation, toValue, duration) => {
     return Animated.timing(animation, {
