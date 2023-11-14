@@ -98,6 +98,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [online, setonline] = useState(false);
 
+  const {width:windowWidth} = useWindowDimensions()
+
   const [lastMessageTime, setLastMessageTime] = useState(new Date(messages[messages.length - 1]?.time))
 
   useEffect(() => {
@@ -497,6 +499,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  const ReplyContainerAnimation = useRef(new Animated.Value(40)).current;
+
   const [emojiModalPositon, setemojiModalPositon] = useState({
     x: 0, y: 0, opacity: 0
   });
@@ -518,16 +522,32 @@ const MessagesScreen = ({ navigation, route }) => {
     }).start()
   }
 
-  const swipeableMessageRef = useRef(null)
+  const swipeableMessageRef = useRef(null);
+
+  const [replyMessage,setreplyMessage] = useState({
+    message:"",
+    status:""
+  });
+
+  function handleShowReply(item,index){
+    setreplyMessage({
+      message:item.message,
+      status:index
+    });
+
+     Animated.timing(ReplyContainerAnimation,{
+      toValue:5,
+      duration:500,
+      useNativeDriver:true
+    }).start(() => {
+      InputRef.current.focus()
+    })
+  }
 
   const renderLeftActions = (progressAnimatedValue,dragX) => {
-    console.log(dragX)
-    // if(Math.floor(dragX) > 150){
-    //   console.log("talha shiekh")
-    // }
     const trans = progressAnimatedValue.interpolate({
       inputRange: [0, 2],
-      outputRange: [0, 280],
+      outputRange: [-40, 280],
     });
 
     return <Animated.View style={[styles.messageContainer,
@@ -564,6 +584,8 @@ const MessagesScreen = ({ navigation, route }) => {
   const bottomSheetRef = useRef(null);
 
   const snapPoints = useMemo(() => ['50%', '51%'], []);
+
+  const InputRef = useRef(null)
 
   // variables
   const handlePresentModalPress = useCallback((reactions) => {
@@ -645,7 +667,11 @@ const MessagesScreen = ({ navigation, route }) => {
                   friction={2}
                   leftThreshold={40}
                   renderLeftActions={renderLeftActions}
-                  ref={swipeableMessageRef}
+                  ref={item.swipeRef}
+                  onSwipeableWillOpen={() => {
+                    item.swipeRef.current.close()
+                    handleShowReply(item,index)
+                  }}
                 >
                   <SingleMessage
                     key={item.key}
@@ -687,6 +713,11 @@ const MessagesScreen = ({ navigation, route }) => {
             replyAnimation={replyAnimation}
             draggedIndex={draggedIndex}
             setpaddingRight={setpaddingRight}
+            replyMessage={replyMessage}
+            setreplyMessage={setreplyMessage}
+            ReplyContainerAnimation={ReplyContainerAnimation}
+            item={item}
+            ref={InputRef}
           />
         </View>
       </View>

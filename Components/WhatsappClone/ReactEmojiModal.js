@@ -1,6 +1,6 @@
 import { Animated, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native'
 import React, { useRef, useState } from 'react'
-import { ANSWER_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './WhatsappMainScreen';
+import { ANSWER_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './Variables';
 import { ACTIONS } from './MessagesReducer';
 import EmojiPicker from "rn-emoji-keyboard";
 
@@ -123,8 +123,8 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
                 transform: [{ scaleX: containerAnimation }]
             }]}>
                 {
-                    Emojis.map(({ emoji, animation }) => {
-                        return <EmojiButton onPress={() => handleReaction(emoji)} animation={animation} key={emoji}>{emoji}</EmojiButton>
+                    Emojis.map(({ emoji, animation,key }) => {
+                        return <EmojiButton onPress={() => handleReaction(emoji)} animation={animation} key={key}>{emoji}</EmojiButton>
                     })
                 }
                 <TouchableNativeFeedback onPress={() => { ; CloseContainer(); setisopen(p => !p) }}>
