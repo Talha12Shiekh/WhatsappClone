@@ -18,7 +18,7 @@ import {
   PopupIconsRippleButton,
   showToast,
   ModelComponent,
-} from "./RippleButton";
+} from "./Helpers";
 
 const Modal = ({ route, navigation }) => {
   const { item } = route.params;

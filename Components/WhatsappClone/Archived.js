@@ -41,8 +41,6 @@ const Archived = ({ route, navigation }) => {
 
   const archivedNavbarAnimation = useRef(new Animated.Value(0)).current;
 
-  // const [archived, setArchived] = useState(route.params.archived);
-
   const selected = archived.some((chat) => chat.selected);
 
   useEffect(() => {
@@ -413,7 +411,11 @@ const Archived = ({ route, navigation }) => {
                 makeTickAnmation();
               },
               onPress: () => {
-                findArchiveItemsToDeSelect(item.key);
+                if(item.selected){
+                  findArchiveItemsToDeSelect(item.key);
+                }else{
+                  navigation.navigate("MessagesScreen",{item})
+                }
               },
             };
             return <Chat {...ItemData} />;

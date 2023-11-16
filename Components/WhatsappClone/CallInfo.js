@@ -156,7 +156,7 @@ const CallInfo = ({ route, navigation }) => {
             />
             <View style={{ flexDirection: "row" }}>
               <View>
-                <RippleButton>
+                <RippleButton onPress={() => navigation.navigate("MessagesScreen",{item})}>
                   <MaterialIcons name="message" size={24} color={TITLE_COLOR} />
                 </RippleButton>
               </View>

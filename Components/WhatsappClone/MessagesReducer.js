@@ -17,7 +17,7 @@ export const ACTIONS = {
   UPDATE_MESSAGE_STATUS_TO_DOUBLE:"handleUpdateMessageStatusToDouble",
   UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple",
   REPLY_MESSAGE:"handleReplyMessage",
-  UPDATE_REACTIONS:"handleReactionsUpdate"
+  UPDATE_REACTIONS:"handleReactionsUpdate",
 };
 
 

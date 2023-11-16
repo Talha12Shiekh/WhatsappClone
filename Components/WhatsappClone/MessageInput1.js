@@ -180,6 +180,7 @@ const MessageInput = React.forwardRef(function MessageInput({
               delivered: Date.now(),
               replied: false,
               swipeRef:React.createRef(),
+              repliedMessage:"",
               reactions: [],
             };
 
@@ -220,7 +221,15 @@ const MessageInput = React.forwardRef(function MessageInput({
             AnimatedFunction(sendButtonAnimation, 0, 300);
             setpaddingRight(100);
 
-            // handleShowReplyContainer(messagesObject.key)
+            setreplyMessage({
+              message: "",
+              status: ""
+            });
+            Animated.timing(ReplyContainerAnimation,{
+              toValue:45,
+              duration:500,
+              useNativeDriver:true
+            }).start()
           }}
         >
           <View style={[styles.sendButton]}>

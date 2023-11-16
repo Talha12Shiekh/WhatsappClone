@@ -96,7 +96,9 @@ const AllContacts = ({ route ,navigation}) => {
         }}
         RightPlaceRenderThing={() => null}
         NotshowChatMakingDate={item.type === "contact" ? false:true}
-        onPress={item.type === "contact" ? () => navigation.navigate("Profile",{handleChatsMaking}) : null}
+        onPress={item.type === "contact" ? () => navigation.navigate("Profile",{handleChatsMaking}) : () => {
+              navigation.navigate("MessagesScreen",{item})
+        }}
       />
     );
   };

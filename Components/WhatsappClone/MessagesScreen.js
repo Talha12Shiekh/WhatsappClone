@@ -98,8 +98,6 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [online, setonline] = useState(false);
 
-  const {width:windowWidth} = useWindowDimensions()
-
   const [lastMessageTime, setLastMessageTime] = useState(new Date(messages[messages.length - 1]?.time))
 
   useEffect(() => {
@@ -522,29 +520,28 @@ const MessagesScreen = ({ navigation, route }) => {
     }).start()
   }
 
-  const swipeableMessageRef = useRef(null);
-
-  const [replyMessage,setreplyMessage] = useState({
-    message:"",
-    status:""
+  const [replyMessage, setreplyMessage] = useState({
+    message: "",
+    status: ""
   });
 
-  function handleShowReply(item,index){
+  function handleShowReply(Replyitem, index) {
     setreplyMessage({
-      message:item.message,
-      status:index
+      message: Replyitem.message,
+      status: index
     });
 
-     Animated.timing(ReplyContainerAnimation,{
-      toValue:5,
-      duration:500,
-      useNativeDriver:true
+
+    Animated.timing(ReplyContainerAnimation, {
+      toValue: 5,
+      duration: 500,
+      useNativeDriver: true
     }).start(() => {
       InputRef.current.focus()
     })
   }
 
-  const renderLeftActions = (progressAnimatedValue,dragX) => {
+  const renderLeftActions = (progressAnimatedValue, dragX) => {
     const trans = progressAnimatedValue.interpolate({
       inputRange: [0, 2],
       outputRange: [-40, 280],
@@ -661,7 +658,6 @@ const MessagesScreen = ({ navigation, route }) => {
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
               let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
-
               return (
                 <Swipeable
                   friction={2}
@@ -670,7 +666,7 @@ const MessagesScreen = ({ navigation, route }) => {
                   ref={item.swipeRef}
                   onSwipeableWillOpen={() => {
                     item.swipeRef.current.close()
-                    handleShowReply(item,index)
+                    handleShowReply(item, index)
                   }}
                 >
                   <SingleMessage
