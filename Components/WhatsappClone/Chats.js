@@ -29,7 +29,7 @@ import CommunityComponent from "./CommunityComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ACTIVE_TAB_GREEN_COLOR } from "./Variables";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { showToast } from "./Helpers";
+import { MakeAnimation } from "./Helpers";
 import { useArchivedContext, useChatsContext } from "../../App";
 
 if (
@@ -56,21 +56,9 @@ const Chats = ({
   const checkedAnimaton = new Animated.Value(0);
   const [margin, setmargin] = useState(0);
 
-  const makeTickAnmation = () => {
-    Animated.spring(checkedAnimaton, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-
   function ToggleOpen() {
     const toValue = open ? 0 : 1;
-    Animated.timing(animation, {
-      toValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    MakeAnimation(animation,toValue,500)
     setopen(!open);
   }
 
@@ -219,7 +207,7 @@ const Chats = ({
                           zIndex: 111,
                           transform: [{ scale: checkedAnimaton }],
                         }}
-                        onLayout={item.selected ? makeTickAnmation() : () => {}}
+                        onLayout={item.selected ?  MakeAnimation(checkedAnimaton,1,200) : () => {}}
                       >
                         {item.selected ? (
                           <Ionicons
@@ -298,7 +286,7 @@ const Chats = ({
                   if(item.selected){
                     findItemstoDeSelect(item.key);
                   }else{
-                    navigation.navigate("MessagesScreen",{item,setchats})
+                    navigation.navigate("MessagesScreen",{item})
                   }
                 },
                 onLongPress: () => {

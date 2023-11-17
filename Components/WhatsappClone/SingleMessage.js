@@ -47,6 +47,7 @@ const SingleMessage = ({
   setcheckSelection,
   reactions,
   handlePresentModalPress,
+  replyMessage
 }) => {
   const messageRef = useRef(null);
 
@@ -167,22 +168,17 @@ const SingleMessage = ({
   //   }
   // },[replied]);
 
-
   
 
-  useEffect(() => {
+  if(starred){
     Animated.timing(starScaleAnimation, {
       toValue: 1,
       duration: 1000,
       useNativeDriver: true,
     }).start(() => {
-      Animated.timing(starScaleAnimation, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
+      MakeAnimation(starScaleAnimation,0,500)
     });
-  }, [starred]);
+  }
 
   let reactionContainerStyles = [styles.reactions_container];
 

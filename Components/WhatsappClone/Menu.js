@@ -17,17 +17,10 @@ import {
   TITLE_COLOR,
 } from "./Variables";
 import { useRoute } from "@react-navigation/native";
+import {MakeAnimation} from "./Helpers"
 
 const Menu = ({ animation, menuData }) => {
   const { height } = useWindowDimensions();
-
-  const ResetAnimaton = () => {
-    Animated.timing(animation, {
-      toValue: 0,
-      duration: 1100,
-      useNativeDriver: true,
-    }).start();
-  };
 
   const MenuStyles = {
     opacity: animation.interpolate({
@@ -46,7 +39,7 @@ const Menu = ({ animation, menuData }) => {
 
   return (
     <>
-    <TouchableWithoutFeedback onPress={ResetAnimaton}>
+    <TouchableWithoutFeedback onPress={() => MakeAnimation(animation,0,1100)}>
       <Animated.View
         style={{
           width: 100,
@@ -81,7 +74,7 @@ const Menu = ({ animation, menuData }) => {
             return (
               <TouchableNativeFeedback
                 onPress={() => {
-                  item.onPress(), ResetAnimaton();
+                  item.onPress(), MakeAnimation(animation,0,1100)
                 }}
                 background={TouchableNativeFeedback.Ripple(
                   TAB_PRESS_ACTIVE_WHITE_COLOR,

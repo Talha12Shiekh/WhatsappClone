@@ -12,7 +12,11 @@ import {
   FlatList,
   ScrollView
 } from "react-native";
+import {
+  STORAGE_KEY,
+} from "./Variables"
 import { Swipeable } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Clipboard from "expo-clipboard";
 import {
   BottomSheetModal,
@@ -20,10 +24,9 @@ import {
 } from '@gorhom/bottom-sheet';
 import React, { useCallback, useMemo } from "react";
 import {
-  ClosenavbarAnimation,
   RippleButton,
-  navbarAnimation,
   showToast,
+  MakeAnimation
 } from "./Helpers";
 import {
   AntDesign,
@@ -73,18 +76,11 @@ import DeleteModal from "./DeleteModal";
 import MessageModal from "./MessageModal";
 import MessageInput1 from "./MessageInput1";
 import ReactEmojiModal from "./ReactEmojiModal";
-import { useKeyboardOffsetHeight, getMessageHeightOffset } from "./Helpers"
-
-export const AnimatedFunction = (animation, toValue, duration) => {
-  return Animated.timing(animation, {
-    toValue,
-    duration,
-    useNativeDriver: true,
-  }).start();
-};
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
+
+  console.log(JSON.stringify(item))
 
   const ICONS_SIZE = 22;
 
@@ -92,7 +88,7 @@ const MessagesScreen = ({ navigation, route }) => {
     ...item,
   });
 
-  const { chats, setchats } = useChatsContext();
+  const { chats,setchats } = useChatsContext();
 
   const [messages, dispatch] = useReducer(MessagesReducer, item.messages);
 
@@ -138,13 +134,11 @@ const MessagesScreen = ({ navigation, route }) => {
   const replayLength =
     "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, voluptatum?  Iste, voluptatum?  Iste, voluptatum? Iste Iste,Iste";
 
-  useEffect(() => {
     if (messagesSelected) {
-      navbarAnimation(messagesNavbarAnimation);
+      MakeAnimation(messagesNavbarAnimation,1,300);
     } else {
-      ClosenavbarAnimation(messagesNavbarAnimation);
+      MakeAnimation(messagesNavbarAnimation,0,300);
     }
-  }, [messagesSelected]);
 
   const handleOpenCallScreen = () => {
     setCurrentItem({
@@ -338,7 +332,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 </RippleButton>
                 <RippleButton
                   onPress={() =>
-                    AnimatedFunction(messagesMenuAnimation, 1, 1000)
+                    MakeAnimation(messagesMenuAnimation, 1, 1000)
                   }
                 >
                   <SimpleLineIcons
@@ -366,7 +360,7 @@ const MessagesScreen = ({ navigation, route }) => {
             >
               <View style={styles.chatsCountContainer}>
                 <RippleButton
-                  onPress={() => ClosenavbarAnimation(messagesNavbarAnimation)}
+                  onPress={() => MakeAnimation(messagesNavbarAnimation,0,300)}
                 >
                   <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
                 </RippleButton>
@@ -452,7 +446,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => { AnimatedFunction(reportMenuAnimation, 1, 1000); CloseContainer() }}>
+                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => { MakeAnimation(reportMenuAnimation, 1, 1000); CloseContainer() }}>
                   <SimpleLineIcons
                     name="options-vertical"
                     color={TITLE_COLOR}
@@ -506,18 +500,11 @@ const MessagesScreen = ({ navigation, route }) => {
   const EmojiContainerAnimation = useRef(new Animated.Value(.2)).current;
 
   const AnimateContainer = () => {
-    return Animated.timing(EmojiContainerAnimation, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true
-    }).start()
+    MakeAnimation(EmojiContainerAnimation,1,1000)
   }
+
   const CloseContainer = () => {
-    return Animated.timing(EmojiContainerAnimation, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true
-    }).start()
+    MakeAnimation(EmojiContainerAnimation,0,500)
   }
 
   const [replyMessage, setreplyMessage] = useState({
@@ -690,6 +677,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     setcheckSelection={setcheckSelection}
                     handlePresentModalPress={handlePresentModalPress}
                     setClickedMessageReactions={setClickedMessageReactions}
+                    replyMessage={replyMessage}
                   />
                 </Swipeable>
               )

@@ -137,13 +137,6 @@ const CallInfo = ({ route, navigation }) => {
     },
   ];
 
-  const handleOpenMenu = () => {
-    Animated.timing(selectedCallsAnimation, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  };
 
   useFocusEffect(() => {
     navigation.setOptions({
@@ -161,7 +154,7 @@ const CallInfo = ({ route, navigation }) => {
                 </RippleButton>
               </View>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <RippleButton onPress={handleOpenMenu}>
+                <RippleButton onPress={() =>  MakeAnimation(selectedCallsAnimation,1,1000)}>
                   <SimpleLineIcons
                     name="options-vertical"
                     color={TITLE_COLOR}

@@ -3,17 +3,10 @@ import React, { useRef, useState } from 'react'
 import { ANSWER_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './Variables';
 import { ACTIONS } from './MessagesReducer';
 import EmojiPicker from "rn-emoji-keyboard";
+import {MakeAnimation} from "./Helpers"
 
 const EmojiButton = ({ children, onPress, animation, ...rest }) => {
     const EmojiScaleAnimation = useRef(new Animated.Value(1)).current;
-
-    const finishAnimation = () => {
-        return Animated.timing(EmojiScaleAnimation, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true
-        }).start()
-    }
 
     const scaleEmoji = () => {
         return Animated.timing(EmojiScaleAnimation, {
@@ -21,7 +14,7 @@ const EmojiButton = ({ children, onPress, animation, ...rest }) => {
             duration: 200,
             useNativeDriver: true
         }).start(() => {
-            finishAnimation()
+            MakeAnimation(EmojiScaleAnimation,1,200)
         })
     }
 
@@ -36,7 +29,7 @@ const EmojiButton = ({ children, onPress, animation, ...rest }) => {
 
     return (
         <View style={styles.emojiButtonStyles}>
-            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR, true, 50)} onPress={() => {
+            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR, true, 30)} onPress={() => {
                scaleEmoji(), onPress()
             }
             }>

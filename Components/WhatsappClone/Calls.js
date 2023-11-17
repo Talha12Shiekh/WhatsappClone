@@ -28,7 +28,7 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import Chat from "./Chat";
-import { ChatGreenLeftComponent, ClosenavbarAnimation, RippleButton, navbarAnimation } from "./Helpers";
+import { ChatGreenLeftComponent, MakeAnimation } from "./Helpers";
 import { useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext } from "../../App";
 
 const CALLS_BUTTON = [
@@ -62,14 +62,6 @@ const Calls = ({
   const checkedAnimaton = useRef(new Animated.Value(0)).current;
 
   const [repeatedDates,setRepatedDates] = useState([]);
-
-  const makeTickAnmation = () => {
-    Animated.spring(checkedAnimaton, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
 
   const findCallsToDelete = (id) => {
     let newCalls = [...calls];
@@ -178,7 +170,7 @@ const Calls = ({
                         zIndex: 1,
                         transform: [{ scale: checkedAnimaton }],
                       }}
-                      onLayout={item.selected ? makeTickAnmation() : () => {}}
+                      onLayout={item.selected ? MakeAnimation(checkedAnimaton,1,200) : () => {}}
                     >
                       {item.selected ? (
                         <Ionicons

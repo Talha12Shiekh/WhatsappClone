@@ -17,6 +17,7 @@ import {
 import { Entypo, MaterialIcons, Foundation, Feather } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
+import {MakeAnimation} from "./Helpers"
 import { useNavigation } from "@react-navigation/native";
 
 export default function CameraComponent({ navigation }) {
@@ -50,20 +51,12 @@ export default function CameraComponent({ navigation }) {
 
   const handleRotation = () => {
     const toValue = !isrotated ? 1 : 0;
-    Animated.timing(rotateAnimation, {
-      toValue,
-      duration: 1500,
-      useNativeDriver: true,
-    }).start();
+    MakeAnimation(rotateAnimation,toValue,1500)
   };
 
   const handleMoveFlash = () => {
     const toValue = !istranslated ? 1 : 0;
-    Animated.timing(flashAnimation, {
-      toValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    MakeAnimation(flashAnimation,toValue,500)
     setistranslated((istranslted) => !istranslted);
     setFlash((flsh) => !flsh);
   };

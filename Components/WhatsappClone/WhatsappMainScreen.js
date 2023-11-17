@@ -38,6 +38,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
     let updatedchats = await JSON.parse(asyncChats);
+    
     if (updatedchats !== null) {
       setchats(updatedchats);
       setFileredChats(updatedchats);

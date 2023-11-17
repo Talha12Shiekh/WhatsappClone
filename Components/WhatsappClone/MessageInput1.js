@@ -20,6 +20,7 @@ import {
 } from "./Variables";
 import { Feather, Fontisto, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ACTIONS } from "./MessagesReducer";
+import {MakeAnimation} from "./Helpers"
 
 const MessagesRippleButton = ({ children, onPress, ...rest }) => {
   return (
@@ -29,10 +30,10 @@ const MessagesRippleButton = ({ children, onPress, ...rest }) => {
         background={TouchableNativeFeedback.Ripple(
           TAB_PRESS_ACTIVE_WHITE_COLOR,
           true,
-          500
+          30
         )}
       >
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
           {children}
         </View>
       </TouchableNativeFeedback>
@@ -60,15 +61,6 @@ const MessageInput = React.forwardRef(function MessageInput({
 
   const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45)
 
-
-  const AnimatedFunction = (animation, toValue, duration) => {
-    return Animated.timing(animation, {
-      toValue,
-      duration,
-      useNativeDriver: true,
-    }).start();
-  };
-
   // (45) value to hide the reply container
 
   const ReplyContainer = () => {
@@ -78,11 +70,7 @@ const MessageInput = React.forwardRef(function MessageInput({
       <Text style={{ marginLeft: 10, color: MESSAGE_BACKGROUND_COLOR, fontWeight: "bold" }}>{replyMessage.status % 2 == 0 ? "You" : item.name}</Text>
       <TouchableOpacity
       onPress={() => {
-        Animated.timing(ReplyContainerAnimation,{
-          toValue:45,
-          duration:500,
-          useNativeDriver:true
-        }).start()
+        MakeAnimation(ReplyContainerAnimation,45,500)
         setreplyMessage({
           message:"",
           status:""
@@ -138,13 +126,13 @@ const MessageInput = React.forwardRef(function MessageInput({
             onChangeText={(value) => {
               setvalue(value);
               if (value !== "") {
-                AnimatedFunction(ClipandCameraAnimation, 50, 300);
-                AnimatedFunction(sendButtonAnimation, 1, 300);
+                MakeAnimation(ClipandCameraAnimation, 50, 300);
+                MakeAnimation(sendButtonAnimation, 1, 300);
                 setpaddingRight(50);
 
               } else {
-                AnimatedFunction(ClipandCameraAnimation, 0, 300);
-                AnimatedFunction(sendButtonAnimation, 0, 300);
+                MakeAnimation(ClipandCameraAnimation, 0, 300);
+                MakeAnimation(sendButtonAnimation, 0, 300);
                 setpaddingRight(100);
               }
             }}
@@ -217,19 +205,15 @@ const MessageInput = React.forwardRef(function MessageInput({
 
             setvalue("");
 
-            AnimatedFunction(ClipandCameraAnimation, 0, 300);
-            AnimatedFunction(sendButtonAnimation, 0, 300);
+            MakeAnimation(ClipandCameraAnimation, 0, 300);
+            MakeAnimation(sendButtonAnimation, 0, 300);
             setpaddingRight(100);
 
-            setreplyMessage({
-              message: "",
-              status: ""
-            });
-            Animated.timing(ReplyContainerAnimation,{
-              toValue:45,
-              duration:500,
-              useNativeDriver:true
-            }).start()
+            // setreplyMessage({
+            //   message: "",
+            //   status: ""
+            // });
+            MakeAnimation(ReplyContainerAnimation,45,500)
           }}
         >
           <View style={[styles.sendButton]}>

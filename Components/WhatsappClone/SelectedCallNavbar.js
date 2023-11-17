@@ -1,6 +1,6 @@
 import { Animated, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { ClosenavbarAnimation, RippleButton } from "./Helpers";
+import { RippleButton,MakeAnimation } from "./Helpers";
 import { TAB_BACKGROUND_COLOR, TITLE_COLOR } from "./Variables";
 import { AntDesign,MaterialIcons } from "@expo/vector-icons";
 
@@ -17,7 +17,7 @@ const SelectedCallNavbar = ({selectedCallNavbarAnimation,selectedCalls,handleCal
     >
       <View style={styles.chatsCountContainer}>
         <RippleButton
-          onPress={() => ClosenavbarAnimation(selectedCallNavbarAnimation)}
+          onPress={() => MakeAnimation(selectedCallNavbarAnimation,0,300)}
         >
           <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
         </RippleButton>

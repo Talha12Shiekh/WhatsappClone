@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Keyboard
 } from "react-native";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   TAB_BACKGROUND_COLOR,
@@ -30,7 +30,7 @@ export const center = {
   alignItems: "center",
 };
 
-export const RippleButton = ({ children, onPress,borderRadius = 50,padding = 15 }) => {
+export const RippleButton = ({ children, onPress, borderRadius = 50, padding = 15 }) => {
   return (
     <View style={{ padding, borderRadius }}>
       <TouchableNativeFeedback
@@ -47,7 +47,7 @@ export const showToast = (message) => {
   ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.CENTER);
 };
 
-export const ModelComponent = ({ name, photo, onPress ,item}) => {
+export const ModelComponent = ({ name, photo, onPress, item }) => {
   const navigation = useNavigation();
 
   const [currentItem, setCurrentItem] = useState({
@@ -144,21 +144,13 @@ export const ModelComponent = ({ name, photo, onPress ,item}) => {
 };
 
 
-export const ClosenavbarAnimation = (closeanim) => {
-  return Animated.timing(closeanim, {
-    toValue: 0,
-    duration: 300,
+export const MakeAnimation = (animation, toValue, duration) => {
+  return Animated.timing(animation, {
+    toValue,
+    duration,
     useNativeDriver: true,
   }).start();
-};
-
-export const navbarAnimation = (openanim) => {
-  Animated.timing(openanim, {
-    toValue: 1,
-    duration: 300,
-    useNativeDriver: true,
-  }).start();
-};
+}
 
 export const ChatGreenLeftComponent = ({ children }) => {
   return (
@@ -178,10 +170,10 @@ export const ChatGreenLeftComponent = ({ children }) => {
 };
 
 
-export const Button = ({color,onPress,children,width}) => {
+export const Button = ({ color, onPress, children, width }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: color,width:width }]}
+      style={[styles.button, { backgroundColor: color, width: width }]}
       onPress={onPress}
     >
       {children}
@@ -285,8 +277,8 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     marginTop: 10,
-    justifyContent:"center",
-    alignItems:"center",
-    alignSelf:"center"
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center"
   },
 });
