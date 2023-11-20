@@ -26,6 +26,7 @@ import {
 import {Button} from "./Helpers";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext } from "../../App";
+import CallTypeModal from "./CallTypeModal";
 
 const CallDetails = ({ route, navigation }) => {
   const {setRepatedDates} = route.params;
@@ -198,91 +199,13 @@ const CallDetails = ({ route, navigation }) => {
     navigation.navigate("Calls");
   };
 
+  const [visibleTypeModal,setvisibleTypeModal] = useState(false);
+
   return (
     <View style={styles.container}>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Select call type</Text>
-            <View style={styles.checkboxesContainer}>
-              <View style={styles.firstContainer}>
-                <View
-                  style={[
-                    styles.checkboxContainer,
-                    {
-                      borderColor: Video
-                        ? ACTIVE_TAB_GREEN_COLOR
-                        : TAB_BACKGROUND_COLOR,
-                    },
-                  ]}
-                >
-                  <Checkbox
-                    style={styles.checkbox}
-                    value={Video}
-                    onValueChange={(vlue) => {
-                      if (vlue) {
-                        setVoice(false);
-                        setVideo(true);
-                        setTimeout(() => {
-                          setModalVisible(!modalVisible);
-                        }, 1000);
-                      }
-                    }}
-                    color={Video ? ACTIVE_TAB_GREEN_COLOR : undefined}
-                  />
-                </View>
-                <View style={styles.VideoTextContainer}>
-                  <Text style={styles.VideoText}>Video</Text>
-                </View>
-              </View>
-              <View style={[styles.firstContainer, { marginTop: 20 }]}>
-                <View
-                  style={[
-                    styles.checkboxContainer,
-                    {
-                      borderColor: Voice
-                        ? ACTIVE_TAB_GREEN_COLOR
-                        : TAB_BACKGROUND_COLOR,
-                    },
-                  ]}
-                >
-                  <Checkbox
-                    style={[
-                      styles.checkbox,
-                      {
-                        borderColor: Voice
-                          ? ACTIVE_TAB_GREEN_COLOR
-                          : CHAT_DATA_STATUS_COLOR,
-                      },
-                    ]}
-                    value={Voice}
-                    onValueChange={(vlue) => {
-                      if (vlue) {
-                        setVoice(true);
-                        setVideo(false);
-                        setTimeout(() => {
-                          setModalVisible(!modalVisible);
-                        }, 200);
-                      }
-                    }}
-                    color={Voice ? ACTIVE_TAB_GREEN_COLOR : undefined}
-                  />
-                </View>
-                <View style={styles.VideoTextContainer}>
-                  <Text style={styles.VideoText}>Voice</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <CallTypeModal visibleTypeModal={visibleTypeModal} setvisibleTypeModal={setvisibleTypeModal} setVoice={setVoice}
+      setVideo={setVideo}
+      />
       <View style={styles.topContentContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.text}>
@@ -346,7 +269,7 @@ const CallDetails = ({ route, navigation }) => {
           }}
           text={"Call Type"}
           onPress={() => {
-            setModalVisible((vsble) => !vsble);
+            setvisibleTypeModal((vsble) => !vsble);
           }}
         />
         <CallReusableComponent

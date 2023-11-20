@@ -80,8 +80,6 @@ import ReactEmojiModal from "./ReactEmojiModal";
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
 
-  console.log(JSON.stringify(item))
-
   const ICONS_SIZE = 22;
 
   const [currentItem, setCurrentItem] = useState({
@@ -169,8 +167,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const [paddingRight, setpaddingRight] = useState(100);
 
   const ClipandCameraAnimation = useRef(new Animated.Value(0)).current;
-
-  // const [draggedMessage, setdraggedMessage] = useState("");
 
   const [draggedIndex, setdraggedIndex] = useState(null)
 
@@ -642,6 +638,7 @@ const MessagesScreen = ({ navigation, route }) => {
         }}>
           <FlatList
             data={messages}
+            keyExtractor={(item) => item.key}
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
               let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";

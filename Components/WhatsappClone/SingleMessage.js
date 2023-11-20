@@ -26,7 +26,6 @@ import {
 import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const SingleMessage = ({
   isEven,

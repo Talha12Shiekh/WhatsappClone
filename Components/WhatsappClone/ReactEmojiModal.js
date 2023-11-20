@@ -117,7 +117,7 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
             }]}>
                 {
                     Emojis.map(({ emoji, animation,key }) => {
-                        return <EmojiButton onPress={() => handleReaction(emoji)} animation={animation} key={key}>{emoji}</EmojiButton>
+                        return <EmojiButton key={key} onPress={() => handleReaction(emoji)} animation={animation} >{emoji}</EmojiButton>
                     })
                 }
                 <TouchableNativeFeedback onPress={() => { ; CloseContainer(); setisopen(p => !p) }}>

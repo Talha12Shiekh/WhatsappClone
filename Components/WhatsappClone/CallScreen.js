@@ -35,9 +35,13 @@ import {
   MaterialIcons,
   Feather,
 } from "@expo/vector-icons";
-import { RippleButton } from "./Helpers";
+import { Button, RippleButton } from "./Helpers";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ImageBackground } from "react-native";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
 import { Audio } from "expo-av";
 import Chat from "./Chat";
 
@@ -66,12 +70,10 @@ const CallScreen = ({ route, navigation }) => {
   React.useEffect(() => {
     return sound
       ? () => {
-          sound.unloadAsync();
-        }
+        sound.unloadAsync();
+      }
       : undefined;
   }, [sound]);
-
-  const translateY = useSharedValue(320);
 
   const [type, setType] = useState(CameraType.front);
 
@@ -93,32 +95,6 @@ const CallScreen = ({ route, navigation }) => {
 
   navigation.addListener("blur", () => {
     setloaded(false);
-  });
-
-  const MAX_TRANSLATE_Y = 320;
-  const MIN_TRANSLATE_Y = -(height / 3 - 320);
-
-  const onDrag = useAnimatedGestureHandler({
-    onStart: (event, context) => {
-      context.translateY = translateY.value;
-    },
-    onActive: (event, context) => {
-      // Apply the boundary on the translateY value
-      translateY.value = Math.max(
-        Math.min(event.translationY + context.translateY, MAX_TRANSLATE_Y),
-        MIN_TRANSLATE_Y
-      );
-    },
-  });
-
-  const containerStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: translateY.value,
-        },
-      ],
-    };
   });
 
   React.useEffect(() => {
@@ -216,164 +192,138 @@ const CallScreen = ({ route, navigation }) => {
     }
   };
 
+  const bottomSheetRef = React.useRef(null);
+
+  const snapPoints = React.useMemo(() => ['15%', '50%'], []);
+
+  React.useEffect(() => {
+    bottomSheetRef.current.present()
+  }, [])
+
   return (
-    <Container>
-      <View style={styles.callUpperContent}>
-        <View style={styles.encrypted}>
-          <FontAwesome
-            name="lock"
-            size={20}
-            color={INACTIVE_TAB_WHITE_COLOR}
-            style={{ marginRight: 5 }}
-          />
-          <Text style={{ color: INACTIVE_TAB_WHITE_COLOR }}>
-            End-to-end Encrypted
-          </Text>
-        </View>
-        <View style={styles.imageContainer}>
-          {!item.video && (
-            <Image
-              resizeMode="contain"
-              source={
-                item.photo
-                  ? { uri: item.photo }
-                  : require("./Images/profile.png")
-              }
-              style={styles.callsPhoto}
-            />
-          )}
-        </View>
-        <View style={styles.imageContainer}>
-          <Text style={[styles.text, { fontSize: 30 }]}>{item.name}</Text>
-          <Text style={[styles.text, { fontSize: 18, marginTop: 15 }]}>
-            Calling
-          </Text>
-        </View>
-      </View>
-      <PanGestureHandler onGestureEvent={onDrag}>
-        <Animated.View style={[styles.bottomSheet, containerStyle]}>
-          <View style={[styles.upperArrow, styles.center]}>
-            <UpperArrow
-              name="arrow-back-ios"
-              size={24}
-              color={CHAT_DATA_STATUS_COLOR}
-              style={styles.arrow}
-            />
-          </View>
-          <View style={[styles.CallIconsContainer]}>
-            {!item.video ? (
-              <IconsContainer
-                colorToggle={iconsToggle.volume}
-                onPress={() => {
-                  setisSpeaker((v) => !v);
-                  setIconsToggle((prev) => {
-                    return {
-                      ...prev,
-                      volume: !prev.volume,
-                    };
-                  });
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="volume-high"
-                  size={ICONS_SIZE}
-                  color={
-                    iconsToggle.volume ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
-                  }
-                />
-              </IconsContainer>
-            ) : (
-              <IconsContainer
-                colorToggle={iconsToggle.backCamera}
-                onPress={() => {
-                  setIconsToggle((prev) => {
-                    return {
-                      ...prev,
-                      backCamera: !prev.backCamera,
-                    };
-                  });
-                  toggleCameraType();
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="camera-flip-outline"
-                  size={ICONS_SIZE}
-                  color={
-                    iconsToggle.backCamera
-                      ? TITLE_COLOR
-                      : ICONS_BACKGROUND_COLOR
-                  }
-                />
-              </IconsContainer>
-            )}
+    <BottomSheetModalProvider>
+      <BottomSheetModal
+        index={0}
+        snapPoints={snapPoints}
+        enablePanDownToClose={false}
+        handleIndicatorStyle={{ backgroundColor: CHAT_DATA_STATUS_COLOR }}
+        ref={bottomSheetRef}
+        backgroundStyle={{ backgroundColor: CHAT_BACKROUND_COLOR }}
+      >
+        <View style={[styles.CallIconsContainer]}>
+          {!item.video ? (
             <IconsContainer
-              colorToggle={iconsToggle.video}
+              colorToggle={iconsToggle.volume}
               onPress={() => {
+                setisSpeaker((v) => !v);
                 setIconsToggle((prev) => {
                   return {
                     ...prev,
-                    video: !prev.video,
-                  };
-                });
-              }}
-            >
-              {iconsToggle.video ? (
-                <Ionicons
-                  name="md-videocam"
-                  size={ICONS_SIZE}
-                  color={
-                    iconsToggle.video ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
-                  }
-                />
-              ) : (
-                <Feather
-                  name="video-off"
-                  color={
-                    iconsToggle.video ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
-                  }
-                  size={24}
-                />
-              )}
-            </IconsContainer>
-            <IconsContainer
-              colorToggle={iconsToggle.microphone}
-              onPress={() => {
-                setIconsToggle((prev) => {
-                  return {
-                    ...prev,
-                    microphone: !prev.microphone,
+                    volume: !prev.volume,
                   };
                 });
               }}
             >
               <MaterialCommunityIcons
-                name={iconsToggle.microphone ? "microphone" : "microphone-off"}
+                name="volume-high"
                 size={ICONS_SIZE}
                 color={
-                  iconsToggle.microphone ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
+                  iconsToggle.volume ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
                 }
               />
             </IconsContainer>
-            <TouchableNativeFeedback onPress={() => navigation.goBack()}>
-              <View style={[styles.callEnd, styles.center]}>
-                <MaterialIcons
-                  name="call-end"
-                  size={ICONS_SIZE}
-                  color={TITLE_COLOR}
-                  style={{ zIndex: 9999999999999 }}
-                />
-              </View>
-            </TouchableNativeFeedback>
-          </View>
-          <View
-            style={{
-              height: 0.5,
-              backgroundColor: CHAT_DATA_STATUS_COLOR,
-              marginTop: 30,
+          ) : (
+            <IconsContainer
+              colorToggle={iconsToggle.backCamera}
+              onPress={() => {
+                setIconsToggle((prev) => {
+                  return {
+                    ...prev,
+                    backCamera: !prev.backCamera,
+                  };
+                });
+                toggleCameraType();
+              }}
+            >
+              <MaterialCommunityIcons
+                name="camera-flip-outline"
+                size={ICONS_SIZE}
+                color={
+                  iconsToggle.backCamera
+                    ? TITLE_COLOR
+                    : ICONS_BACKGROUND_COLOR
+                }
+              />
+            </IconsContainer>
+          )}
+          <IconsContainer
+            colorToggle={iconsToggle.video}
+            onPress={() => {
+              setIconsToggle((prev) => {
+                return {
+                  ...prev,
+                  video: !prev.video,
+                };
+              });
             }}
-          />
-          <TouchableNativeFeedback>
-            <View style={{ height:80 }}>
+          >
+            {iconsToggle.video ? (
+              <Ionicons
+                name="md-videocam"
+                size={ICONS_SIZE}
+                color={
+                  iconsToggle.video ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
+                }
+              />
+            ) : (
+              <Feather
+                name="video-off"
+                color={
+                  iconsToggle.video ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
+                }
+                size={24}
+              />
+            )}
+          </IconsContainer>
+          <IconsContainer
+            colorToggle={iconsToggle.microphone}
+            onPress={() => {
+              setIconsToggle((prev) => {
+                return {
+                  ...prev,
+                  microphone: !prev.microphone,
+                };
+              });
+            }}
+          >
+            <MaterialCommunityIcons
+              name={iconsToggle.microphone ? "microphone" : "microphone-off"}
+              size={ICONS_SIZE}
+              color={
+                iconsToggle.microphone ? TITLE_COLOR : ICONS_BACKGROUND_COLOR
+              }
+            />
+          </IconsContainer>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <View style={[styles.callEnd, styles.center]}>
+              <MaterialIcons
+                name="call-end"
+                size={ICONS_SIZE}
+                color={TITLE_COLOR}
+                style={{ zIndex: 9999999999999 }}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            height: 0.5,
+            backgroundColor: CHAT_DATA_STATUS_COLOR,
+            marginTop: 30,
+          }}
+        />
+        <TouchableNativeFeedback>
+          <View style={{ height: 80 }}>
             <CallChat
               text={"Add Participant"}
               key={1}
@@ -381,25 +331,60 @@ const CallScreen = ({ route, navigation }) => {
               showDots={false}
               opacity={1}
             />
-            </View>
-          </TouchableNativeFeedback>
+          </View>
+        </TouchableNativeFeedback>
 
-            <TouchableOpacity>
-              <CallChat
-                image={
+        <TouchableOpacity>
+          <CallChat
+            image={
+              item.photo
+                ? { uri: item.photo }
+                : require("./Images/profile.png")
+            }
+            key={2}
+            text={item.name}
+            showDots={true}
+            opacity={0.5}
+          />
+        </TouchableOpacity>
+      </BottomSheetModal>
+      <Container>
+        <View style={styles.callUpperContent}>
+          <View style={styles.encrypted}>
+            <FontAwesome
+              name="lock"
+              size={20}
+              color={INACTIVE_TAB_WHITE_COLOR}
+              style={{ marginRight: 5 }}
+            />
+            <Text style={{ color: INACTIVE_TAB_WHITE_COLOR }}>
+              End-to-end Encrypted
+            </Text>
+          </View>
+          <View style={styles.imageContainer}>
+            {!item.video && (
+              <Image
+                resizeMode="contain"
+                source={
                   item.photo
                     ? { uri: item.photo }
                     : require("./Images/profile.png")
                 }
-                key={2}
-                text={item.name}
-                showDots={true}
-                opacity={0.5}
+                style={styles.callsPhoto}
               />
-            </TouchableOpacity>
-        </Animated.View>
-      </PanGestureHandler>
-    </Container>
+            )}
+          </View>
+          <View style={styles.imageContainer}>
+            <Text style={[styles.text, { fontSize: 30 }]}>{item.name}</Text>
+            <Text style={[styles.text, { fontSize: 18, marginTop: 15 }]}>
+              Calling
+            </Text>
+          </View>
+        </View>
+
+
+      </Container>
+    </BottomSheetModalProvider>
   );
 };
 
