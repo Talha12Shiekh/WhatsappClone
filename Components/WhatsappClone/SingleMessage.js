@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
+import { Swipeable } from "react-native-gesture-handler";
 
 import {
   ANSWER_BACKGROUND_COLOR,
@@ -23,11 +24,11 @@ import {
   TITLE_COLOR,
   generateSendTick,
 } from "./Variables";
-import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome, Ionicons,Entypo } from "@expo/vector-icons";
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";
 
-const SingleMessage = ({
+const SingleMessage = React.forwardRef(function SingleMessage({
   isEven,
   ColumnOrRow,
   index,
@@ -46,8 +47,12 @@ const SingleMessage = ({
   setcheckSelection,
   reactions,
   handlePresentModalPress,
-  replyMessage
-}) => {
+  // replyMessage,
+  // setreplyMessage,
+  SwipeRef,
+  ReplyContainerAnimation,
+  setshowingReplyMessage
+},ref) {
   const messageRef = useRef(null);
 
   const cornerRef = useRef(null);
@@ -167,7 +172,14 @@ const SingleMessage = ({
   //   }
   // },[replied]);
 
+  const [replyMessage, setreplyMessage] = useState({
+    message: "",
+    status: ""
+  });
+
   
+
+  setshowingReplyMessage(replyMessage)
 
   if(starred){
     Animated.timing(starScaleAnimation, {
@@ -187,6 +199,56 @@ const SingleMessage = ({
       style: reactionContainerStyles
     })
   }
+
+  function handleShowReply(message, index) {
+    setreplyMessage({
+      message: message,
+      status: index
+    });
+
+
+    Animated.timing(ReplyContainerAnimation, {
+      toValue: 5,
+      duration: 500,
+      useNativeDriver: true
+    }).start(() => {
+      ref.current.focus()
+    })
+  }
+
+  const renderLeftActions = (progressAnimatedValue,) => {
+    const trans = progressAnimatedValue.interpolate({
+      inputRange: [0, 2],
+      outputRange: [-40, 280],
+    });
+
+    return <Animated.View style={[styles.messageContainer,
+    {
+      transform: [
+        { translateX: trans }
+      ],
+
+    }
+    ]}>
+      <View style={[styles.replyImageWrapper]}>
+        <Entypo name="reply" size={20} color={TITLE_COLOR} />
+      </View>
+    </Animated.View>
+  }
+
+  const [RealMessage,setRealMessage] = useState(message.split("&")[0]);
+  const [RepliedMessage,setRepledMessage] = useState("");
+  // if(message.split("&").length > 1){
+
+  // }
+  useEffect(() => {
+    if(message.split("&").length > 1){
+      setRealMessage(message.split("&")[1]);
+      setRepledMessage(message.split("&")[0])
+    }
+  },[message])
+  
+
 
   return (
     <>
@@ -211,7 +273,21 @@ const SingleMessage = ({
       {/* {replied && <View style={{backgroundColor:"red"}} ref={msgReplyRef}>
           
       </View>} */}
+      {/* {replyMessage.message != "" && <View>
+       <Text> {replyMessage.message} </Text>
+      </View>} */}
+      {RepliedMessage !== "" && <Text>{RepliedMessage}</Text>}
       {/*  */}
+      <Swipeable
+        friction={2}
+        leftThreshold={40}
+        renderLeftActions={renderLeftActions}
+        ref={SwipeRef}
+        onSwipeableWillOpen={() => {
+          SwipeRef.current.close()
+          handleShowReply(message, index)
+        }}
+        >
       <Pressable
 
         onPressIn={handleChangeMessageBackground}
@@ -289,7 +365,7 @@ const SingleMessage = ({
                       marginRight: 10,
                     }}
                   >
-                    {message}
+                    {RealMessage}
                   </Text>
                 </View>
               ) : (
@@ -382,9 +458,10 @@ const SingleMessage = ({
           </View>
         </View>
       </Pressable>
+      </Swipeable>
     </>
   );
-};
+});
 
 export default SingleMessage;
 
@@ -477,5 +554,20 @@ const styles = StyleSheet.create({
   },
   usual: {
     backgroundColor: ANSWER_BACKGROUND_COLOR
+  },
+  messageContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  replyImageWrapper: {
+    width: 30,
+    height: 30,
+    backgroundColor: "rgba(0,0,0,.5)",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: 'center',
+    alignSelf: "center"
   }
 });

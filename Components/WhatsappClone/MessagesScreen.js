@@ -503,46 +503,14 @@ const MessagesScreen = ({ navigation, route }) => {
     MakeAnimation(EmojiContainerAnimation,0,500)
   }
 
-  const [replyMessage, setreplyMessage] = useState({
-    message: "",
-    status: ""
-  });
 
-  function handleShowReply(Replyitem, index) {
-    setreplyMessage({
-      message: Replyitem.message,
-      status: index
-    });
+  const [showingReplyMessage,setshowingReplyMessage] = useState({
+    message:"",status:""
+  })
 
+  
 
-    Animated.timing(ReplyContainerAnimation, {
-      toValue: 5,
-      duration: 500,
-      useNativeDriver: true
-    }).start(() => {
-      InputRef.current.focus()
-    })
-  }
-
-  const renderLeftActions = (progressAnimatedValue, dragX) => {
-    const trans = progressAnimatedValue.interpolate({
-      inputRange: [0, 2],
-      outputRange: [-40, 280],
-    });
-
-    return <Animated.View style={[styles.messageContainer,
-    {
-      transform: [
-        { translateX: trans }
-      ],
-
-    }
-    ]}>
-      <View style={[styles.replyImageWrapper]}>
-        <Entypo name="reply" size={20} color={TITLE_COLOR} />
-      </View>
-    </Animated.View>
-  }
+  
 
   // const replyContainerStyles = {
   //   transform: [
@@ -641,18 +609,16 @@ const MessagesScreen = ({ navigation, route }) => {
             keyExtractor={(item) => item.key}
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
-              let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
+            
+              let ColumnOrRow; 
+              if(item.message.split("&").length > 1){
+                ColumnOrRow =  item.message.split("&")[1]?.length > messageLenght.length ? "column" : "row";
+                console.log(item.message.split("&")[1])
+              }else {
+                ColumnOrRow =  item.message.split("&")[0]?.length > messageLenght.length ? "column" : "row";
+              }
               return (
-                <Swipeable
-                  friction={2}
-                  leftThreshold={40}
-                  renderLeftActions={renderLeftActions}
-                  ref={item.swipeRef}
-                  onSwipeableWillOpen={() => {
-                    item.swipeRef.current.close()
-                    handleShowReply(item, index)
-                  }}
-                >
+               
                   <SingleMessage
                     key={item.key}
                     isEven={isEven}
@@ -674,9 +640,13 @@ const MessagesScreen = ({ navigation, route }) => {
                     setcheckSelection={setcheckSelection}
                     handlePresentModalPress={handlePresentModalPress}
                     setClickedMessageReactions={setClickedMessageReactions}
-                    replyMessage={replyMessage}
+                    // replyMessage={replyMessage}
+                    // setreplyMessage={setreplyMessage}
+                    SwipeRef={item.swipeRef}
+                    ReplyContainerAnimation={ReplyContainerAnimation}
+                    ref={InputRef}
+                    setshowingReplyMessage={setshowingReplyMessage}
                   />
-                </Swipeable>
               )
             }}
           />
@@ -694,8 +664,8 @@ const MessagesScreen = ({ navigation, route }) => {
             replyAnimation={replyAnimation}
             draggedIndex={draggedIndex}
             setpaddingRight={setpaddingRight}
-            replyMessage={replyMessage}
-            setreplyMessage={setreplyMessage}
+            replyMessage={showingReplyMessage}
+            setreplyMessage={setshowingReplyMessage}
             ReplyContainerAnimation={ReplyContainerAnimation}
             item={item}
             ref={InputRef}
