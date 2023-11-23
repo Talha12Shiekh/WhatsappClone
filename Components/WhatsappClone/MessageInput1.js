@@ -175,8 +175,7 @@ const MessageInput = React.forwardRef(function MessageInput({
             if (value == "") return;
 
             if(replyMessage.message !== ""){
-              messagesObject.message = `${replyMessage.message}&${value}
-              `
+              messagesObject.repliedMessage = `${replyMessage.message}`
             }
 
             dispatch({

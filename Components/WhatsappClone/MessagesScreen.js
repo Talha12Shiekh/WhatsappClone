@@ -507,9 +507,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const [showingReplyMessage,setshowingReplyMessage] = useState({
     message:"",status:""
   })
-
-  
-
   
 
   // const replyContainerStyles = {
@@ -606,17 +603,13 @@ const MessagesScreen = ({ navigation, route }) => {
         }}>
           <FlatList
             data={messages}
+            inverted={messages.length > 10}
+            contentContainerStyle={{ flexDirection:messages.length > 10 ? 'column-reverse':"column"}}
             keyExtractor={(item) => item.key}
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
             
-              let ColumnOrRow; 
-              if(item.message.split("&").length > 1){
-                ColumnOrRow =  item.message.split("&")[1]?.length > messageLenght.length ? "column" : "row";
-                console.log(item.message.split("&")[1])
-              }else {
-                ColumnOrRow =  item.message.split("&")[0]?.length > messageLenght.length ? "column" : "row";
-              }
+              let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
               return (
                
                   <SingleMessage
@@ -646,6 +639,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     ReplyContainerAnimation={ReplyContainerAnimation}
                     ref={InputRef}
                     setshowingReplyMessage={setshowingReplyMessage}
+                    repliedMessage={item.repliedMessage}
                   />
               )
             }}
