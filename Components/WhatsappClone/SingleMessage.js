@@ -28,6 +28,7 @@ import { MaterialIcons, FontAwesome, Ionicons, Entypo } from "@expo/vector-icons
 import { useRef } from "react";
 import { FormattedTime } from "react-intl";
 import ReplyContainer from "./ReplyContainer";
+import { MakeAnimation } from "./Helpers";
 
 const SingleMessage = React.forwardRef(function SingleMessage({
   isEven,
@@ -53,10 +54,11 @@ const SingleMessage = React.forwardRef(function SingleMessage({
   SwipeRef,
   ReplyContainerAnimation,
   setshowingReplyMessage,
-  repliedMessage
+  repliedMessage,
+  replieduser,
+  direction
 }, ref) {
   const messageRef = useRef(null);
-
   const cornerRef = useRef(null);
 
   let messageStyles = [styles.message];
@@ -113,7 +115,6 @@ const SingleMessage = React.forwardRef(function SingleMessage({
 
   let overlayStyles = [styles.overlay];
 
-  let replyMsgstyles = [styles.replyMessageStyles];
 
   const [heightofMessage, setheightofMessage] = useState(null);
 
@@ -143,19 +144,19 @@ const SingleMessage = React.forwardRef(function SingleMessage({
     if (selected) {
       AnimateContainer()
       setcheckSelection(true)
-      if(messageRef.current){
+      if (messageRef.current) {
 
-      messageRef?.current?.measure((x, y, Mwidth, Mheight, pageX, pageY) => {
-        setheightofMessage(Mheight);
-        // Adjust the X and Y values to stay within the screen bounds
-        const adjustedX = Math.min(pageX, maxX);
-        const adjustedY = Math.min(pageY, maxY);
+        messageRef?.current?.measure((x, y, Mwidth, Mheight, pageX, pageY) => {
+          setheightofMessage(Mheight);
+          // Adjust the X and Y values to stay within the screen bounds
+          const adjustedX = Math.min(pageX, maxX);
+          const adjustedY = Math.min(pageY, maxY);
 
-        setemojiModalPositon({ x: adjustedX, y: adjustedY, opacity: 1 })
+          setemojiModalPositon({ x: adjustedX, y: adjustedY, opacity: 1 })
 
 
-      });
-    }
+        });
+      }
 
     } else {
       setcheckSelection(false)
@@ -166,18 +167,18 @@ const SingleMessage = React.forwardRef(function SingleMessage({
 
   }, [selected]);
 
-  
 
-  useEffect(() => {
-    if(repliedMessage){
-      messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-        replyMsgstyles.push({width,transform:[{translateX:pageX},{translateY:8}],borderRadius:5})
-        msgReplyRef?.current?.setNativeProps({
-          style: replyMsgstyles,
-        });
-      });
-    }
-  },[repliedMessage]);
+
+  // useEffect(() => {
+  //   if(repliedMessage){
+  //     messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
+  //       replyMsgstyles.push({width,transform:[{translateX:pageX},{translateY:8}],borderRadius:5})
+  //       msgReplyRef?.current?.setNativeProps({
+  //         style: replyMsgstyles,
+  //       });
+  //     });
+  //   }
+  // },[repliedMessage]);
 
 
 
@@ -209,6 +210,9 @@ const SingleMessage = React.forwardRef(function SingleMessage({
     //  ! 1) implement flashList 
     // ! 2) limit messages lenght
     // ! 3) improve the design of the replyContair and make it go up as the size of input increases
+    // ! 4 ) try adding the Swipeable List View as in previous one insted of the current code 
+    // ! 5 ) hightlight the replyMessage that is clicked
+    // ! 6 ) scroll the user to bottom when messages are greater than screen hight
 
     Animated.timing(ReplyContainerAnimation, {
       toValue: 5,
@@ -219,7 +223,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
     })
   }
 
-  const renderLeftActions = (progressAnimatedValue,) => {
+  const renderLeftActions = (progressAnimatedValue) => {
     const trans = progressAnimatedValue.interpolate({
       inputRange: [0, 2],
       outputRange: [-40, 280],
@@ -260,10 +264,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
       >
         <Animated.View pointerEvents={selected ? "auto" : "none"} ref={overlayRef} />
       </TouchableOpacity>
-      {repliedMessage && <ReplyContainer
-      repliedMessage={repliedMessage}
-      ref={msgReplyRef}
-      />}
+
       <Swipeable
         friction={2}
         leftThreshold={40}
@@ -292,10 +293,11 @@ const SingleMessage = React.forwardRef(function SingleMessage({
             style={[
               styles.messagesContainer,
               { alignSelf: isEven ? "flex-end" : "flex-start" },
+
             ]}
             ref={messageContainerRef}
           >
-            
+
             <View
               style={isEven ? styles.messageCorner : styles.answermessageCorner}
               ref={cornerRef}
@@ -312,6 +314,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                     ? MESSAGE_BACKGROUND_COLOR
                     : ANSWER_BACKGROUND_COLOR,
                   position: "relative",
+
                   marginBottom: reactions.length !== 0 ? 30 : 10
                 },
               ]}
@@ -340,20 +343,28 @@ const SingleMessage = React.forwardRef(function SingleMessage({
               </Pressable>}
               <View
                 style={{
-                  flexDirection: ColumnOrRow,
+                  flexDirection: direction,
                 }}
               >
                 {!deleteForEveryone ? (
                   <View>
-                    <Text
-                      style={{
-                        color: TITLE_COLOR,
-                        fontSize: 15,
-                        marginRight: 10,
-                      }}
-                    >
-                      {message}
-                    </Text>
+                    {repliedMessage && <ReplyContainer
+                      repliedMessage={repliedMessage}
+                      replieduser={replieduser}
+                      index={index}
+                    />}
+                    <View>
+                      <Text
+                        style={{
+                          color: TITLE_COLOR,
+                          fontSize: 15,
+                          marginRight: 10,
+                          // alignSelf:"fle"
+                        }}
+                      >
+                        {message}
+                      </Text>
+                    </View>
                   </View>
                 ) : (
                   <View style={{ flexDirection: "row" }}>
@@ -383,7 +394,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                     flexDirection: "row",
                   }}
                 >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center"}}>
                     <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
                       <View
                         style={{
@@ -429,7 +440,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                         </>
                       )}
                       {"  "}
-                      <FormattedTime value={new Date(time)} />
+                     <FormattedTime value={new Date(time)} />
                       {"  "}
                     </Text>
                     {isEven && !deleteForEveryone && (
@@ -443,7 +454,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                 </View>
               </View>
             </View>
-            
+
           </View>
         </Pressable>
       </Swipeable>
@@ -512,11 +523,6 @@ const styles = StyleSheet.create({
     zIndex: 99999999999,
     width: "100%",
     backgroundColor: "red",
-  },
-
-  replyMessageStyles: {
-    height: 50,
-    backgroundColor: "red"
   },
   reactions_container: {
     height: 30,

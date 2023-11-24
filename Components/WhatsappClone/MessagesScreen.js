@@ -80,6 +80,8 @@ import ReactEmojiModal from "./ReactEmojiModal";
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
 
+  const user = item.name
+
   const ICONS_SIZE = 22;
 
   const [currentItem, setCurrentItem] = useState({
@@ -128,9 +130,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const InfoMessages = messages?.find((msg) => msg.selected);
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
-
-  const replayLength =
-    "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, voluptatum?  Iste, voluptatum?  Iste, voluptatum? Iste Iste,Iste";
 
     if (messagesSelected) {
       MakeAnimation(messagesNavbarAnimation,1,300);
@@ -505,7 +504,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
 
   const [showingReplyMessage,setshowingReplyMessage] = useState({
-    message:"",status:""
+    message:"",
+    status:""
   })
   
 
@@ -603,13 +603,16 @@ const MessagesScreen = ({ navigation, route }) => {
         }}>
           <FlatList
             data={messages}
-            inverted={messages.length > 10}
-            contentContainerStyle={{ flexDirection:messages.length > 10 ? 'column-reverse':"column"}}
+            // inverted={messages.length > 10}
+            // contentContainerStyle={{ flexDirection:messages.length > 10 ? 'column-reverse':"column"}}
             keyExtractor={(item) => item.key}
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
             
               let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
+
+              const direction = item.repliedMessage.message == "" ?  "column"  : ColumnOrRow;
+
               return (
                
                   <SingleMessage
@@ -640,6 +643,8 @@ const MessagesScreen = ({ navigation, route }) => {
                     ref={InputRef}
                     setshowingReplyMessage={setshowingReplyMessage}
                     repliedMessage={item.repliedMessage}
+                    replieduser= {user}
+                    direction={item.direction}
                   />
               )
             }}
@@ -659,7 +664,7 @@ const MessagesScreen = ({ navigation, route }) => {
             draggedIndex={draggedIndex}
             setpaddingRight={setpaddingRight}
             replyMessage={showingReplyMessage}
-            setreplyMessage={setshowingReplyMessage}
+            setshowingReplyMessage={setshowingReplyMessage}
             ReplyContainerAnimation={ReplyContainerAnimation}
             item={item}
             ref={InputRef}

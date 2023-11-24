@@ -20,7 +20,7 @@ import {
 } from "./Variables";
 import { Feather, Fontisto, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ACTIONS } from "./MessagesReducer";
-import {MakeAnimation} from "./Helpers"
+import { MakeAnimation } from "./Helpers"
 
 const MessagesRippleButton = ({ children, onPress, ...rest }) => {
   return (
@@ -33,7 +33,7 @@ const MessagesRippleButton = ({ children, onPress, ...rest }) => {
           30
         )}
       >
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
           {children}
         </View>
       </TouchableNativeFeedback>
@@ -54,36 +54,49 @@ const MessageInput = React.forwardRef(function MessageInput({
   draggedIndex,
   setpaddingRight,
   replyMessage,
-  setreplyMessage,
+  setshowingReplyMessage,
   ReplyContainerAnimation
-  ,item
-},ref){
+  , item
+}, ref) {
 
-  const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45)
+  const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45);
+
+  const replyLength =
+    "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit ";
 
   // (45) value to hide the reply container
 
+  let repliedMessage = replyMessage.message.length > replyLength.length ? replyMessage.message.slice(0, replyLength.length) + " ..." : replyMessage.message;
+
+  let showReplyCheck = replyMessage.status !== "" && replyMessage.message !== ""
+
+  let translateReply = {transform: [{ translateY: ReplyContainerAnimation }, { translateX: -5 }]};
+
+  let repliedName = replyMessage.status % 2 == 0 ? "You" : item.name;
+
+  function CloseReplyContianer(){
+    MakeAnimation(ReplyContainerAnimation, 45, 500)
+    setshowingReplyMessage({
+      message: "",
+      status: ""
+    })
+  }
+
   const ReplyContainer = () => {
-    return <Animated.View style={{ width: "83%", backgroundColor: CHAT_BACKROUND_COLOR, marginLeft: 15, borderRadius: 10, transform: [{ translateY: ReplyContainerAnimation }, { translateX: -5 }], borderWidth: 7, borderColor: ANSWER_BACKGROUND_COLOR }}>
-      {replyMessage.status !== "" && replyMessage.message !== "" && <>
-      <View style={{flexDirection:"row",justifyContent:"space-between"}}>
-      <Text style={{ marginLeft: 10, color: MESSAGE_BACKGROUND_COLOR, fontWeight: "bold" }}>{replyMessage.status % 2 == 0 ? "You" : item.name}</Text>
-      <TouchableOpacity
-      onPress={() => {
-        MakeAnimation(ReplyContainerAnimation,45,500)
-        setreplyMessage({
-          message:"",
-          status:""
-        })
-      }}
-      
-      >
-      <Text style={{ marginRight: 10, color: EMOJI_BACKGROUND_COLOR, fontWeight: "bold",fontSize:15 }}>&times;</Text>
-      </TouchableOpacity>
-      </View>
-        <Text style={{ marginLeft: 10, color: EMOJI_BACKGROUND_COLOR }}>{replyMessage.message}</Text></>}
+    return <Animated.View style={[styles.containerOfReply,translateReply]}>
+      {showReplyCheck && <>
+        <View style={styles.textandCross}>
+          <Text style={styles.RepliednameOrYou}>{repliedName}</Text>
+          <TouchableOpacity onPress={CloseReplyContianer}
+          >
+            <Text style={styles.replyCross}>&times;</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.repliedMessage}>{repliedMessage}</Text></>}
     </Animated.View>
   }
+
+  const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
 
   return (
@@ -167,15 +180,23 @@ const MessageInput = React.forwardRef(function MessageInput({
               readedTime: Date.now(),
               delivered: Date.now(),
               replied: false,
-              swipeRef:React.createRef(),
-              repliedMessage:"",
+              swipeRef: React.createRef(),
+              repliedMessage: "",
               reactions: [],
+              direction: ""
             };
 
             if (value == "") return;
 
-            if(replyMessage.message !== ""){
-              messagesObject.repliedMessage = `${replyMessage.message}`
+            const { message, status } = replyMessage;
+
+            let ColumnOrRow = messagesObject.message?.length > messageLenght.length ? "column" : "row";
+            messagesObject.direction = ColumnOrRow;
+
+
+            if (replyMessage.message !== "") {
+              messagesObject.repliedMessage = { message, status };
+              messagesObject.direction = "column"
             }
 
             dispatch({
@@ -213,11 +234,12 @@ const MessageInput = React.forwardRef(function MessageInput({
             MakeAnimation(sendButtonAnimation, 0, 300);
             setpaddingRight(100);
 
-            // setreplyMessage({
-            //   message: "",
-            //   status: ""
-            // });
-            MakeAnimation(ReplyContainerAnimation,45,500)
+
+            setshowingReplyMessage({
+              message: "",
+              status: ""
+            });
+            MakeAnimation(ReplyContainerAnimation, 45, 500)
           }}
         >
           <View style={[styles.sendButton]}>
@@ -315,4 +337,15 @@ const styles = StyleSheet.create({
     top: 2,
     bottom: 0,
   },
+  containerOfReply: {
+    width: "83%", backgroundColor: CHAT_BACKROUND_COLOR, marginLeft: 15, borderTopLeftRadius: 10, borderWidth: 7, borderColor: ANSWER_BACKGROUND_COLOR, borderTopEndRadius: 10
+  },
+  textandCross:{
+    flexDirection: "row", justifyContent: "space-between"
+  },
+  RepliednameOrYou:{
+     marginLeft: 10, color: ACTIVE_TAB_GREEN_COLOR, fontWeight: "bold", marginTop: 5 
+  },
+  replyCross:{ marginRight: 10, color: EMOJI_BACKGROUND_COLOR, fontWeight: "bold", fontSize: 15 },
+  repliedMessage:{ marginLeft: 10, color: EMOJI_BACKGROUND_COLOR, marginBottom: 5 }
 });
