@@ -21,6 +21,7 @@ import {
 import { Feather, Fontisto, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ACTIONS } from "./MessagesReducer";
 import { MakeAnimation } from "./Helpers"
+import { useNavigation } from "@react-navigation/native";
 
 const MessagesRippleButton = ({ children, onPress, ...rest }) => {
   return (
@@ -60,6 +61,8 @@ const MessageInput = React.forwardRef(function MessageInput({
 }, ref) {
 
   const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45);
+
+  const navigation = useNavigation()
 
   const replyLength =
     "talha shiekh is always the best in the world Lorem ipsum dolor sit amet consectetur, adipisicing elit. Libero quod quaerat sunt nostrum temporibus veritatis. Lorem ipsum dolor sit ";
