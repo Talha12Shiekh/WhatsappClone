@@ -68,6 +68,7 @@ const Menu = ({ animation, menuData }) => {
         ]}
       >
         <FlatList
+          estimatedItemSize={100}
           data={menuData}
           keyExtractor={(item) => item.key}
           renderItem={({ item }) => {

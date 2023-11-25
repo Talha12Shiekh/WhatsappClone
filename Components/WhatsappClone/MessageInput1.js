@@ -56,9 +56,10 @@ const MessageInput = React.forwardRef(function MessageInput({
   setpaddingRight,
   replyMessage,
   setshowingReplyMessage,
-  ReplyContainerAnimation
-  , item
-}, ref) {
+  ReplyContainerAnimation,
+  messages,
+  item
+}, {inputRef,MessageContainerRef}) {
 
   const [HeightOfMessageBox, setHeightOfMessageBox] = useState(45);
 
@@ -85,8 +86,8 @@ const MessageInput = React.forwardRef(function MessageInput({
     })
   }
 
-  const ReplyContainer = () => {
-    return <Animated.View style={[styles.containerOfReply,translateReply]}>
+  const ReplyContainer = ({HeightOfMessageBox}) => {
+    return <Animated.View style={[styles.containerOfReply,translateReply,{bottom:HeightOfMessageBox > 45 ? HeightOfMessageBox - 45 : undefined}]}>
       {showReplyCheck && <>
         <View style={styles.textandCross}>
           <Text style={styles.RepliednameOrYou}>{repliedName}</Text>
@@ -104,7 +105,7 @@ const MessageInput = React.forwardRef(function MessageInput({
 
   return (
     <>
-      <ReplyContainer />
+      <ReplyContainer HeightOfMessageBox={HeightOfMessageBox}/>
       <View
         style={[
           styles.inputContainer,
@@ -130,7 +131,7 @@ const MessageInput = React.forwardRef(function MessageInput({
         </View>
         <View>
           <TextInput
-            ref={ref}
+            ref={inputRef}
             placeholderTextColor={EMOJI_BACKGROUND_COLOR}
             placeholder="Messages"
             style={[styles.input, { paddingRight: paddingRight }]}
@@ -183,7 +184,7 @@ const MessageInput = React.forwardRef(function MessageInput({
               readedTime: Date.now(),
               delivered: Date.now(),
               replied: false,
-              swipeRef: React.createRef(),
+              // swipeRef: React.createRef(),
               repliedMessage: "",
               reactions: [],
               direction: ""
@@ -242,7 +243,10 @@ const MessageInput = React.forwardRef(function MessageInput({
               message: "",
               status: ""
             });
-            MakeAnimation(ReplyContainerAnimation, 45, 500)
+
+            MakeAnimation(ReplyContainerAnimation, 45, 500);
+
+            MessageContainerRef.current.scrollToIndex({animated:true,index:messages.length - 1})
           }}
         >
           <View style={[styles.sendButton]}>

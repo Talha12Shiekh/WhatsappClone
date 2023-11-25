@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   ACTIVE_TAB_GREEN_COLOR,
   CHAT_BACKROUND_COLOR,
+  CHAT_HEIGHT,
   TAB_BACKGROUND_COLOR,
 } from "./Variables";
 import Chat from "./Chat";
@@ -37,6 +38,7 @@ const Settings = ({ route ,navigation }) => {
   return (
     <View style={styles.container}>
       <FlatList
+        estimatedItemSize={CHAT_HEIGHT}
         data={settingChats}
         keyExtractor={(chat) => chat.key}
         ItemSeparatorComponent={() => {

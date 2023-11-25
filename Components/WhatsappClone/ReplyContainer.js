@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet,TouchableNativeFeedback } from "react-native"
 import { ACTIVE_TAB_GREEN_COLOR, CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, GREEN_MESSAGE_CLICKED_BACKGROUND, TAB_PRESS_ACTIVE_WHITE_COLOR, TITLE_COLOR } from "./Variables";
 
-const ReplyContainer = ({repliedMessage,replieduser,index}) => {
+const ReplyContainer = React.forwardRef(function ReplyContainer({repliedMessage,replieduser,index,messages},ref){
     let backgroundColor = index % 2 == 0 ? GREEN_MESSAGE_CLICKED_BACKGROUND : CHAT_BACKROUND_COLOR;
 
     let replyTextColor = index % 2 == 0 ? TITLE_COLOR : CHAT_DATA_STATUS_COLOR
@@ -11,10 +11,17 @@ const ReplyContainer = ({repliedMessage,replieduser,index}) => {
 
     let replyLimit =  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate doloremque deserunt culpa voluptatem libero consequatur veniam, ad voluptas";
 
+    function handleHightLightMessage(msg){
+       const repliedIndex = messages.findIndex(message => message.message == msg);
+       ref?.current?.scrollToIndex({animated:true,index:repliedIndex});
+
+    }
+
     let replyMessage = repliedMessage.message.length > replyLimit.length ? repliedMessage.message.slice(0,replyLimit.length) + " ..." : repliedMessage.message;
 
+
     return (
-        <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR,false)}>
+        <TouchableNativeFeedback onPress={() => handleHightLightMessage(replyMessage)} background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR,false)}>
         <View style={[styles.replyContainer,{backgroundColor}]}>
             <View style={styles.sideline}/>
             <View>
@@ -24,7 +31,7 @@ const ReplyContainer = ({repliedMessage,replieduser,index}) => {
         </View>
         </TouchableNativeFeedback>
     ) 
-}
+})
 
 const styles = StyleSheet.create({
     replyContainer:{

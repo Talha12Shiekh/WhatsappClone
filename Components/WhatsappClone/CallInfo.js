@@ -18,6 +18,7 @@ import {
   TITLE_COLOR,
   generateRandomArrow,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
+  CHAT_HEIGHT,
 } from "./Variables";
 import { RippleButton, showToast } from "./Helpers";
 import { FormattedDate, FormattedTime, FormattedDateParts } from "react-intl";
@@ -35,6 +36,7 @@ import Menu from "./Menu";
 import { useRef } from "react";
 import { Alert } from "react-native";
 import { useCallsContext, useChatsContext } from "../../App";
+
 const CallInfo = ({ route, navigation }) => {
   const { item, repeatedDates } = route.params;
 
@@ -250,6 +252,7 @@ const CallInfo = ({ route, navigation }) => {
       <View style={styles.container}>
         <View>
           <FlatList
+            estimatedItemSize={CHAT_HEIGHT}
             data={[item]}
             keyExtractor={(item) => item.key}
             renderItem={({ item }) => {

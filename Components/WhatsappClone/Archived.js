@@ -19,13 +19,13 @@ import {
   ACTIVE_TAB_GREEN_COLOR,
   CHAT_BACKROUND_COLOR,
   CHAT_DATA_STATUS_COLOR,
+  CHAT_HEIGHT,
   TAB_BACKGROUND_COLOR,
   TITLE_COLOR,
 } from "./Variables";
 import {
   MakeAnimation,
   RippleButton,
-  showToast,
 } from "./Helpers";
 import { useFocusEffect } from "@react-navigation/native";
 import Menu from "./Menu";
@@ -298,6 +298,7 @@ const Archived = ({ route, navigation }) => {
           </Text>
         </View>
         <FlatList
+          estimatedItemSize={CHAT_HEIGHT}
           data={archived}
           keyExtractor={(item) => item.key}
           ItemSeparatorComponent={() => {

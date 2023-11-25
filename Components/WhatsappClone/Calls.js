@@ -19,6 +19,7 @@ import {
   CHAT_DATA_STATUS_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
+  CHAT_HEIGHT,
 } from "./Variables";
 import {
   Entypo,
@@ -134,6 +135,7 @@ const Calls = ({
         }}
       >
         <FlatList
+          estimatedItemSize={CHAT_HEIGHT}
           data={calls}
           ListHeaderComponent={() => {
             if (calls.length !== 0) {

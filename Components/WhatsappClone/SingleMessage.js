@@ -56,8 +56,9 @@ const SingleMessage = React.forwardRef(function SingleMessage({
   setshowingReplyMessage,
   repliedMessage,
   replieduser,
-  direction
-}, ref) {
+  direction,
+  messages,
+}, {InputRef:ref,MessageContainerRef}) {
   const messageRef = useRef(null);
   const cornerRef = useRef(null);
 
@@ -207,12 +208,9 @@ const SingleMessage = React.forwardRef(function SingleMessage({
       status: index
     });
 
-    //  ! 1) implement flashList 
     // ! 2) limit messages lenght
-    // ! 3) improve the design of the replyContair and make it go up as the size of input increases
     // ! 4 ) try adding the Swipeable List View as in previous one insted of the current code 
     // ! 5 ) hightlight the replyMessage that is clicked
-    // ! 6 ) scroll the user to bottom when messages are greater than screen hight
 
     Animated.timing(ReplyContainerAnimation, {
       toValue: 5,
@@ -243,8 +241,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
     </Animated.View>
   }
 
-
-
+ 
   return (
     <>
 
@@ -269,9 +266,9 @@ const SingleMessage = React.forwardRef(function SingleMessage({
         friction={2}
         leftThreshold={40}
         renderLeftActions={renderLeftActions}
-        ref={SwipeRef}
+        // ref={SwipeRef}
         onSwipeableWillOpen={() => {
-          SwipeRef.current.close()
+          // SwipeRef.current.close()
           handleShowReply(message, index)
         }}
       >
@@ -292,7 +289,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
           <View
             style={[
               styles.messagesContainer,
-              { alignSelf: isEven ? "flex-end" : "flex-start" },
+              { alignSelf: isEven ? "flex-end" : "flex-start"},
 
             ]}
             ref={messageContainerRef}
@@ -315,7 +312,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                     : ANSWER_BACKGROUND_COLOR,
                   position: "relative",
 
-                  marginBottom: reactions.length !== 0 ? 30 : 10
+                  marginBottom: reactions.length !== 0 ? 30 : 10,
                 },
               ]}
             >
@@ -352,6 +349,8 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                       repliedMessage={repliedMessage}
                       replieduser={replieduser}
                       index={index}
+                      messages={messages}
+                      ref={MessageContainerRef}
                     />}
                     <View>
                       <Text
@@ -389,19 +388,14 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                 )}
                 <View
                   style={{
-                    alignSelf: "flex-end",
+                    alignSelf:"flex-end",
                     marginTop: 5,
                     flexDirection: "row",
                   }}
                 >
                   <View style={{ flexDirection: "row", alignItems: "center"}}>
-                    <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                      <View
-                        style={{
-                          position: "absolute",
-                          transform: [{ translateX: -35 }],
-                        }}
-                      ></View>
+                   
+                       <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
                       {starred && (
                         <>
                           <View style={{ marginRight: 10 }}>
@@ -439,10 +433,10 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                           </Animated.View>
                         </>
                       )}
-                      {"  "}
+                      {"  "} 
                      <FormattedTime value={new Date(time)} />
                       {"  "}
-                    </Text>
+                      </Text>
                     {isEven && !deleteForEveryone && (
                       <View>
                         <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
@@ -522,7 +516,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 99999999999,
     width: "100%",
-    backgroundColor: "red",
   },
   reactions_container: {
     height: 30,

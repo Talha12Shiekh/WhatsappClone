@@ -539,6 +539,12 @@ const MessagesScreen = ({ navigation, route }) => {
     setClickedMessageReactions(reactions)
   }, []);
 
+  const MessageContainerRef = useRef(null);
+
+  function scrollToBottom(){
+    MessageContainerRef?.current?.scrollToEnd({animated:true})
+  }
+
   return (
     <BottomSheetModalProvider>
 
@@ -597,21 +603,17 @@ const MessagesScreen = ({ navigation, route }) => {
           </View>
         </BottomSheetModal>
 
-        <View style={{
+        <View  style={{
           flex: 10,
           paddingTop: 20,
         }}>
           <FlatList
+            ref={MessageContainerRef}
             data={messages}
-            // inverted={messages.length > 10}
-            // contentContainerStyle={{ flexDirection:messages.length > 10 ? 'column-reverse':"column"}}
+            onLayout={scrollToBottom}
             keyExtractor={(item) => item.key}
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
-            
-              let ColumnOrRow = item.message?.length > messageLenght.length ? "column" : "row";
-
-              const direction = item.repliedMessage.message == "" ?  "column"  : ColumnOrRow;
 
               return (
                
@@ -619,7 +621,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     key={item.key}
                     isEven={isEven}
                     index={index}
-                    ColumnOrRow={ColumnOrRow}
+                    // ColumnOrRow={ColumnOrRow}
                     dispatch={dispatch}
                     selected={item.selected}
                     keyOfMessage={item.key}
@@ -640,11 +642,12 @@ const MessagesScreen = ({ navigation, route }) => {
                     // setreplyMessage={setreplyMessage}
                     SwipeRef={item.swipeRef}
                     ReplyContainerAnimation={ReplyContainerAnimation}
-                    ref={InputRef}
+                    ref={{InputRef,MessageContainerRef}}
                     setshowingReplyMessage={setshowingReplyMessage}
                     repliedMessage={item.repliedMessage}
                     replieduser= {user}
                     direction={item.direction}
+                    messages={messages}
                   />
               )
             }}
@@ -652,6 +655,7 @@ const MessagesScreen = ({ navigation, route }) => {
         </View>
         <View>
           <MessageInput1
+          messages={messages}
             value={value}
             setvalue={setvalue}
             paddingRight={paddingRight}
@@ -667,7 +671,7 @@ const MessagesScreen = ({ navigation, route }) => {
             setshowingReplyMessage={setshowingReplyMessage}
             ReplyContainerAnimation={ReplyContainerAnimation}
             item={item}
-            ref={InputRef}
+            ref={{inputRef:InputRef,MessageContainerRef:MessageContainerRef}}
           />
         </View>
       </View>
