@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet,TouchableNativeFeedback } from "react-native"
 import { ACTIVE_TAB_GREEN_COLOR, CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, GREEN_MESSAGE_CLICKED_BACKGROUND, TAB_PRESS_ACTIVE_WHITE_COLOR, TITLE_COLOR } from "./Variables";
+import {ACTIONS} from "./MessagesReducer";
 
-const ReplyContainer = React.forwardRef(function ReplyContainer({repliedMessage,replieduser,index,messages},ref){
+const ReplyContainer = React.forwardRef(function ReplyContainer({repliedMessage,replieduser,index,messages,dispatch},ref){
     let backgroundColor = index % 2 == 0 ? GREEN_MESSAGE_CLICKED_BACKGROUND : CHAT_BACKROUND_COLOR;
 
     let replyTextColor = index % 2 == 0 ? TITLE_COLOR : CHAT_DATA_STATUS_COLOR
@@ -15,6 +16,11 @@ const ReplyContainer = React.forwardRef(function ReplyContainer({repliedMessage,
        const repliedIndex = messages.findIndex(message => message.message == msg);
        ref?.current?.scrollToIndex({animated:true,index:repliedIndex});
 
+       dispatch({type:ACTIONS.UPDATE_BACKGROUND_COLOR,payload:{index:repliedIndex,color:"#00800094"}})
+
+       setTimeout(() => {
+        dispatch({type:ACTIONS.UPDATE_BACKGROUND_COLOR,payload:{index:repliedIndex,color:"transparent"}})
+       },100)
     }
 
     let replyMessage = repliedMessage.message.length > replyLimit.length ? repliedMessage.message.slice(0,replyLimit.length) + " ..." : repliedMessage.message;

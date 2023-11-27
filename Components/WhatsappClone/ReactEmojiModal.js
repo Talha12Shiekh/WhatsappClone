@@ -1,9 +1,10 @@
-import { Animated, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native'
+import { Animated, StyleSheet, Text, TouchableNativeFeedback, View,TouchableOpacity } from 'react-native'
 import React, { useRef, useState } from 'react'
-import { ANSWER_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './Variables';
+import { ANSWER_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR,TITLE_COLOR } from './Variables';
 import { ACTIONS } from './MessagesReducer';
 import EmojiPicker from "rn-emoji-keyboard";
-import {MakeAnimation} from "./Helpers"
+import {MakeAnimation} from "./Helpers";
+import { AntDesign } from '@expo/vector-icons';
 
 const EmojiButton = ({ children, onPress, animation, ...rest }) => {
     const EmojiScaleAnimation = useRef(new Animated.Value(1)).current;
@@ -116,15 +117,15 @@ const ReactEmojiModal = ({ emojiModalPositon, containerAnimation, checkSelection
                 transform: [{ scaleX: containerAnimation }]
             }]}>
                 {
-                    Emojis.map(({ emoji, animation,key },index) => {
+                    Emojis.map(({ emoji, animation },index) => {
                         return <EmojiButton key={index} onPress={() => handleReaction(emoji)} animation={animation} >{emoji}</EmojiButton>
                     })
                 }
-                <TouchableNativeFeedback onPress={() => { ; CloseContainer(); setisopen(p => !p) }}>
-                    <View style={[styles.emojiButtonStyles, { backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR }]}>
-                        <Text style={styles.plus}>+</Text>
+                <TouchableOpacity onPress={() => { ; CloseContainer(); setisopen(p => !p) }}>
+                    <View style={[styles.plusButton,{ backgroundColor: TAB_PRESS_ACTIVE_WHITE_COLOR }]}>
+                        <AntDesign name="plus" size={24} color={ANSWER_BACKGROUND_COLOR} />
                     </View>
-                </TouchableNativeFeedback>
+                </TouchableOpacity>
             </Animated.View>
         </>
     )
@@ -141,8 +142,9 @@ const styles = StyleSheet.create({
         zIndex: 999999999,
         flexDirection: "row",
         alignItems: "center",
-        gap: 5,
-        padding: 10
+        // gap: 5,
+        padding: 10,
+        justifyContent:'space-between'
     },
     emoji: {
         fontSize: 25,
@@ -154,5 +156,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    plus: { fontSize: 40, marginTop: -10 }
+    plus: { fontSize: 40, marginTop: -10 },
+    plusButton:{
+        width:30,
+        height:30,
+        borderRadius: 50,
+        justifyContent: "center",
+        alignItems: "center",
+    }
 })

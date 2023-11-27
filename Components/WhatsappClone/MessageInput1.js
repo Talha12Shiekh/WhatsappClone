@@ -187,7 +187,8 @@ const MessageInput = React.forwardRef(function MessageInput({
               // swipeRef: React.createRef(),
               repliedMessage: "",
               reactions: [],
-              direction: ""
+              direction: "",
+              backgroundColor:"transparent"
             };
 
             if (value == "") return;
@@ -246,7 +247,9 @@ const MessageInput = React.forwardRef(function MessageInput({
 
             MakeAnimation(ReplyContainerAnimation, 45, 500);
 
-            MessageContainerRef.current.scrollToIndex({animated:true,index:messages.length - 1})
+            if(messages.length > 1){
+              MessageContainerRef.current.scrollToIndex({animated:true,index:messages.length - 1})
+            }
           }}
         >
           <View style={[styles.sendButton]}>

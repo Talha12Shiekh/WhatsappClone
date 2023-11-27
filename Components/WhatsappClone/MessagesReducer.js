@@ -18,6 +18,7 @@ export const ACTIONS = {
   UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple",
   REPLY_MESSAGE:"handleReplyMessage",
   UPDATE_REACTIONS:"handleReactionsUpdate",
+  UPDATE_BACKGROUND_COLOR :"handleUpdateBackgroundColor"
 };
 
 
@@ -62,6 +63,8 @@ export const MessagesReducer = (state, { type, payload }) => {
             ...msg,
             deleteForEveryone: true,
             selected: false,
+            starred:false,
+            reactions:[]
           };
         }
         return msg;
@@ -127,6 +130,17 @@ export const MessagesReducer = (state, { type, payload }) => {
     }
     case ACTIONS.UPDATE_REACTIONS:{
       return payload.reactedMessages
+    }
+    case ACTIONS.UPDATE_BACKGROUND_COLOR:{
+      return state.map((item,i) => {
+        if(i == payload.index){
+          return {
+            ...item,
+            backgroundColor:payload.color
+          }
+        }
+        return item;
+      })
     }
     default: {
       return state;

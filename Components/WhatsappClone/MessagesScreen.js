@@ -619,34 +619,20 @@ const MessagesScreen = ({ navigation, route }) => {
                
                   <SingleMessage
                     key={item.key}
+                    item={item}
                     isEven={isEven}
                     index={index}
-                    // ColumnOrRow={ColumnOrRow}
                     dispatch={dispatch}
-                    selected={item.selected}
                     keyOfMessage={item.key}
-                    message={item.message}
-                    starred={item.starred}
-                    reactions={item.reactions}
-                    deleteForEveryone={item.deleteForEveryone}
-                    messageStatus={item.messageStatus}
-                    time={item.time}
-                    setdraggedIndex={setdraggedIndex}
                     setemojiModalPositon={setemojiModalPositon}
                     AnimateContainer={AnimateContainer}
                     CloseContainer={CloseContainer}
                     setcheckSelection={setcheckSelection}
                     handlePresentModalPress={handlePresentModalPress}
-                    setClickedMessageReactions={setClickedMessageReactions}
-                    // replyMessage={replyMessage}
-                    // setreplyMessage={setreplyMessage}
-                    SwipeRef={item.swipeRef}
                     ReplyContainerAnimation={ReplyContainerAnimation}
                     ref={{InputRef,MessageContainerRef}}
                     setshowingReplyMessage={setshowingReplyMessage}
-                    repliedMessage={item.repliedMessage}
                     replieduser= {user}
-                    direction={item.direction}
                     messages={messages}
                   />
               )

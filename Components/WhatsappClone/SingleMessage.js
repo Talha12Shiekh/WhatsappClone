@@ -12,6 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { ACTIONS } from "./MessagesReducer";
 import { Swipeable } from "react-native-gesture-handler";
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 import {
   ANSWER_BACKGROUND_COLOR,
@@ -23,6 +24,7 @@ import {
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   TITLE_COLOR,
   generateSendTick,
+  BLUE_TICK_BACKGROUND
 } from "./Variables";
 import { MaterialIcons, FontAwesome, Ionicons, Entypo } from "@expo/vector-icons";
 import { useRef } from "react";
@@ -32,41 +34,51 @@ import { MakeAnimation } from "./Helpers";
 
 const SingleMessage = React.forwardRef(function SingleMessage({
   isEven,
-  ColumnOrRow,
   index,
   dispatch,
-  selected,
   keyOfMessage,
-  deleteForEveryone,
-  message,
-  starred,
-  messageStatus,
-  time,
-  setdraggedIndex,
   setemojiModalPositon,
   AnimateContainer,
   CloseContainer,
   setcheckSelection,
-  reactions,
   handlePresentModalPress,
-  // replyMessage,
-  // setreplyMessage,
-  SwipeRef,
   ReplyContainerAnimation,
   setshowingReplyMessage,
-  repliedMessage,
   replieduser,
-  direction,
   messages,
-}, {InputRef:ref,MessageContainerRef}) {
+  item
+}, { InputRef: ref, MessageContainerRef }) {
   const messageRef = useRef(null);
   const cornerRef = useRef(null);
+
+  const {selected,message,starred,reactions,deleteForEveryone,messageStatus,time,repliedMessage,direction,backgroundColor} = item;
 
   let messageStyles = [styles.message];
   let questionMessageCornerStyles = [styles.messageCorner];
   let answerMessageCornerStyles = [styles.answermessageCorner];
 
-  const EmojiViewerRef = useRef(null)
+  const EmojiViewerRef = useRef(null);
+
+  let messageLimit = `[25/11, 7:47 pm] Talha: xjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxk
+  [25/11, 7:48 pm] Talha: xjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxjxkxjjxjxjxkjxkxkxj talha shiekh is the best in the world and it is certified by`.length;
+
+  const [showingMessage, setShowingMessage] = useState(message);
+
+  const [showReadMore, setshowReadMore] = useState(false);
+
+  useEffect(() => {
+    if (message == "") return;
+
+    if (message.length > messageLimit) {
+      let splittedMessage = message.slice(0, messageLimit) + "...";
+      setShowingMessage(splittedMessage);
+      setshowReadMore(true)
+    } else {
+      setShowingMessage(message);
+    }
+
+  }, [message])
+
 
   const handleChangeMessageBackground = (event) => {
     // setdraggedIndex(index);
@@ -241,7 +253,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
     </Animated.View>
   }
 
- 
+
   return (
     <>
 
@@ -262,196 +274,214 @@ const SingleMessage = React.forwardRef(function SingleMessage({
         <Animated.View pointerEvents={selected ? "auto" : "none"} ref={overlayRef} />
       </TouchableOpacity>
 
-      <Swipeable
-        friction={2}
-        leftThreshold={40}
-        renderLeftActions={renderLeftActions}
-        // ref={SwipeRef}
-        onSwipeableWillOpen={() => {
-          // SwipeRef.current.close()
-          handleShowReply(message, index)
-        }}
+      <SwipeListView 
+      data={[item]}
+      disableLeftSwipe
+      leftActivationValue={50}
+      onLeftAction={() => {
+        handleShowReply(message, index)
+      }}
+      keyExtractor={item => item.key}
+      renderHiddenItem={(data, rowMap) => <View />}
+      renderItem={({item,index}) => {
+        return <Pressable
+        style={{ backgroundColor }}
+        onPressIn={handleChangeMessageBackground}
+        onPressOut={handleUnChangeMessageBackground}
+        onLongPress={() => {
+          dispatch({
+            type: ACTIONS.SELECT_MESSAGES,
+            payload: {
+              key: keyOfMessage,
+            },
+          })
+        }
+        }
       >
-        <Pressable
-
-          onPressIn={handleChangeMessageBackground}
-          onPressOut={handleUnChangeMessageBackground}
-          onLongPress={() => {
-            dispatch({
-              type: ACTIONS.SELECT_MESSAGES,
-              payload: {
-                key: keyOfMessage,
-              },
-            })
-          }
-          }
+        <View
+          style={[
+            styles.arrowIcon,
+            {
+              left: -40,
+              width: 30,
+              aspectRatio: 1,
+              borderRadius: 50,
+              backgroundColor: "rgba(0,0,0,.5)",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
         >
+          <Entypo name="reply" size={20} color={TITLE_COLOR} />
+        </View>
+        <View
+          style={[
+            styles.messagesContainer,
+            { alignSelf: isEven ? "flex-end" : "flex-start" },
+
+          ]}
+          ref={messageContainerRef}
+        >
+
           <View
+            style={isEven ? styles.messageCorner : styles.answermessageCorner}
+            ref={cornerRef}
+          />
+
+          <View
+            ref={messageRef}
             style={[
-              styles.messagesContainer,
-              { alignSelf: isEven ? "flex-end" : "flex-start"},
+              styles.message,
+              {
+                transform: [{ translateX: isEven ? -20 : 20 }],
+                flexDirection: "row",
+                backgroundColor: isEven
+                  ? MESSAGE_BACKGROUND_COLOR
+                  : ANSWER_BACKGROUND_COLOR,
+                position: "relative",
 
+                marginBottom: reactions.length !== 0 ? 30 : 10,
+              },
             ]}
-            ref={messageContainerRef}
           >
-
-            <View
-              style={isEven ? styles.messageCorner : styles.answermessageCorner}
-              ref={cornerRef}
-            />
-
-            <View
-              ref={messageRef}
-              style={[
-                styles.message,
-                {
-                  transform: [{ translateX: isEven ? -20 : 20 }],
-                  flexDirection: "row",
-                  backgroundColor: isEven
-                    ? MESSAGE_BACKGROUND_COLOR
-                    : ANSWER_BACKGROUND_COLOR,
-                  position: "relative",
-
-                  marginBottom: reactions.length !== 0 ? 30 : 10,
-                },
-              ]}
+            {reactions.length !== 0 && <Pressable
+              onPress={() => handlePresentModalPress(reactions)}
+              onPressIn={() => changeEmojiViewerStyles(styles.black)}
+              onPressOut={() => changeEmojiViewerStyles(styles.usual)}
             >
-              {reactions.length !== 0 && <Pressable
-                onPress={() => handlePresentModalPress(reactions)}
-                onPressIn={() => changeEmojiViewerStyles(styles.black)}
-                onPressOut={() => changeEmojiViewerStyles(styles.usual)}
-              >
-                <View style={styles.reactions_container} ref={EmojiViewerRef}>
-                  {
-                    reactions.length >= 5 ? reactions.reverse().slice(0, 5).map(reaction => {
-                      return (
-                        <View key={reaction.key}><Text style={[styles.reacted_emoji]}>{reaction.emoji}</Text></View>
-                      )
-                    }) : reactions.reverse().map(reaction => {
-                      return (
-                        <View key={reaction.key}><Text style={[styles.reacted_emoji]}>{reaction.emoji}</Text></View>
-                      )
-                    })
-                  }
-                  {reactions.length !== 1 && <View>
-                    <Text style={{ color: CHAT_DATA_STATUS_COLOR, fontWeight: 'bold' }}>{reactions.length}</Text>
-                  </View>}
-                </View>
-              </Pressable>}
-              <View
-                style={{
-                  flexDirection: direction,
-                }}
-              >
-                {!deleteForEveryone ? (
+              <View style={[styles.reactions_container, { borderRadius: reactions.length > 1 ? 10 : 100 }]} ref={EmojiViewerRef}>
+                {
+                  reactions.length >= 5 ? reactions.reverse().slice(0, 5).map(reaction => {
+                    return (
+                      <View key={reaction.key}><Text style={[styles.reacted_emoji]}>{reaction.emoji}</Text></View>
+                    )
+                  }) : reactions.reverse().map(reaction => {
+                    return (
+                      <View key={reaction.key}><Text style={[styles.reacted_emoji]}>{reaction.emoji}</Text></View>
+                    )
+                  })
+                }
+                {reactions.length !== 1 && <View>
+                  <Text style={{ color: CHAT_DATA_STATUS_COLOR, fontWeight: 'bold' }}>{reactions.length}</Text>
+                </View>}
+              </View>
+            </Pressable>}
+            <View
+              style={{
+                flexDirection: direction,
+              }}
+            >
+              {!deleteForEveryone ? (
+                <View>
+                  {repliedMessage && <ReplyContainer
+                    repliedMessage={repliedMessage}
+                    replieduser={replieduser}
+                    index={index}
+                    messages={messages}
+                    ref={MessageContainerRef}
+                    dispatch={dispatch}
+                  />}
                   <View>
-                    {repliedMessage && <ReplyContainer
-                      repliedMessage={repliedMessage}
-                      replieduser={replieduser}
-                      index={index}
-                      messages={messages}
-                      ref={MessageContainerRef}
-                    />}
-                    <View>
-                      <Text
-                        style={{
-                          color: TITLE_COLOR,
-                          fontSize: 15,
-                          marginRight: 10,
-                          // alignSelf:"fle"
-                        }}
-                      >
-                        {message}
-                      </Text>
-                    </View>
-                  </View>
-                ) : (
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={{ marginRight: 5 }}>
-                      <MaterialIcons
-                        name="block-flipped"
-                        size={20}
-                        color={INACTIVE_TAB_WHITE_COLOR}
-                      />
-                    </Text>
                     <Text
                       style={{
-                        color: INACTIVE_TAB_WHITE_COLOR,
+                        color: TITLE_COLOR,
                         fontSize: 15,
                         marginRight: 10,
-                        fontStyle: "italic",
                       }}
                     >
-                      You deleted this message
+                      {showingMessage}
+                      {showReadMore && <TouchableOpacity onPress={() => { setShowingMessage(message); setshowReadMore(false) }}><Text style={{ color: BLUE_TICK_BACKGROUND }}>Press me</Text></TouchableOpacity>}
                     </Text>
                   </View>
-                )}
-                <View
-                  style={{
-                    alignSelf:"flex-end",
-                    marginTop: 5,
-                    flexDirection: "row",
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center"}}>
-                   
-                       <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                      {starred && (
-                        <>
-                          <View style={{ marginRight: 10 }}>
-                            <FontAwesome
-                              name="star"
-                              size={8}
-                              color={TITLE_COLOR}
-                            />
-                          </View>
-                          <Animated.View
-                            style={{
-                              position: "absolute",
-                              transform: [
-                                { translateX: -7 },
-                                {
-                                  translateY: starScaleAnimation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [0, -50],
-                                  }),
-                                },
-                                {
-                                  scale: starScaleAnimation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [0, 3.4],
-                                  }),
-                                },
-                              ],
-                              opacity: starScaleAnimation.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [1, 0],
-                              }),
-                            }}
-                          >
-                            <FontAwesome name="star" size={8} color={"yellow"} />
-                          </Animated.View>
-                        </>
-                      )}
-                      {"  "} 
-                     <FormattedTime value={new Date(time)} />
-                      {"  "}
-                      </Text>
-                    {isEven && !deleteForEveryone && (
-                      <View>
-                        <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
-                          {generateSendTick(messageStatus)}
-                        </Text>
-                      </View>
+                </View>
+              ) : (
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={{ marginRight: 5 }}>
+                    <MaterialIcons
+                      name="block-flipped"
+                      size={20}
+                      color={INACTIVE_TAB_WHITE_COLOR}
+                    />
+                  </Text>
+                  <Text
+                    style={{
+                      color: INACTIVE_TAB_WHITE_COLOR,
+                      fontSize: 15,
+                      marginRight: 10,
+                      fontStyle: "italic",
+                    }}
+                  >
+                    You deleted this message
+                  </Text>
+                </View>
+              )}
+              <View
+                style={{
+                  alignSelf: "flex-end",
+                  marginTop: 5,
+                  flexDirection: "row",
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+
+                  <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
+                    {starred && (
+                      <>
+                        <View style={{ marginRight: 10 }}>
+                          <FontAwesome
+                            name="star"
+                            size={8}
+                            color={TITLE_COLOR}
+                          />
+                        </View>
+                        <Animated.View
+                          style={{
+                            position: "absolute",
+                            transform: [
+                              { translateX: -7 },
+                              {
+                                translateY: starScaleAnimation.interpolate({
+                                  inputRange: [0, 1],
+                                  outputRange: [0, -50],
+                                }),
+                              },
+                              {
+                                scale: starScaleAnimation.interpolate({
+                                  inputRange: [0, 1],
+                                  outputRange: [0, 3.4],
+                                }),
+                              },
+                            ],
+                            opacity: starScaleAnimation.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [1, 0],
+                            }),
+                          }}
+                        >
+                          <FontAwesome name="star" size={8} color={"yellow"} />
+                        </Animated.View>
+                      </>
                     )}
-                  </View>
+                    {"  "}
+                    <FormattedTime value={new Date(time)} />
+                    {"  "}
+                  </Text>
+                  {isEven && !deleteForEveryone && (
+                    <View>
+                      <Text style={{ color: TITLE_COLOR, fontSize: 10 }}>
+                        {generateSendTick(messageStatus)}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
-
           </View>
-        </Pressable>
-      </Swipeable>
+
+        </View>
+      </Pressable>
+      }}
+      />      
     </>
   );
 });
