@@ -102,6 +102,8 @@ const MessageInput = React.forwardRef(function MessageInput({
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
+  const withEmojis = /\p{Extended_Pictographic}/u
+
 
   return (
     <>
@@ -142,6 +144,8 @@ const MessageInput = React.forwardRef(function MessageInput({
             }}
             onChangeText={(value) => {
               setvalue(value);
+              // const containsEmoji = /[\p{Extended_Pictographic}]/u.test(value);
+              // alert(containsEmoji)
               if (value !== "") {
                 MakeAnimation(ClipandCameraAnimation, 50, 300);
                 MakeAnimation(sendButtonAnimation, 1, 300);
@@ -184,14 +188,29 @@ const MessageInput = React.forwardRef(function MessageInput({
               readedTime: Date.now(),
               delivered: Date.now(),
               replied: false,
-              // swipeRef: React.createRef(),
               repliedMessage: "",
               reactions: [],
               direction: "",
-              backgroundColor:"transparent"
+              backgroundColor:"transparent",
+              fontSize:15
             };
 
             if (value == "") return;
+
+            // const isEmojiPresent = value.split("").every(s => withEmojis.test(s));
+            
+            // for (let i = 0; i < value.length; i++) {
+            //   const element = value[i];
+            //   if(withEmojis.test(element)){
+            //     alert()
+            //   }
+            // }
+            // alert(isEmojiPresent)
+
+            // if(isEmojiPresent){
+            //   messagesObject.fontSize = 20;
+            // }
+            // if(withEmojis.test(value))
 
             const { message, status } = replyMessage;
 

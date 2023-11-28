@@ -51,7 +51,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
   const messageRef = useRef(null);
   const cornerRef = useRef(null);
 
-  const {selected,message,starred,reactions,deleteForEveryone,messageStatus,time,repliedMessage,direction,backgroundColor} = item;
+  const {selected,message,starred,reactions,deleteForEveryone,messageStatus,time,repliedMessage,direction,backgroundColor,fontSize} = item;
 
   let messageStyles = [styles.message];
   let questionMessageCornerStyles = [styles.messageCorner];
@@ -283,7 +283,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
       }}
       keyExtractor={item => item.key}
       renderHiddenItem={(data, rowMap) => <View />}
-      renderItem={({item,index}) => {
+      renderItem={() => {
         return <Pressable
         style={{ backgroundColor }}
         onPressIn={handleChangeMessageBackground}
@@ -385,7 +385,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                     <Text
                       style={{
                         color: TITLE_COLOR,
-                        fontSize: 15,
+                        fontSize,
                         marginRight: 10,
                       }}
                     >

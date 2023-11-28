@@ -125,7 +125,10 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const messagesSelected = messages?.some((msg) => msg.selected);
 
+  
   const selectedMessages = messages?.filter((msg) => msg.selected);
+  
+  const isDeletedforEveryOne = selectedMessages?.some((msg) => msg.deleteForEveryone);
 
   const InfoMessages = messages?.find((msg) => msg.selected);
 
@@ -192,10 +195,18 @@ const MessagesScreen = ({ navigation, route }) => {
     { text: "Wallpaper", onPress: () => { }, key: 6 },
     {
       text: "More                                    >",
-      onPress: () => { },
+      onPress: () => { MakeAnimation(messagesMenuAnimation, 0, 1000) ; MakeAnimation(MoreMenuAnimation, 1, 1000) },
       key: 7,
     },
   ];
+
+  const MoreClickedMenudata = [
+    { text: "Report", onPress: () => { }, key: 1 },
+    { text: "Block", onPress: () => { }, key: 2 },
+    { text: "Clear Chat", onPress: () => { }, key: 3 },
+    { text: "Export chat", onPress: () => { }, key: 4 },
+    { text: "Add shortcut", onPress: () => { }, key: 5 },
+  ]
 
   const ReportMenuData = [
     { text: "Report", onPress: () => { }, key: 1 },
@@ -219,12 +230,18 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const reportMenuAnimation = useRef(new Animated.Value(0)).current;
 
+  const MoreMenuAnimation = useRef(new Animated.Value(0)).current;
 
 
 
   useEffect(() => {
     setselectedStarMessages(selectedMessage[selectedMessage.length - 1])
-  }, [selectedMessage])
+  }, [selectedMessage]);
+
+  const [showingReplyMessage,setshowingReplyMessage] = useState({
+    message:"",
+    status:""
+  })
 
   useFocusEffect(() => {
     navigation.setOptions({
@@ -310,6 +327,10 @@ const MessagesScreen = ({ navigation, route }) => {
                 animation={messagesMenuAnimation}
                 menuData={MessagesMenuData}
               />
+              <Menu
+                animation={MoreMenuAnimation}
+                menuData={MoreClickedMenudata}
+              />
               <View
                 style={{
                   position: "absolute",
@@ -371,11 +392,15 @@ const MessagesScreen = ({ navigation, route }) => {
                   { justifyContent: "center", alignItems: "center", gap: -5 },
                 ]}
               >
-                {selectedMessages?.length <= 1 ? (
+                {!isDeletedforEveryOne && selectedMessages?.length <= 1 ? (
                   <RippleButton onPress={() => {
-                    // const selectedMessage = messages.find(msg => msg.selected);
-                    // setdraggedMessage(selectedMessage.message);
-                    // AnimateReplyContainer()
+                    MakeAnimation(ReplyContainerAnimation,5,500);
+                    const selectedMessage = messages.findIndex(msg => msg.selected);
+                    dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})
+                    setshowingReplyMessage({
+                      message:messages[selectedMessage].message,
+                      status:selectedMessage
+                    })
                   }}>
                     <Ionicons
                       name="md-arrow-undo-sharp"
@@ -384,7 +409,7 @@ const MessagesScreen = ({ navigation, route }) => {
                     />
                   </RippleButton>
                 ) : null}
-                <RippleButton
+                {!isDeletedforEveryOne && <RippleButton
                   onPress={() => {
                     dispatch({
                       type: ACTIONS.STARRE_MESSAGES,
@@ -397,8 +422,8 @@ const MessagesScreen = ({ navigation, route }) => {
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
                   /> : <MaterialCommunityIcons name="star-off" size={ICONS_SIZE} color={TITLE_COLOR} />}
-                </RippleButton>
-                {(selectedMessages?.length <= 1 && selectedMessageIndices % 2 == 0) ? (
+                </RippleButton>}
+                {(selectedMessages?.length <= 1 && selectedMessageIndices % 2 == 0) && !isDeletedforEveryOne ? (
                   <RippleButton
                     onPress={() => {
                       navigation.navigate("MessagesInfo", {
@@ -427,21 +452,21 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                <RippleButton onPress={() => { handleCopyMessages(); CloseContainer() }}>
+                {!isDeletedforEveryOne && <RippleButton onPress={() => { handleCopyMessages(); CloseContainer() }}>
                   <MaterialIcons
                     name="content-copy"
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
                   />
-                </RippleButton>
-                <RippleButton onPress={() => { ForwardMessages(); CloseContainer() }}>
+                </RippleButton>}
+                {!isDeletedforEveryOne && <RippleButton onPress={() => { ForwardMessages(); CloseContainer() }}>
                   <Ionicons
                     name="md-arrow-redo-sharp"
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
                   />
-                </RippleButton>
-                {selectedMessageIndices % 2 !== 0 && <RippleButton onPress={() => { MakeAnimation(reportMenuAnimation, 1, 1000); CloseContainer() }}>
+                </RippleButton>}
+                {selectedMessageIndices % 2 !== 0 && !isDeletedforEveryOne && selectedMessages?.length <= 1 && <RippleButton onPress={() => { MakeAnimation(reportMenuAnimation, 1, 1000); CloseContainer() }}>
                   <SimpleLineIcons
                     name="options-vertical"
                     color={TITLE_COLOR}
@@ -455,6 +480,25 @@ const MessagesScreen = ({ navigation, route }) => {
       },
     });
   });
+
+  const {height} = useWindowDimensions()
+
+  const [contentVerticalOffset, setContentVerticalOffset] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [ShowScrollToBottomButton,setShowScrollToBottomButton] = useState(false)
+
+
+  const ScrollToBottomButton = () => {
+    return (
+      <TouchableOpacity onPress={() => {
+        MessageContainerRef.current.scrollToEnd({animated:true})
+      }}>
+        <View style={{zIndex:999999999999999,bottom:80,right:20,position:"absolute",width:35,height:35,backgroundColor:ANSWER_BACKGROUND_COLOR,borderRadius:100,justifyContent:"center",alignItems:"center"}}>
+          <FontAwesome name="angle-double-down" size={24} color={EMOJI_BACKGROUND_COLOR} />
+        </View>
+      </TouchableOpacity>
+    )
+  }
 
   function handleShowSelectionInAlert() {
     if (selectedMessages?.length == 1) {
@@ -503,10 +547,7 @@ const MessagesScreen = ({ navigation, route }) => {
   }
 
 
-  const [showingReplyMessage,setshowingReplyMessage] = useState({
-    message:"",
-    status:""
-  })
+  
   
 
   // const replyContainerStyles = {
@@ -541,8 +582,10 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const MessageContainerRef = useRef(null);
 
-  function scrollToBottom(){
+  function scrollToBottom(e){
     MessageContainerRef?.current?.scrollToEnd({animated:true})
+
+    setContentHeight(e.nativeEvent.layout.height)
   }
 
   return (
@@ -612,6 +655,11 @@ const MessagesScreen = ({ navigation, route }) => {
             data={messages}
             onLayout={scrollToBottom}
             keyExtractor={(item) => item.key}
+            onContentSizeChange={(width, height) => setContentHeight(height)}
+            onScroll={(e) => {
+              setContentVerticalOffset(e.nativeEvent.contentOffset.y);
+              setShowScrollToBottomButton(e.nativeEvent.contentOffset.y + height < contentHeight);
+            }}
             renderItem={({ item, index }) => {
               const isEven = index % 2 == 0;
 
@@ -660,6 +708,8 @@ const MessagesScreen = ({ navigation, route }) => {
             ref={{inputRef:InputRef,MessageContainerRef:MessageContainerRef}}
           />
         </View>
+
+        {ShowScrollToBottomButton && <ScrollToBottomButton/>}
       </View>
     </BottomSheetModalProvider >
   );
