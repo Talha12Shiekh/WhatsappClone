@@ -22,6 +22,7 @@ import { Feather, Fontisto, Entypo, MaterialIcons, Ionicons } from "@expo/vector
 import { ACTIONS } from "./MessagesReducer";
 import { MakeAnimation } from "./Helpers"
 import { useNavigation } from "@react-navigation/native";
+import { Linking } from "react-native";
 
 const MessagesRippleButton = ({ children, onPress, ...rest }) => {
   return (
@@ -85,6 +86,29 @@ const MessageInput = React.forwardRef(function MessageInput({
       status: ""
     })
   }
+
+  const sendWhatsAppMessage = (sndmsg) => {
+    let msg = sndmsg;
+    let phoneWithCountryCode = item.number;
+  
+    let mobile = Platform.OS == "ios" ? phoneWithCountryCode : "+" + phoneWithCountryCode;
+    if (mobile) {
+      if (msg) {
+        let url = "whatsapp://send?text=" + msg + "&phone=" + mobile;
+        Linking.openURL(url)
+          .then(data => {
+            alert(data)
+          })
+          .catch(() => {
+            alert("Make sure WhatsApp installed on your device");
+          });
+      } else {
+        alert("Please insert message to send");
+      }
+    } else {
+      alert("Please insert mobile no");
+    }
+  };
 
   const ReplyContainer = ({HeightOfMessageBox}) => {
     return <Animated.View style={[styles.containerOfReply,translateReply,{bottom:HeightOfMessageBox > 45 ? HeightOfMessageBox - 45 : undefined}]}>
@@ -269,6 +293,8 @@ const MessageInput = React.forwardRef(function MessageInput({
             if(messages.length > 1){
               MessageContainerRef.current.scrollToIndex({animated:true,index:messages.length - 1})
             }
+
+            sendWhatsAppMessage(messagesObject.message)
           }}
         >
           <View style={[styles.sendButton]}>

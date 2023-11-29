@@ -76,6 +76,7 @@ import DeleteModal from "./DeleteModal";
 import MessageModal from "./MessageModal";
 import MessageInput1 from "./MessageInput1";
 import ReactEmojiModal from "./ReactEmojiModal";
+import { Alert } from "react-native";
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
@@ -257,7 +258,35 @@ const MessagesScreen = ({ navigation, route }) => {
               }}
             >
               <TouchableNativeFeedback
-                onPress={() => navigation.goBack()}
+                onPress={() => {
+                  
+                  dispatch({type:ACTIONS.COPY_TO_CLIPBOARD});
+                  if(value !== ""){
+                    Alert.alert(
+                      "Alert",
+                      "Do you want to keep writing the message",
+                      [
+                        {
+                          text: "Discard",
+                          onPress: () => {
+                            navigation.goBack();
+                            setvalue("")
+                          },
+                          style: "cancel",
+                        },
+                        {
+                          text: "Yes",
+                          onPress: () => {
+
+                          },
+                        },
+                      ],
+                      { cancelable: true }
+                    );
+                  }else {
+                    navigation.goBack();
+                  }
+                }}
                 background={TouchableNativeFeedback.Ripple(
                   TAB_PRESS_ACTIVE_WHITE_COLOR,
                   false,
@@ -376,7 +405,7 @@ const MessagesScreen = ({ navigation, route }) => {
             >
               <View style={styles.chatsCountContainer}>
                 <RippleButton
-                  onPress={() => MakeAnimation(messagesNavbarAnimation,0,300)}
+                  onPress={() => {MakeAnimation(messagesNavbarAnimation,0,300);dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})}}
                 >
                   <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
                 </RippleButton>
@@ -689,7 +718,7 @@ const MessagesScreen = ({ navigation, route }) => {
         </View>
         <View>
           <MessageInput1
-          messages={messages}
+            messages={messages}
             value={value}
             setvalue={setvalue}
             paddingRight={paddingRight}

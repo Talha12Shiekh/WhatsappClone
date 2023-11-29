@@ -20,14 +20,14 @@ const ReplyContainer = React.forwardRef(function ReplyContainer({repliedMessage,
 
        setTimeout(() => {
         dispatch({type:ACTIONS.UPDATE_BACKGROUND_COLOR,payload:{index:repliedIndex,color:"transparent"}})
-       },100)
+       },500)
     }
 
     let replyMessage = repliedMessage.message.length > replyLimit.length ? repliedMessage.message.slice(0,replyLimit.length) + " ..." : repliedMessage.message;
 
 
     return (
-        <TouchableNativeFeedback onPress={() => handleHightLightMessage(replyMessage)} background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR,false)}>
+        <TouchableNativeFeedback onPress={() => handleHightLightMessage(repliedMessage.message)} background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR,false)}>
         <View style={[styles.replyContainer,{backgroundColor}]}>
             <View style={styles.sideline}/>
             <View>

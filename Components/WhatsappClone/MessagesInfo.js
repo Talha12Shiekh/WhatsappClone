@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useRef } from "react";
 import { ImageBackground } from "react-native";
+import { ListItem, Icon } from '@rneui/themed';
 import {
   BADGE_BACKGROUND_COLOR,
   BLUE_TICK_BACKGROUND,
@@ -13,7 +14,7 @@ import {
   TITLE_COLOR,
   generateSendTick,
 } from "./Variables";
-import { FormattedTime,FormattedDateParts } from "react-intl";
+import { FormattedTime, FormattedDateParts } from "react-intl";
 import {
   FontAwesome5,
   Ionicons,
@@ -66,13 +67,13 @@ const MessagesInfo = ({ route }) => {
             onPressIn={handleSelectMessage}
             onPressOut={handleDeSelectMessage}
           >
-            <View style={[styles.messagesContainer, { alignSelf: "flex-end",maxHeight:500,marginBottom:10 }]}>
+            <View style={[styles.messagesContainer, { alignSelf: "flex-end", maxHeight: 500, marginBottom: 10 }]}>
               <View style={[styles.messageCorner]} ref={messageCornerRef} />
               <View ref={messageRef} style={[styles.message]}>
                 <View
                   style={{
                     flexDirection: ColumnOrRow,
-                    overflow:"hidden"
+                    overflow: "hidden"
                   }}
                 >
                   <View>
@@ -122,66 +123,57 @@ const MessagesInfo = ({ route }) => {
         </View>
         <View style={styles.bottomSheet}>
           <View style={styles.messageInfoContainer}>
-            <View style={styles.singleInfoMessage}>
-              <View style={{ flexDirection: "row" }}>
-                <Text>
-                  <Ionicons
-                    name="checkmark-done"
-                    size={18}
-                    color={BLUE_TICK_BACKGROUND}
-                  />{" "}
-                </Text>
-
-                <Text
-                  style={{ color: TITLE_COLOR, fontSize: 16, marginLeft: 5 }}
-                >
-                  Read
-                </Text>
-              </View>
+            <View>
+              <ListItem containerStyle={{ backgroundColor: CHAT_SELECTION_BACKGROUND,padding:12 }}>
+                <Ionicons
+                  name="checkmark-done"
+                  size={18}
+                  color={BLUE_TICK_BACKGROUND}
+                />
+                <ListItem.Content>
+                  <ListItem.Title style={{ color: TITLE_COLOR }}>Read</ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
 
               <Text
                 style={{
                   color: CHAT_DATA_STATUS_COLOR,
-                  marginTop: 2,
+                  marginLeft:20,
                   fontSize: 15,
                 }}
               >
+                
                 <FormattedDateParts
-                    value={new Date(InfoMessages.readedTime)}
-                    month="long"
-                    day="2-digit"
-                  >
-                    {
-                      parts => <Text>{parts[2].value} {parts[0].value} ,</Text>
-                    }
-                  </FormattedDateParts>
+                  value={new Date(InfoMessages.readedTime)}
+                  month="long"
+                  day="2-digit"
+                >
+                  {
+                    parts => <Text>{parts[2].value} {parts[0].value} ,</Text>
+                  }
+                </FormattedDateParts>
                 <FormattedTime value={new Date(InfoMessages.readedTime)} />
               </Text>
             </View>
             <View style={styles.centerLine} />
             <View>
-              <View style={styles.singleInfoMessage}>
-                <View style={{ flexDirection: "row" }}>
-                  <Text>
-                    <Ionicons
-                      name="checkmark-done"
-                      size={18}
-                      color={CHAT_DATA_STATUS_COLOR}
-                    />{" "}
-                  </Text>
-
-                  <Text
-                    style={{ color: TITLE_COLOR, fontSize: 15, marginLeft: 5 }}
-                  >
-                    Delivered
-                  </Text>
-                </View>
+              <View>
+              <ListItem containerStyle={{ backgroundColor: CHAT_SELECTION_BACKGROUND,padding:12 }}>
+                <Ionicons
+                  name="checkmark-done"
+                  size={18}
+                  color={CHAT_DATA_STATUS_COLOR}
+                />
+                <ListItem.Content>
+                  <ListItem.Title style={{ color: TITLE_COLOR }}>Delivered</ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
 
                 <Text
                   style={{
                     color: CHAT_DATA_STATUS_COLOR,
-                    marginTop: 2,
                     fontSize: 15,
+                    marginLeft:20
                   }}
                 >
                   <FormattedDateParts
