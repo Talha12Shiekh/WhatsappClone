@@ -52,6 +52,7 @@ import {
   CALLS_KEY,
   FILTER_CALLS_STORAGE_KEY,
 } from "./Components/WhatsappClone/Variables"
+import DisappearingMessages from "./Components/WhatsappClone/DisappearingMessages";
 
 LogBox.ignoreLogs([
   "Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",
@@ -418,6 +419,11 @@ export default function App() {
                   name="MessagesInfo"
                   component={MessagesInfo}
                   options={{ headerTransparent: true }}
+                />
+                <Stack.Screen
+                  name="DissapearingMessages"
+                  component={DisappearingMessages}
+                  // options={{ headerTransparent: true }}
                 />
               </Stack.Group>
             </Stack.Navigator>

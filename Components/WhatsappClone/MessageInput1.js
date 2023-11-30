@@ -211,7 +211,6 @@ const MessageInput = React.forwardRef(function MessageInput({
               starred: false,
               readedTime: Date.now(),
               delivered: Date.now(),
-              replied: false,
               repliedMessage: "",
               reactions: [],
               direction: "",

@@ -12,11 +12,7 @@ import {
   FlatList,
   ScrollView
 } from "react-native";
-import {
-  STORAGE_KEY,
-} from "./Variables"
-import { Swipeable } from "react-native-gesture-handler";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Dialog, CheckBox, Icon } from '@rneui/themed';
 import * as Clipboard from "expo-clipboard";
 import {
   BottomSheetModal,
@@ -89,7 +85,7 @@ const MessagesScreen = ({ navigation, route }) => {
     ...item,
   });
 
-  const { chats,setchats } = useChatsContext();
+  const { chats, setchats } = useChatsContext();
 
   const [messages, dispatch] = useReducer(MessagesReducer, item.messages);
 
@@ -126,20 +122,20 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const messagesSelected = messages?.some((msg) => msg.selected);
 
-  
+
   const selectedMessages = messages?.filter((msg) => msg.selected);
-  
+
   const isDeletedforEveryOne = selectedMessages?.some((msg) => msg.deleteForEveryone);
 
   const InfoMessages = messages?.find((msg) => msg.selected);
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
-    if (messagesSelected) {
-      MakeAnimation(messagesNavbarAnimation,1,300);
-    } else {
-      MakeAnimation(messagesNavbarAnimation,0,300);
-    }
+  if (messagesSelected) {
+    MakeAnimation(messagesNavbarAnimation, 1, 300);
+  } else {
+    MakeAnimation(messagesNavbarAnimation, 0, 300);
+  }
 
   const handleOpenCallScreen = () => {
     setCurrentItem({
@@ -187,16 +183,24 @@ const MessagesScreen = ({ navigation, route }) => {
 
   let ChatNameLength = "loremipsumdolor";
 
+
+  const [mutedDialogOpen, setmutedDialogOpen] = useState(false);
+  const [mutedChecked, setmutedChecked] = useState(0);
+
   const MessagesMenuData = [
     { text: "View contact", onPress: () => { }, key: 1 },
     { text: "Media, links, and docs", onPress: () => { }, key: 2 },
     { text: "Search", onPress: () => { }, key: 3 },
-    { text: "Mute notifications", onPress: () => { }, key: 4 },
-    { text: "Dissappearing messages", onPress: () => { }, key: 5 },
+    {
+      text: "Mute notifications", onPress: () => {
+        setmutedDialogOpen(p => !p)
+      }, key: 4
+    },
+    { text: "Dissappearing messages", onPress: () => { navigation.navigate("DissapearingMessages") }, key: 5 },
     { text: "Wallpaper", onPress: () => { }, key: 6 },
     {
       text: "More                                    >",
-      onPress: () => { MakeAnimation(messagesMenuAnimation, 0, 1000) ; MakeAnimation(MoreMenuAnimation, 1, 1000) },
+      onPress: () => { MakeAnimation(messagesMenuAnimation, 0, 1000); MakeAnimation(MoreMenuAnimation, 1, 1000) },
       key: 7,
     },
   ];
@@ -239,9 +243,9 @@ const MessagesScreen = ({ navigation, route }) => {
     setselectedStarMessages(selectedMessage[selectedMessage.length - 1])
   }, [selectedMessage]);
 
-  const [showingReplyMessage,setshowingReplyMessage] = useState({
-    message:"",
-    status:""
+  const [showingReplyMessage, setshowingReplyMessage] = useState({
+    message: "",
+    status: ""
   })
 
   useFocusEffect(() => {
@@ -259,9 +263,9 @@ const MessagesScreen = ({ navigation, route }) => {
             >
               <TouchableNativeFeedback
                 onPress={() => {
-                  
-                  dispatch({type:ACTIONS.COPY_TO_CLIPBOARD});
-                  if(value !== ""){
+
+                  dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
+                  if (value !== "") {
                     Alert.alert(
                       "Alert",
                       "Do you want to keep writing the message",
@@ -283,7 +287,7 @@ const MessagesScreen = ({ navigation, route }) => {
                       ],
                       { cancelable: true }
                     );
-                  }else {
+                  } else {
                     navigation.goBack();
                   }
                 }}
@@ -405,7 +409,7 @@ const MessagesScreen = ({ navigation, route }) => {
             >
               <View style={styles.chatsCountContainer}>
                 <RippleButton
-                  onPress={() => {MakeAnimation(messagesNavbarAnimation,0,300);dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})}}
+                  onPress={() => { MakeAnimation(messagesNavbarAnimation, 0, 300); dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD }) }}
                 >
                   <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
                 </RippleButton>
@@ -423,12 +427,12 @@ const MessagesScreen = ({ navigation, route }) => {
               >
                 {!isDeletedforEveryOne && selectedMessages?.length <= 1 ? (
                   <RippleButton onPress={() => {
-                    MakeAnimation(ReplyContainerAnimation,5,500);
+                    MakeAnimation(ReplyContainerAnimation, 5, 500);
                     const selectedMessage = messages.findIndex(msg => msg.selected);
-                    dispatch({type:ACTIONS.COPY_TO_CLIPBOARD})
+                    dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD })
                     setshowingReplyMessage({
-                      message:messages[selectedMessage].message,
-                      status:selectedMessage
+                      message: messages[selectedMessage].message,
+                      status: selectedMessage
                     })
                   }}>
                     <Ionicons
@@ -472,7 +476,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 <RippleButton
                   onPress={() => {
                     setModalVisible(true);
-                    CloseContainer()
+                    CloseContainer();
                   }}
                 >
                   <MaterialCommunityIcons
@@ -481,14 +485,15 @@ const MessagesScreen = ({ navigation, route }) => {
                     color={TITLE_COLOR}
                   />
                 </RippleButton>
-                {!isDeletedforEveryOne && <RippleButton onPress={() => { handleCopyMessages(); CloseContainer() }}>
+
+                {!isDeletedforEveryOne && <RippleButton onPress={() => { handleCopyMessages(); CloseContainer(); dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD }) }}>
                   <MaterialIcons
                     name="content-copy"
                     size={ICONS_SIZE}
                     color={TITLE_COLOR}
                   />
                 </RippleButton>}
-                {!isDeletedforEveryOne && <RippleButton onPress={() => { ForwardMessages(); CloseContainer() }}>
+                {!isDeletedforEveryOne && <RippleButton onPress={() => { ForwardMessages(); CloseContainer(); dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD }) }}>
                   <Ionicons
                     name="md-arrow-redo-sharp"
                     size={ICONS_SIZE}
@@ -510,19 +515,19 @@ const MessagesScreen = ({ navigation, route }) => {
     });
   });
 
-  const {height} = useWindowDimensions()
+  const { height } = useWindowDimensions()
 
   const [contentVerticalOffset, setContentVerticalOffset] = useState(0);
   const [contentHeight, setContentHeight] = useState(0);
-  const [ShowScrollToBottomButton,setShowScrollToBottomButton] = useState(false)
+  const [ShowScrollToBottomButton, setShowScrollToBottomButton] = useState(false)
 
 
   const ScrollToBottomButton = () => {
     return (
       <TouchableOpacity onPress={() => {
-        MessageContainerRef.current.scrollToEnd({animated:true})
+        MessageContainerRef.current.scrollToEnd({ animated: true })
       }}>
-        <View style={{zIndex:999999999999999,bottom:80,right:20,position:"absolute",width:35,height:35,backgroundColor:ANSWER_BACKGROUND_COLOR,borderRadius:100,justifyContent:"center",alignItems:"center"}}>
+        <View style={{ zIndex: 999999999999999, bottom: 80, right: 20, position: "absolute", width: 35, height: 35, backgroundColor: ANSWER_BACKGROUND_COLOR, borderRadius: 100, justifyContent: "center", alignItems: "center" }}>
           <FontAwesome name="angle-double-down" size={24} color={EMOJI_BACKGROUND_COLOR} />
         </View>
       </TouchableOpacity>
@@ -568,31 +573,12 @@ const MessagesScreen = ({ navigation, route }) => {
   const EmojiContainerAnimation = useRef(new Animated.Value(.2)).current;
 
   const AnimateContainer = () => {
-    MakeAnimation(EmojiContainerAnimation,1,1000)
+    MakeAnimation(EmojiContainerAnimation, 1, 1000)
   }
 
   const CloseContainer = () => {
-    MakeAnimation(EmojiContainerAnimation,0,500)
+    MakeAnimation(EmojiContainerAnimation, 0, 500)
   }
-
-
-  
-  
-
-  // const replyContainerStyles = {
-  //   transform: [
-  //     {
-  //       translateY: replyAnimation.interpolate({
-  //         inputRange: [0, 1],
-  //         outputRange: [width, 0],
-  //       }),
-  //     },
-  //   ],
-  //   opacity: replyAnimation.interpolate({
-  //     inputRange: [0, 0.8, 1],
-  //     outputRange: [0, 0, 1],
-  //   }),
-  // };
 
   const [checkSelection, setcheckSelection] = useState(false);
 
@@ -611,15 +597,86 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const MessageContainerRef = useRef(null);
 
-  function scrollToBottom(e){
-    MessageContainerRef?.current?.scrollToEnd({animated:true})
+  function scrollToBottom(e) {
+    MessageContainerRef?.current?.scrollToEnd({ animated: true })
 
     setContentHeight(e.nativeEvent.layout.height)
   }
 
+  const [mutedModalData, setmutedModalData] = useState([
+    { text: "8 hours", checked: false, key: 1 },
+    { text: "1 week", checked: false, key: 2 },
+    { text: "Always", checked: true, key: 3 },
+  ]);
+
+  function handleChangeCheckbox(ind){
+    const newMutedData = mutedModalData.map((item,index) => {
+      if(index == ind){
+        return {
+          ...item,
+          checked:true
+        }
+      }else {
+        return {
+          ...item,
+          checked:false
+        }
+      }
+      return item;
+    })
+
+    setmutedModalData(newMutedData)
+  }
+
   return (
     <BottomSheetModalProvider>
+      <Dialog
+        overlayStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }}
+        isVisible={mutedDialogOpen}
+        onBackdropPress={() => setmutedDialogOpen(p => !p)}
+      >
+        <Dialog.Title titleStyle={{ color: TITLE_COLOR }} title="Mute notifications" />
+        <Text style={{ marginBottom: 10, color: EMOJI_BACKGROUND_COLOR, fontSize: 15 }}>Other participants will not see that you muted this chat, You will still be notified if you are mentioned</Text>
+        {mutedModalData.map((l,index) => (
+          <CheckBox
+            key={l.key}
+            containerStyle={{ backgroundColor: TAB_BACKGROUND_COLOR, borderWidth: 0 }}
+            checkedIcon={
+              <Icon
+                name="radio-button-checked"
+                type="material"
+                color="green"
+                size={25}
+                iconStyle={{ marginRight: 10 }}
+              />
+            }
+            uncheckedIcon={
+              <Icon
+                name="radio-button-unchecked"
+                type="material"
+                color="grey"
+                size={25}
+                iconStyle={{ marginRight: 10 }}
+              />
+            }
+            checked={l.checked}
+            textStyle={{ color: TITLE_COLOR }}
+            title={l.text}
+            onPress={(p) => handleChangeCheckbox(index)}
+          />
+        ))}
 
+        <Dialog.Actions>
+          <Dialog.Button
+            titleStyle={{ color: "lightgreen" }}
+            title="Ok"
+            onPress={() => {
+              setmutedDialogOpen(p => !p)
+            }}
+          />
+          <Dialog.Button titleStyle={{ color: "lightgreen" }} title="Cancel" onPress={() => setmutedDialogOpen(p => !p)} />
+        </Dialog.Actions>
+      </Dialog>
       <DeleteModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -675,7 +732,7 @@ const MessagesScreen = ({ navigation, route }) => {
           </View>
         </BottomSheetModal>
 
-        <View  style={{
+        <View style={{
           flex: 10,
           paddingTop: 20,
         }}>
@@ -693,25 +750,25 @@ const MessagesScreen = ({ navigation, route }) => {
               const isEven = index % 2 == 0;
 
               return (
-               
-                  <SingleMessage
-                    key={item.key}
-                    item={item}
-                    isEven={isEven}
-                    index={index}
-                    dispatch={dispatch}
-                    keyOfMessage={item.key}
-                    setemojiModalPositon={setemojiModalPositon}
-                    AnimateContainer={AnimateContainer}
-                    CloseContainer={CloseContainer}
-                    setcheckSelection={setcheckSelection}
-                    handlePresentModalPress={handlePresentModalPress}
-                    ReplyContainerAnimation={ReplyContainerAnimation}
-                    ref={{InputRef,MessageContainerRef}}
-                    setshowingReplyMessage={setshowingReplyMessage}
-                    replieduser= {user}
-                    messages={messages}
-                  />
+
+                <SingleMessage
+                  key={item.key}
+                  item={item}
+                  isEven={isEven}
+                  index={index}
+                  dispatch={dispatch}
+                  keyOfMessage={item.key}
+                  setemojiModalPositon={setemojiModalPositon}
+                  AnimateContainer={AnimateContainer}
+                  CloseContainer={CloseContainer}
+                  setcheckSelection={setcheckSelection}
+                  handlePresentModalPress={handlePresentModalPress}
+                  ReplyContainerAnimation={ReplyContainerAnimation}
+                  ref={{ InputRef, MessageContainerRef }}
+                  setshowingReplyMessage={setshowingReplyMessage}
+                  replieduser={user}
+                  messages={messages}
+                />
               )
             }}
           />
@@ -734,11 +791,11 @@ const MessagesScreen = ({ navigation, route }) => {
             setshowingReplyMessage={setshowingReplyMessage}
             ReplyContainerAnimation={ReplyContainerAnimation}
             item={item}
-            ref={{inputRef:InputRef,MessageContainerRef:MessageContainerRef}}
+            ref={{ inputRef: InputRef, MessageContainerRef: MessageContainerRef }}
           />
         </View>
 
-        {ShowScrollToBottomButton && <ScrollToBottomButton/>}
+        {ShowScrollToBottomButton && <ScrollToBottomButton />}
       </View>
     </BottomSheetModalProvider >
   );

@@ -75,7 +75,7 @@ const Menu = ({ animation, menuData }) => {
             return (
               <TouchableNativeFeedback
                 onPress={() => {
-                  item.onPress(), MakeAnimation(animation,0,1100)
+                  MakeAnimation(animation,0,1100); item.onPress() 
                 }}
                 background={TouchableNativeFeedback.Ripple(
                   TAB_PRESS_ACTIVE_WHITE_COLOR,
