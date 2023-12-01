@@ -131,6 +131,8 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
+  const [showloadingDialog, setshowloadingDialog] = useState(false);
+
   if (messagesSelected) {
     MakeAnimation(messagesNavbarAnimation, 1, 300);
   } else {
@@ -196,7 +198,7 @@ const MessagesScreen = ({ navigation, route }) => {
         setmutedDialogOpen(p => !p)
       }, key: 4
     },
-    { text: "Dissappearing messages", onPress: () => { navigation.navigate("DissapearingMessages") }, key: 5 },
+    { text: "Dissappearing messages", onPress: () => { navigation.navigate("DissapearingMessages", { key: item.key }) }, key: 5 },
     { text: "Wallpaper", onPress: () => { }, key: 6 },
     {
       text: "More                                    >",
@@ -205,9 +207,22 @@ const MessagesScreen = ({ navigation, route }) => {
     },
   ];
 
+  function handleBlockChats() {
+    const newChats = chats.map(chat => {
+      if (chat.key == item.key) {
+        return {
+          ...chat,
+          blocked: !chat.blocked
+        }
+      }
+      return chat;
+    });
+    setchats(newChats)
+  }
+
   const MoreClickedMenudata = [
     { text: "Report", onPress: () => { }, key: 1 },
-    { text: "Block", onPress: () => { }, key: 2 },
+    { text: item.blocked ? "UnBlock" : "Block", onPress: () => handleBlockChats(), key: 2 },
     { text: "Clear Chat", onPress: () => { }, key: 3 },
     { text: "Export chat", onPress: () => { }, key: 4 },
     { text: "Add shortcut", onPress: () => { }, key: 5 },
@@ -609,35 +624,76 @@ const MessagesScreen = ({ navigation, route }) => {
     { text: "Always", checked: true, key: 3 },
   ]);
 
-  function handleChangeCheckbox(ind){
-    const newMutedData = mutedModalData.map((item,index) => {
-      if(index == ind){
+  // const newData = chats.map(chat => {
+  //   if (chat.key == item.key) {
+  //     return {
+  //       ...chat,
+  //       mutedNotifications: chat.text
+  //     }
+  //   }
+  //   return chat
+  // })
+
+  // setchats(newData)
+
+  function handleUpdateChatsMutedNotifications(checkedText) {
+    const newChatData = chats.map(chat => {
+      if (chat.key == item.key) {
         return {
-          ...item,
-          checked:true
-        }
-      }else {
-        return {
-          ...item,
-          checked:false
+          ...chat,
+          mutedNotifications: checkedText
         }
       }
-      return item;
+      return chat;
+    });
+
+    setchats(newChatData)
+  }
+
+  function handleChangeCheckbox(ind, mutedItem) {
+
+    const newMutedData = mutedModalData.map((item, index) => {
+      if (index == ind) {
+        return {
+          ...item,
+          checked: true
+        }
+      } else {
+        return {
+          ...item,
+          checked: false
+        }
+      }
     })
 
-    setmutedModalData(newMutedData)
+    setmutedModalData(newMutedData);
+    // 
   }
 
   return (
     <BottomSheetModalProvider>
+
+      <Dialog overlayStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }} isVisible={showloadingDialog} onBackdropPress={() => setshowloadingDialog(p => !p)}>
+        <View style={{ flexDirection: "row",justifyContent:"space-around",alignItems:"center"}}>
+          <View>
+            <Dialog.Loading loadingProps={{size:50,color:ACTIVE_TAB_GREEN_COLOR}}
+            />
+          </View>
+          <View>
+
+            <Text style={{color:TITLE_COLOR}}>Please wait a moment</Text>
+          </View>
+        </View>
+      </Dialog>
+  
       <Dialog
-        overlayStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }}
+        overlayStyle={{ backgroundColor: EMOJI_BACKGROUND_COLOR }}
         isVisible={mutedDialogOpen}
         onBackdropPress={() => setmutedDialogOpen(p => !p)}
       >
         <Dialog.Title titleStyle={{ color: TITLE_COLOR }} title="Mute notifications" />
         <Text style={{ marginBottom: 10, color: EMOJI_BACKGROUND_COLOR, fontSize: 15 }}>Other participants will not see that you muted this chat, You will still be notified if you are mentioned</Text>
-        {mutedModalData.map((l,index) => (
+        {mutedModalData.map((l, index) => (
           <CheckBox
             key={l.key}
             containerStyle={{ backgroundColor: TAB_BACKGROUND_COLOR, borderWidth: 0 }}
@@ -662,7 +718,7 @@ const MessagesScreen = ({ navigation, route }) => {
             checked={l.checked}
             textStyle={{ color: TITLE_COLOR }}
             title={l.text}
-            onPress={(p) => handleChangeCheckbox(index)}
+            onPress={(p) => handleChangeCheckbox(index, l)}
           />
         ))}
 
@@ -671,7 +727,9 @@ const MessagesScreen = ({ navigation, route }) => {
             titleStyle={{ color: "lightgreen" }}
             title="Ok"
             onPress={() => {
-              setmutedDialogOpen(p => !p)
+              setmutedDialogOpen(p => !p);
+              const checkedCheckBox = mutedModalData.find(box => box.checked);
+              handleUpdateChatsMutedNotifications(checkedCheckBox.text)
             }}
           />
           <Dialog.Button titleStyle={{ color: "lightgreen" }} title="Cancel" onPress={() => setmutedDialogOpen(p => !p)} />

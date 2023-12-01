@@ -138,7 +138,9 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           muted: false,
           readed: false,
           blocked: false,
-          messages: []
+          messages: [],
+          mutedNotifications:"",
+          disappearingMessages:""
         };
         const callInformation = {
           name,

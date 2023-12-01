@@ -72,73 +72,81 @@ const Chat = (item) => {
   function initDescription() {
     if (item.type == "call") {
       return (
-        <View style={{ flexDirection: "row" ,marginTop:-2 ,marginLeft:-5}}>
+        <View style={{ flexDirection: "row", marginTop: -2, marginLeft: -5 }}>
           <View>{generateRandomArrow(item.arrowColor)}</View>
           <View>
-            
-            <View style={{flexDirection:"row"}}>
+
+            <View style={{ flexDirection: "row" }}>
               <Text
-              style={{
-                color: CHAT_DATA_STATUS_COLOR,
-                marginLeft: 12,
-                fontSize:14,
-                fontWeight: "normal",
-              }}
-            >
-              <FormattedDateParts
-                value={new Date(item.time)}
-                year="numeric"
-                month="long"
-                day="2-digit"
+                style={{
+                  color: CHAT_DATA_STATUS_COLOR,
+                  marginLeft: 12,
+                  fontSize: 14,
+                  fontWeight: "normal",
+                }}
               >
-                {(parts) => (
-                  <>
-                    <Text>{parts[2].value}</Text>
-                    {parts[1].value}
-                    <Text>{parts[0].value}</Text>
-                  </>
-                )}
-              </FormattedDateParts>
-              {" , "}<FormattedTime value={new Date(item.time)} />
-            </Text>
+                <FormattedDateParts
+                  value={new Date(item.time)}
+                  year="numeric"
+                  month="long"
+                  day="2-digit"
+                >
+                  {(parts) => (
+                    <>
+                      <Text>{parts[2].value}</Text>
+                      {parts[1].value}
+                      <Text>{parts[0].value}</Text>
+                    </>
+                  )}
+                </FormattedDateParts>
+                {" , "}<FormattedTime value={new Date(item.time)} />
+              </Text>
             </View>
           </View>
         </View>
       );
     } else {
-      if (item.messages?.length == 0) {
-        return (
-          <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-            {!item.blocked
-              ? item.about?.length > generateAboutLimit().length
-                ? item.about.slice(0, generateAboutLimit().length - 1) + "..."
-                : item.about
-              : "You blocked this contact"}
-          </Text>
-        );
-      } else {
-        return (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-            {lastMessage.indexOfMessage % 2 == 0 && (
+      if (!item.blocked) {
+
+        if (item.messages?.length == 0) {
+          return (
+            <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+              {item.about?.length > generateAboutLimit().length
+                  ? item.about.slice(0, generateAboutLimit().length - 1) + "..."
+                  : item.about}
+            </Text>
+          );
+        } else {
+          return (
+
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+              {lastMessage.indexOfMessage % 2 == 0 && (
+                <View>
+                  <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+                    {generateSendTick(lastMessage.status, CHAT_DATA_STATUS_COLOR)}
+                  </Text>
+                </View>
+              )}
               <View>
                 <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-                  {generateSendTick(lastMessage.status, CHAT_DATA_STATUS_COLOR)}
-                </Text>
-              </View>
-            )}
-            <View>
-              <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
-                {lastMessage.message.length > generateAboutLimit().length
-                  ? lastMessage.message.slice(
+                  {lastMessage.message.length > generateAboutLimit().length
+                    ? lastMessage.message.slice(
                       0,
                       generateAboutLimit().length - 1
                     ) + "..."
-                  : lastMessage.message}
-              </Text>
+                    : lastMessage.message}
+                </Text>
+              </View>
             </View>
-          </View>
-        );
+          );
+        }
+
+      }else {
+        return  <Text style={[styles.info, { color: CHAT_DATA_STATUS_COLOR }]}>
+          You blocked this contact
+        </Text>
       }
+
     }
   }
 
