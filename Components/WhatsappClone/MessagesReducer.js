@@ -17,7 +17,8 @@ export const ACTIONS = {
   UPDATE_MESSAGE_STATUS_TO_DOUBLE:"handleUpdateMessageStatusToDouble",
   UPDATE_MESSAGE_STATUS_TO_TRIPLE:"handleUpdateMessageStatusToTriple",
   UPDATE_REACTIONS:"handleReactionsUpdate",
-  UPDATE_BACKGROUND_COLOR :"handleUpdateBackgroundColor"
+  UPDATE_BACKGROUND_COLOR :"handleUpdateBackgroundColor",
+  BLOCK_CHAT:"handleBlockChat"
 };
 
 
@@ -63,7 +64,8 @@ export const MessagesReducer = (state, { type, payload }) => {
             deleteForEveryone: true,
             selected: false,
             starred:false,
-            reactions:[]
+            reactions:[],
+            repliedMessage:""
           };
         }
         return msg;
@@ -130,6 +132,17 @@ export const MessagesReducer = (state, { type, payload }) => {
         return item;
       })
     }
+    // case ACTIONS.BLOCK_CHAT :{
+    //   return state.map(ch => {
+    //     if(ch.key == payload.key){
+    //      return {
+    //       ...ch,
+    //       blocked:!ch.BLOCK_CHAT
+    //      }
+    //     }
+    //     return ch;
+    //   })
+    // }
     default: {
       return state;
     }

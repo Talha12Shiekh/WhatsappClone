@@ -154,6 +154,7 @@ const Chat = (item) => {
     if (item.type == "call") {
       return (
         <Text
+        numberOfLines={1}
           style={[
             styles.title,
             {

@@ -6,32 +6,32 @@ import {
   Image,
   TouchableNativeFeedback,
   TouchableOpacity,
-  TextInput,
   useWindowDimensions,
-  TouchableWithoutFeedback,
   FlatList,
-  ScrollView
+  ScrollView,
+  Share,
+  Alert
 } from "react-native";
 import { Dialog, CheckBox, Icon } from '@rneui/themed';
-import * as Clipboard from "expo-clipboard";
+
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-import React, { useCallback, useMemo } from "react";
+import React, {
+  useCallback, useMemo, useEffect,
+  useReducer,
+  useRef,
+  useState
+} from "react";
 import {
   RippleButton,
   showToast,
   MakeAnimation
 } from "./Helpers";
-import {
-  AntDesign,
-  SimpleLineIcons,
-  Ionicons,
-} from "react-native-vector-icons";
+
 import { useFocusEffect } from "@react-navigation/native";
 import EmojiPicker from "rn-emoji-keyboard";
-import { SwipeListView } from 'react-native-swipe-list-view';
 import {
   MaterialIcons,
   FontAwesome5,
@@ -47,43 +47,29 @@ import {
   TITLE_COLOR,
   TAB_PRESS_ACTIVE_WHITE_COLOR,
   ACTIVE_TAB_GREEN_COLOR,
-  MENU_BACKGROUND_COLOR,
   ANSWER_BACKGROUND_COLOR,
   EMOJI_BACKGROUND_COLOR,
   CHAT_DATA_STATUS_COLOR,
   MESSAGE_BACKGROUND_COLOR,
-  MODAL_BACKGROUND_COLOR,
-  MODAL_TEXT_COLOR,
   CHAT_BACKROUND_COLOR,
 } from "./Variables";
-import {
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
 import Menu from "./Menu";
 import { MessagesReducer, ACTIONS } from "./MessagesReducer";
-import { Modal } from "react-native";
-import { Share } from "react-native";
 import SingleMessage from "./SingleMessage";
 import { useChatsContext } from "../../App";
 import DeleteModal from "./DeleteModal";
 import MessageModal from "./MessageModal";
 import MessageInput1 from "./MessageInput1";
 import ReactEmojiModal from "./ReactEmojiModal";
-import { Alert } from "react-native";
+import SingleMessagesScreenNavigationBar from "./SingleMessagesScreenNavigationBar";
+import SingleReaction from "./SingleReaction";
+import {BlockModal, LoadingModal, MuteNotificationsDialog} from "./MessagesDialogs";
+
 
 const MessagesScreen = ({ navigation, route }) => {
   const { item } = route.params;
 
   const user = item.name
-
-  const ICONS_SIZE = 22;
-
-  const [currentItem, setCurrentItem] = useState({
-    ...item,
-  });
 
   const { chats, setchats } = useChatsContext();
 
@@ -125,11 +111,6 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const selectedMessages = messages?.filter((msg) => msg.selected);
 
-  const isDeletedforEveryOne = selectedMessages?.some((msg) => msg.deleteForEveryone);
-
-  const InfoMessages = messages?.find((msg) => msg.selected);
-
-  const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
 
   const [showloadingDialog, setshowloadingDialog] = useState(false);
 
@@ -139,37 +120,12 @@ const MessagesScreen = ({ navigation, route }) => {
     MakeAnimation(messagesNavbarAnimation, 0, 300);
   }
 
-  const handleOpenCallScreen = () => {
-    setCurrentItem({
-      ...item,
-      video: true,
-    });
-    navigation.navigate("CallScreen", { item: currentItem });
-  };
-
-  const handleOpenVideoScreen = () => {
-    setCurrentItem({
-      ...item,
-      video: false,
-    });
-    navigation.navigate("CallScreen", { item: currentItem });
-  };
-
-  const handleCopyMessages = async () => {
-    let selectedMessages = messages.filter((msgs) => msgs.selected);
-    let msgs = selectedMessages.map((msg) => msg.message).join(" ");
-    await Clipboard.setStringAsync(msgs);
-    dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
-    showToast(`${selectedMessages.length} messages copied`);
-  };
 
   const [value, setvalue] = useState("");
 
   const [paddingRight, setpaddingRight] = useState(100);
 
   const ClipandCameraAnimation = useRef(new Animated.Value(0)).current;
-
-  const [draggedIndex, setdraggedIndex] = useState(null)
 
   const sendButtonAnimation = useRef(new Animated.Value(0)).current;
 
@@ -181,76 +137,19 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const messagesMenuAnimation = useRef(new Animated.Value(0)).current;
 
-  let ChatNameLength = "loremipsumdolor";
+
+
 
 
   const [mutedDialogOpen, setmutedDialogOpen] = useState(false);
-  const [mutedChecked, setmutedChecked] = useState(0);
 
-  const MessagesMenuData = [
-    { text: "View contact", onPress: () => { }, key: 1 },
-    { text: "Media, links, and docs", onPress: () => { }, key: 2 },
-    { text: "Search", onPress: () => { }, key: 3 },
-    {
-      text: "Mute notifications", onPress: () => {
-        setmutedDialogOpen(p => !p)
-      }, key: 4
-    },
-    { text: "Dissappearing messages", onPress: () => { navigation.navigate("DissapearingMessages", { key: item.key }) }, key: 5 },
-    { text: "Wallpaper", onPress: () => { }, key: 6 },
-    {
-      text: "More                                    >",
-      onPress: () => { MakeAnimation(messagesMenuAnimation, 0, 1000); MakeAnimation(MoreMenuAnimation, 1, 1000) },
-      key: 7,
-    },
-  ];
-
-  function handleBlockChats() {
-    const newChats = chats.map(chat => {
-      if (chat.key == item.key) {
-        return {
-          ...chat,
-          blocked: !chat.blocked
-        }
-      }
-      return chat;
-    });
-    setchats(newChats)
-  }
-
-  const MoreClickedMenudata = [
-    { text: "Report", onPress: () => { }, key: 1 },
-    { text: item.blocked ? "UnBlock" : "Block", onPress: () => handleBlockChats(), key: 2 },
-    { text: "Clear Chat", onPress: () => { }, key: 3 },
-    { text: "Export chat", onPress: () => { }, key: 4 },
-    { text: "Add shortcut", onPress: () => { }, key: 5 },
-  ]
-
-  const ReportMenuData = [
-    { text: "Report", onPress: () => { }, key: 1 },
-  ];
-
-  const ForwardMessages = async () => {
-    let selectedMessages = messages.filter((msgs) => msgs.selected);
-    let msgs = selectedMessages.map((msg) => msg.message).join(" ");
-    try {
-      const result = await Share.share({
-        message: msgs,
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   const selectedMessage = messages.filter(msg => msg.selected);
 
   const [selectedStarMessages, setselectedStarMessages] = useState(null);
 
-  const reportMenuAnimation = useRef(new Animated.Value(0)).current;
 
-  const MoreMenuAnimation = useRef(new Animated.Value(0)).current;
 
 
 
@@ -261,271 +160,32 @@ const MessagesScreen = ({ navigation, route }) => {
   const [showingReplyMessage, setshowingReplyMessage] = useState({
     message: "",
     status: ""
-  })
+  });
+
+  const [openBlockModal,setopenBlockModal] = useState(false);
+
 
   useFocusEffect(() => {
     navigation.setOptions({
       header: () => {
-        return (
-          <>
-            <View
-              style={{
-                height: 60,
-                backgroundColor: TAB_BACKGROUND_COLOR,
-                flexDirection: "row",
-                zIndex: -1,
-              }}
-            >
-              <TouchableNativeFeedback
-                onPress={() => {
-
-                  dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
-                  if (value !== "") {
-                    Alert.alert(
-                      "Alert",
-                      "Do you want to keep writing the message",
-                      [
-                        {
-                          text: "Discard",
-                          onPress: () => {
-                            navigation.goBack();
-                            setvalue("")
-                          },
-                          style: "cancel",
-                        },
-                        {
-                          text: "Yes",
-                          onPress: () => {
-
-                          },
-                        },
-                      ],
-                      { cancelable: true }
-                    );
-                  } else {
-                    navigation.goBack();
-                  }
-                }}
-                background={TouchableNativeFeedback.Ripple(
-                  TAB_PRESS_ACTIVE_WHITE_COLOR,
-                  false,
-                  300
-                )}
-              >
-                <View
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "row",
-                    gap: 5,
-                    marginLeft: 10,
-                    height: 40,
-                    borderRadius: 100,
-                    marginTop: 10,
-                  }}
-                >
-                  <View>
-                    <AntDesign name="arrowleft" size={25} color={TITLE_COLOR} />
-                  </View>
-                  <View>
-                    <Image
-                      source={
-                        item.photo
-                          ? { uri: item.photo }
-                          : require("./Images/profile.png")
-                      }
-                      style={styles.messagesImage}
-                    />
-                  </View>
-                </View>
-              </TouchableNativeFeedback>
-              <TouchableNativeFeedback
-                background={TouchableNativeFeedback.Ripple(
-                  TAB_PRESS_ACTIVE_WHITE_COLOR,
-                  false,
-                  300
-                )}
-              >
-                <View
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "flex-start",
-                    marginLeft: 15,
-                    width: "40%",
-                    // paddingHorizontal:10
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: TITLE_COLOR,
-                      fontSize: 18,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {item.name.length > ChatNameLength.length
-                      ? item.name.slice(0, ChatNameLength.length)
-                      : item.name}
-                  </Text>
-                  {messages.length !== 0 && <Text style={{ color: TITLE_COLOR, fontSize: 11 }}>
-                    {online ? "online" : `last seen today at ${lastMessageTime.getHours() > 12 ? lastMessageTime.getHours() - 12 : lastMessageTime.getHours()}:${lastMessageTime.getMinutes() < 10 ? "0" + lastMessageTime.getMinutes() : lastMessageTime.getMinutes()} ${lastMessageTime.getHours() > 12 ? "pm" : "am"}`}
-                  </Text>}
-                </View>
-              </TouchableNativeFeedback>
-              <Menu
-                animation={messagesMenuAnimation}
-                menuData={MessagesMenuData}
-              />
-              <Menu
-                animation={MoreMenuAnimation}
-                menuData={MoreClickedMenudata}
-              />
-              <View
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  flexDirection: "row",
-                  gap: -5,
-                  top: 5,
-                }}
-              >
-                <RippleButton onPress={handleOpenCallScreen}>
-                  <FontAwesome5 name="video" size={20} color={TITLE_COLOR} />
-                </RippleButton>
-                <RippleButton onPress={handleOpenVideoScreen}>
-                  <MaterialIcons name="call" size={22} color={TITLE_COLOR} />
-                </RippleButton>
-                <RippleButton
-                  onPress={() =>
-                    MakeAnimation(messagesMenuAnimation, 1, 1000)
-                  }
-                >
-                  <SimpleLineIcons
-                    name="options-vertical"
-                    color={TITLE_COLOR}
-                    size={18}
-                  />
-                </RippleButton>
-              </View>
-            </View>
-            <Menu
-              animation={reportMenuAnimation}
-              menuData={ReportMenuData}
-            />
-            <Animated.View
-              style={[
-                styles.selectedChatNavbar,
-                {
-                  backgroundColor: TAB_BACKGROUND_COLOR,
-                  transform: [{ scaleX: messagesNavbarAnimation }],
-                  zIndex: 222222,
-                  position: "absolute",
-                },
-              ]}
-            >
-              <View style={styles.chatsCountContainer}>
-                <RippleButton
-                  onPress={() => { MakeAnimation(messagesNavbarAnimation, 0, 300); dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD }) }}
-                >
-                  <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
-                </RippleButton>
-                <Text
-                  style={{ fontSize: 20, marginLeft: 15, color: TITLE_COLOR }}
-                >
-                  {selectedMessages?.length}
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.iconContainer,
-                  { justifyContent: "center", alignItems: "center", gap: -5 },
-                ]}
-              >
-                {!isDeletedforEveryOne && selectedMessages?.length <= 1 ? (
-                  <RippleButton onPress={() => {
-                    MakeAnimation(ReplyContainerAnimation, 5, 500);
-                    const selectedMessage = messages.findIndex(msg => msg.selected);
-                    dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD })
-                    setshowingReplyMessage({
-                      message: messages[selectedMessage].message,
-                      status: selectedMessage
-                    })
-                  }}>
-                    <Ionicons
-                      name="md-arrow-undo-sharp"
-                      size={ICONS_SIZE}
-                      color={TITLE_COLOR}
-                    />
-                  </RippleButton>
-                ) : null}
-                {!isDeletedforEveryOne && <RippleButton
-                  onPress={() => {
-                    dispatch({
-                      type: ACTIONS.STARRE_MESSAGES,
-                    });
-                    CloseContainer()
-                  }}
-                >
-                  {(selectedStarMessages !== null && !selectedStarMessages?.starred) ? <FontAwesome
-                    name="star"
-                    size={ICONS_SIZE}
-                    color={TITLE_COLOR}
-                  /> : <MaterialCommunityIcons name="star-off" size={ICONS_SIZE} color={TITLE_COLOR} />}
-                </RippleButton>}
-                {(selectedMessages?.length <= 1 && selectedMessageIndices % 2 == 0) && !isDeletedforEveryOne ? (
-                  <RippleButton
-                    onPress={() => {
-                      navigation.navigate("MessagesInfo", {
-                        InfoMessages,
-                      });
-                      dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD });
-                      CloseContainer()
-                    }}
-                  >
-                    <Feather
-                      name="info"
-                      size={ICONS_SIZE}
-                      color={TITLE_COLOR}
-                    />
-                  </RippleButton>
-                ) : null}
-                <RippleButton
-                  onPress={() => {
-                    setModalVisible(true);
-                    CloseContainer();
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="delete"
-                    size={ICONS_SIZE}
-                    color={TITLE_COLOR}
-                  />
-                </RippleButton>
-
-                {!isDeletedforEveryOne && <RippleButton onPress={() => { handleCopyMessages(); CloseContainer(); dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD }) }}>
-                  <MaterialIcons
-                    name="content-copy"
-                    size={ICONS_SIZE}
-                    color={TITLE_COLOR}
-                  />
-                </RippleButton>}
-                {!isDeletedforEveryOne && <RippleButton onPress={() => { ForwardMessages(); CloseContainer(); dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD }) }}>
-                  <Ionicons
-                    name="md-arrow-redo-sharp"
-                    size={ICONS_SIZE}
-                    color={TITLE_COLOR}
-                  />
-                </RippleButton>}
-                {selectedMessageIndices % 2 !== 0 && !isDeletedforEveryOne && selectedMessages?.length <= 1 && <RippleButton onPress={() => { MakeAnimation(reportMenuAnimation, 1, 1000); CloseContainer() }}>
-                  <SimpleLineIcons
-                    name="options-vertical"
-                    color={TITLE_COLOR}
-                    size={18}
-                  />
-                </RippleButton>}
-              </View>
-            </Animated.View>
-          </>
-        );
+        return <SingleMessagesScreenNavigationBar
+          dispatch={dispatch}
+          item={item}
+          messages={messages}
+          online={online}
+          lastMessageTime={lastMessageTime}
+          setmutedDialogOpen={setmutedDialogOpen}
+          messagesNavbarAnimation={messagesNavbarAnimation}
+          selectedMessages={selectedMessages}
+          ReplyContainerAnimation={ReplyContainerAnimation}
+          setshowingReplyMessage={setshowingReplyMessage}
+          CloseContainer={CloseContainer}
+          selectedStarMessages={selectedStarMessages}
+          selectedMessageIndices={selectedMessageIndices}
+          setModalVisible={setModalVisible}
+          setopenBlockModal={setopenBlockModal}
+          value={value}
+        />
       },
     });
   });
@@ -618,123 +278,28 @@ const MessagesScreen = ({ navigation, route }) => {
     setContentHeight(e.nativeEvent.layout.height)
   }
 
-  const [mutedModalData, setmutedModalData] = useState([
-    { text: "8 hours", checked: false, key: 1 },
-    { text: "1 week", checked: false, key: 2 },
-    { text: "Always", checked: true, key: 3 },
-  ]);
-
-  // const newData = chats.map(chat => {
-  //   if (chat.key == item.key) {
-  //     return {
-  //       ...chat,
-  //       mutedNotifications: chat.text
-  //     }
-  //   }
-  //   return chat
-  // })
-
-  // setchats(newData)
-
-  function handleUpdateChatsMutedNotifications(checkedText) {
-    const newChatData = chats.map(chat => {
-      if (chat.key == item.key) {
-        return {
-          ...chat,
-          mutedNotifications: checkedText
-        }
-      }
-      return chat;
-    });
-
-    setchats(newChatData)
-  }
-
-  function handleChangeCheckbox(ind, mutedItem) {
-
-    const newMutedData = mutedModalData.map((item, index) => {
-      if (index == ind) {
-        return {
-          ...item,
-          checked: true
-        }
-      } else {
-        return {
-          ...item,
-          checked: false
-        }
-      }
-    })
-
-    setmutedModalData(newMutedData);
-    // 
-  }
 
   return (
     <BottomSheetModalProvider>
 
-      <Dialog overlayStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }} isVisible={showloadingDialog} onBackdropPress={() => setshowloadingDialog(p => !p)}>
-        <View style={{ flexDirection: "row",justifyContent:"space-around",alignItems:"center"}}>
-          <View>
-            <Dialog.Loading loadingProps={{size:50,color:ACTIVE_TAB_GREEN_COLOR}}
-            />
-          </View>
-          <View>
+     <LoadingModal
+     showloadingDialog={showloadingDialog}
+     setshowloadingDialog={setshowloadingDialog}
+     />
 
-            <Text style={{color:TITLE_COLOR}}>Please wait a moment</Text>
-          </View>
-        </View>
-      </Dialog>
-  
-      <Dialog
-        overlayStyle={{ backgroundColor: EMOJI_BACKGROUND_COLOR }}
-        isVisible={mutedDialogOpen}
-        onBackdropPress={() => setmutedDialogOpen(p => !p)}
-      >
-        <Dialog.Title titleStyle={{ color: TITLE_COLOR }} title="Mute notifications" />
-        <Text style={{ marginBottom: 10, color: EMOJI_BACKGROUND_COLOR, fontSize: 15 }}>Other participants will not see that you muted this chat, You will still be notified if you are mentioned</Text>
-        {mutedModalData.map((l, index) => (
-          <CheckBox
-            key={l.key}
-            containerStyle={{ backgroundColor: TAB_BACKGROUND_COLOR, borderWidth: 0 }}
-            checkedIcon={
-              <Icon
-                name="radio-button-checked"
-                type="material"
-                color="green"
-                size={25}
-                iconStyle={{ marginRight: 10 }}
-              />
-            }
-            uncheckedIcon={
-              <Icon
-                name="radio-button-unchecked"
-                type="material"
-                color="grey"
-                size={25}
-                iconStyle={{ marginRight: 10 }}
-              />
-            }
-            checked={l.checked}
-            textStyle={{ color: TITLE_COLOR }}
-            title={l.text}
-            onPress={(p) => handleChangeCheckbox(index, l)}
-          />
-        ))}
+     <BlockModal
+          name={item.name}
+          setopenBlockModal={setopenBlockModal}
+          openBlockModal={openBlockModal}
+          dispatch={dispatch}
+          item={item}
+          setshowloadingDialog={setshowloadingDialog}
+     />
 
-        <Dialog.Actions>
-          <Dialog.Button
-            titleStyle={{ color: "lightgreen" }}
-            title="Ok"
-            onPress={() => {
-              setmutedDialogOpen(p => !p);
-              const checkedCheckBox = mutedModalData.find(box => box.checked);
-              handleUpdateChatsMutedNotifications(checkedCheckBox.text)
-            }}
-          />
-          <Dialog.Button titleStyle={{ color: "lightgreen" }} title="Cancel" onPress={() => setmutedDialogOpen(p => !p)} />
-        </Dialog.Actions>
-      </Dialog>
+      <MuteNotificationsDialog
+        mutedDialogOpen={mutedDialogOpen}
+        setmutedDialogOpen={setmutedDialogOpen}
+      />
       <DeleteModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -743,7 +308,16 @@ const MessagesScreen = ({ navigation, route }) => {
         handleShowSelectionInAlert={handleShowSelectionInAlert}
         dispatch={dispatch}
       />
-      <ReactEmojiModal setIsOpen={setIsOpen} CloseContainer={CloseContainer} dispatch={dispatch} messages={messages} checkSelection={checkSelection} containerAnimation={EmojiContainerAnimation} emojiModalPositon={emojiModalPositon} />
+
+      <ReactEmojiModal
+        setIsOpen={setIsOpen}
+        CloseContainer={CloseContainer}
+        dispatch={dispatch}
+        messages={messages}
+        checkSelection={checkSelection}
+        containerAnimation={EmojiContainerAnimation}
+        emojiModalPositon={emojiModalPositon} />
+
       <View style={{ flex: 1, backgroundColor: CHAT_BACKROUND_COLOR }}>
         <MessageModal
           MenuVisible={MenuVisible}
@@ -773,16 +347,9 @@ const MessagesScreen = ({ navigation, route }) => {
               {
                 clickedMessageReactions.map(reaction => {
                   return (
-                    <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(TAB_PRESS_ACTIVE_WHITE_COLOR, false)}>
-                      <View style={{ flexDirection: "row", marginBottom: 10, gap: 20, alignItems: "center", paddingHorizontal: 40, paddingVertical: 8 }}>
-                        <View>
-                          <Text style={{ fontSize: 25 }}>{reaction.emoji}</Text>
-                        </View>
-                        <View>
-                          <Text style={{ color: TITLE_COLOR, fontSize: 20 }}>{reaction.count}</Text>
-                        </View>
-                      </View>
-                    </TouchableNativeFeedback>
+                    <SingleReaction
+                      reaction={reaction}
+                    />
                   )
                 })
               }
@@ -843,7 +410,6 @@ const MessagesScreen = ({ navigation, route }) => {
             dispatch={dispatch}
             setMenuVisible={setMenuVisible}
             replyAnimation={replyAnimation}
-            draggedIndex={draggedIndex}
             setpaddingRight={setpaddingRight}
             replyMessage={showingReplyMessage}
             setshowingReplyMessage={setshowingReplyMessage}
@@ -866,29 +432,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-  },
-  selectedChatNavbar: {
-    width: "100%",
-    height: 60,
-    position: "absolute",
-    zIndex: 2222,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    top: 0,
-  },
-  iconContainer: {
-    flexDirection: "row",
-    gap: 2,
-  },
-  chatsCountContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  messagesImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 100,
   },
   message: {
     padding: 7,

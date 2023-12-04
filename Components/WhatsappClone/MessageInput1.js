@@ -52,8 +52,6 @@ const MessageInput = React.forwardRef(function MessageInput({
   sendButtonAnimation,
   dispatch,
   setMenuVisible,
-  replyAnimation,
-  draggedIndex,
   setpaddingRight,
   replyMessage,
   setshowingReplyMessage,
@@ -293,7 +291,7 @@ const MessageInput = React.forwardRef(function MessageInput({
               MessageContainerRef.current.scrollToIndex({animated:true,index:messages.length - 1})
             }
 
-            sendWhatsAppMessage(messagesObject.message)
+            // sendWhatsAppMessage(messagesObject.message)
           }}
         >
           <View style={[styles.sendButton]}>
