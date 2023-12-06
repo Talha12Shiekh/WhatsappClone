@@ -1,17 +1,20 @@
 import { Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { CheckBox, Dialog, Icon } from '@rneui/base';
-import { ACTIVE_TAB_GREEN_COLOR, CHAT_BACKROUND_COLOR, EMOJI_BACKGROUND_COLOR, TAB_BACKGROUND_COLOR, TITLE_COLOR } from './Variables';
+import { ACTIVE_TAB_GREEN_COLOR, CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, CUSTOM_MODAL_BACKGROUND, EMOJI_BACKGROUND_COLOR, TAB_BACKGROUND_COLOR, TITLE_COLOR } from './Variables';
 import { ACTIONS } from './MessagesReducer';
 import { useChatsContext } from '../../App';
 import { showToast } from './Helpers';
+import CustomModal from './CustomModal';
 
-export const MuteNotificationsDialog = ({ mutedDialogOpen, setmutedDialogOpen }) => {
+export const MuteNotificationsDialog = ({ mutedDialogOpen, setmutedDialogOpen,item }) => {
     const [mutedModalData, setmutedModalData] = useState([
         { text: "8 hours", checked: false, key: 1 },
         { text: "1 week", checked: false, key: 2 },
         { text: "Always", checked: true, key: 3 },
     ]);
+
+    const {chats,setchats} = useChatsContext()
 
 
     function handleUpdateChatsMutedNotifications(checkedText) {
@@ -50,22 +53,27 @@ export const MuteNotificationsDialog = ({ mutedDialogOpen, setmutedDialogOpen })
 
 
     return (
-        <Dialog
-            overlayStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }}
-            isVisible={mutedDialogOpen}
-            onBackdropPress={() => setmutedDialogOpen(p => !p)}
-        >
-            <Dialog.Title titleStyle={{ color: TITLE_COLOR }} title="Mute notifications" />
-            <Text style={{ marginBottom: 10, color: EMOJI_BACKGROUND_COLOR, fontSize: 15 }}>Other participants will not see that you muted this chat, You will still be notified if you are mentioned</Text>
-            {mutedModalData.map((l, index) => (
+        <CustomModal
+            title="Mute notifications ?"
+            description="Other participants will not see that you muted this chat, You will still be notified if you are mentioned"
+            visible={mutedDialogOpen}
+            handleCancelPressed={() => {}}
+            handleSucess={() => {
+                const checkedCheckBox = mutedModalData.find(box => box.checked);
+                handleUpdateChatsMutedNotifications(checkedCheckBox.text)
+            }}
+            setvisible={setmutedDialogOpen}
+            AdditionalContent={() => {
+                return <View style={{marginTop:5}}>
+                {mutedModalData.map((l, index) => (
                 <CheckBox
                     key={l.key}
-                    containerStyle={{ backgroundColor: TAB_BACKGROUND_COLOR, borderWidth: 0 }}
+                    containerStyle={{ backgroundColor: CUSTOM_MODAL_BACKGROUND, borderWidth: 0 }}
                     checkedIcon={
                         <Icon
                             name="radio-button-checked"
                             type="material"
-                            color="green"
+                            color={ACTIVE_TAB_GREEN_COLOR}
                             size={25}
                             iconStyle={{ marginRight: 10 }}
                         />
@@ -86,24 +94,15 @@ export const MuteNotificationsDialog = ({ mutedDialogOpen, setmutedDialogOpen })
                 />
             ))}
 
-            <Dialog.Actions>
-                <Dialog.Button
-                    titleStyle={{ color: "lightgreen" }}
-                    title="Ok"
-                    onPress={() => {
-                        setmutedDialogOpen(p => !p);
-                        const checkedCheckBox = mutedModalData.find(box => box.checked);
-                        handleUpdateChatsMutedNotifications(checkedCheckBox.text)
-                    }}
-                />
-                <Dialog.Button titleStyle={{ color: "lightgreen" }} title="Cancel" onPress={() => setmutedDialogOpen(p => !p)} />
-            </Dialog.Actions>
-        </Dialog>
+                </View>
+            }}
+            secondBtnText="Ok"
+        />
     )
 }
 
 export const LoadingModal = ({ showloadingDialog, setshowloadingDialog, }) => {
-    return <Dialog overlayStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }} isVisible={showloadingDialog} onBackdropPress={() => setshowloadingDialog(p => !p)}>
+    return <Dialog overlayStyle={{ backgroundColor: CUSTOM_MODAL_BACKGROUND }} isVisible={showloadingDialog} onBackdropPress={() => setshowloadingDialog(p => !p)}>
         <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
             <View>
                 <Dialog.Loading loadingProps={{ size: 50, color: ACTIVE_TAB_GREEN_COLOR }}
@@ -143,50 +142,65 @@ export const BlockModal = ({ name, openBlockModal, setopenBlockModal,item ,setsh
 
         
         setchats(newChats);
-        setopenBlockModal(p => !p)
     }
 
-    return <Dialog
-        isVisible={openBlockModal}
-        overlayStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }}
-        onBackdropPress={() => setopenBlockModal(p => !p)}
-    >
-        <Dialog.Title
-            titleStyle={{ color: TITLE_COLOR }}
-            title={`Block ${name} ?`}
-
-        />
-
-        <Text style={{ marginBottom: 10, color: EMOJI_BACKGROUND_COLOR, fontSize: 15 }}>Blocked contacts cannot call or send you messages. This contact will not be notified</Text>
-
-        <View style={{ flexDirection: "row", alignItems: "center", marginVertical: 20 }}>
-            <View style={{ alignSelf: 'flex-start' }}>
-                <CheckBox
-                    containerStyle={{ backgroundColor: TAB_BACKGROUND_COLOR }}
-                    checked={checked}
-                    onPress={() => setchecked(p => !p)}
-                    iconType="material-community"
-                    checkedIcon="checkbox-marked"
-                    uncheckedIcon="checkbox-blank-outline"
-                    checkedColor={EMOJI_BACKGROUND_COLOR}
-                />
-            </View>
-            <View>
-                <Text style={{ marginBottom: 5, color: EMOJI_BACKGROUND_COLOR, fontSize: 15, fontWeight: 'bold' }}>Report contact</Text>
-                <Text style={{ color: EMOJI_BACKGROUND_COLOR, fontSize: 15 }}>The last 5 messages will be forwarded to WhatsApp</Text>
-            </View>
-        </View>
-
-        <Dialog.Actions>
-
-            <Dialog.Button onPress={handleBlockChat} titleStyle={{ color: "lightgreen" }} title="Block" />
-            <Dialog.Button
-                onPress={() => setopenBlockModal(p => !p)}
-                titleStyle={{ color: "lightgreen" }}
-                title="Cancel"
+    return <CustomModal
+    
+    visible={openBlockModal}
+    setvisible={setopenBlockModal}
+    AdditionalContent={() => {
+        return        <View style={{ flexDirection: "row", alignItems: "center", marginVertical: 20 }}>
+        <View style={{ alignSelf: 'flex-start' }}>
+            <CheckBox
+                containerStyle={{ backgroundColor: CUSTOM_MODAL_BACKGROUND }}
+                checked={checked}
+                onPress={() => setchecked(p => !p)}
+                iconType="material-community"
+                checkedIcon="checkbox-marked"
+                uncheckedIcon="checkbox-blank-outline"
+                checkedColor={EMOJI_BACKGROUND_COLOR}
             />
-        </Dialog.Actions>
-    </Dialog>
+        </View>
+        <View style={{maxWidth:280}}>
+            <Text style={{ marginBottom: 5, color: EMOJI_BACKGROUND_COLOR, fontSize: 15, fontWeight: 'bold' }}>Report contact</Text>
+            <Text style={{ color: EMOJI_BACKGROUND_COLOR, fontSize: 15 }}>The last 5 messages will be forwarded to WhatsApp</Text>
+        </View>
+    </View>
+    }}
+    title={`Block ${name} ?`}
+    description="Blocked contacts cannot call or send you messages. This contact will not be notified"
+    secondBtnText="Block"
+    handleCancelPressed={() => {}}
+    handleSucess={handleBlockChat}
+    />
+    
+}
+
+export const ClearChatModal = ({clearChatModal,setclearChatModal,handleClearChat}) => {
+    const [c,sc] = useState(false);
+    return <CustomModal
+    title={"Clear this chat ?"}
+    description={""}
+    visible={clearChatModal}
+    setvisible={setclearChatModal}
+    AdditionalContent={() => {
+        return <View style={{flexDirection:"row",maxWidth:250,marginRight:30,alignItems:"center",alignSelf:'flex-start',marginTop:-20 }}>
+        <CheckBox
+            containerStyle={{ backgroundColor: CUSTOM_MODAL_BACKGROUND,marginLeft:0 }}
+            checked={c}
+            onPress={() => sc(p => !p)}
+            iconType="material-community"
+            checkedIcon="checkbox-marked"
+            uncheckedIcon="checkbox-blank-outline"
+            checkedColor={ACTIVE_TAB_GREEN_COLOR}
+        />
+        <Text style={{color:CHAT_DATA_STATUS_COLOR}}>Also delete the media received in the chat from the device gallery</Text>
+    </View>
+    }}
+    secondBtnText="Clear chat"
+    handleCancelPressed={() => {}}
+    handleSucess={handleClearChat}
+    />
 }
 
 

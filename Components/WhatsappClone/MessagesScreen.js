@@ -63,7 +63,8 @@ import MessageInput1 from "./MessageInput1";
 import ReactEmojiModal from "./ReactEmojiModal";
 import SingleMessagesScreenNavigationBar from "./SingleMessagesScreenNavigationBar";
 import SingleReaction from "./SingleReaction";
-import {BlockModal, LoadingModal, MuteNotificationsDialog} from "./MessagesDialogs";
+import {BlockModal, ClearChatModal, LoadingModal, MuteNotificationsDialog} from "./MessagesDialogs";
+import CustomModal from "./CustomModal";
 
 
 const MessagesScreen = ({ navigation, route }) => {
@@ -164,7 +165,6 @@ const MessagesScreen = ({ navigation, route }) => {
 
   const [openBlockModal,setopenBlockModal] = useState(false);
 
-
   useFocusEffect(() => {
     navigation.setOptions({
       header: () => {
@@ -185,6 +185,8 @@ const MessagesScreen = ({ navigation, route }) => {
           setModalVisible={setModalVisible}
           setopenBlockModal={setopenBlockModal}
           value={value}
+          setshowloadingDialog={setshowloadingDialog}
+          showloadingDialog={showloadingDialog}
         />
       },
     });
@@ -297,6 +299,7 @@ const MessagesScreen = ({ navigation, route }) => {
      />
 
       <MuteNotificationsDialog
+        item={item}
         mutedDialogOpen={mutedDialogOpen}
         setmutedDialogOpen={setmutedDialogOpen}
       />
@@ -348,6 +351,7 @@ const MessagesScreen = ({ navigation, route }) => {
                 clickedMessageReactions.map(reaction => {
                   return (
                     <SingleReaction
+                      key={reaction.key}
                       reaction={reaction}
                     />
                   )

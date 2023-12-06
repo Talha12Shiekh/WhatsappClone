@@ -23,8 +23,11 @@ import {
 } from "@expo/vector-icons";
 import { useChatsContext } from '../../App';
 import Menu from './Menu';
+import { ClearChatModal } from './MessagesDialogs';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages, online, lastMessageTime, setmutedDialogOpen, messagesNavbarAnimation, selectedMessages, ReplyContainerAnimation, setshowingReplyMessage, CloseContainer, selectedStarMessages, selectedMessageIndices, setModalVisible, setopenBlockModal,value }) => {
+const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages, online, lastMessageTime, setmutedDialogOpen, messagesNavbarAnimation, selectedMessages, ReplyContainerAnimation, setshowingReplyMessage, CloseContainer, selectedStarMessages, selectedMessageIndices, setModalVisible, setopenBlockModal, value, setshowloadingDialog, showloadingDialog }) => {
     let ChatNameLength = "loremipsumdolor";
 
     const navigation = useNavigation();
@@ -52,6 +55,8 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
         { text: "Report", onPress: () => { }, key: 1 },
     ];
 
+    const [clearChatModal, setclearChatModal] = useState(false);
+
 
     const ForwardMessages = async () => {
         let selectedMessages = messages.filter((msgs) => msgs.selected);
@@ -69,7 +74,7 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
     function handleBlockChats() {
         !item.blocked ? setopenBlockModal(p => !p) : null;
 
-        if(item.blocked){
+        if (item.blocked) {
             const newChats = chats.map(chat => {
                 if (chat.key == item.key) {
                     return {
@@ -84,10 +89,38 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
         }
     }
 
+    const [clearedChats,setclearedChats] = useState([]);
+
+    const handleClearChat = (clearKey) => {
+        const newClearedChats = chats.map(clearChat => {
+            if (clearChat.key == clearKey) {
+
+                return {
+                    ...clearChat,
+                    messages: (clearChat.messages.length = 0)
+                }
+            }
+            return clearChat;
+        });
+        setclearedChats(newClearedChats);
+        setclearChatModal(p => !p)
+    }
+
+    const handleSuccess = () => {
+        setshowloadingDialog(p => !p);
+        setTimeout(() => {
+            setshowloadingDialog(p => !p);
+        }, 500);
+
+        setclearedChats(clearedChats);
+        showToast("You cleared this chat");
+
+    }
+
     const MoreClickedMenudata = [
         { text: "Report", onPress: () => { }, key: 1 },
         { text: item.blocked ? "UnBlock" : "Block", onPress: () => handleBlockChats(), key: 2 },
-        { text: "Clear Chat", onPress: () => { }, key: 3 },
+        { text: "Clear Chat", onPress: () => handleClearChat(item.key), key: 3 },
         { text: "Export chat", onPress: () => { }, key: 4 },
         { text: "Add shortcut", onPress: () => { }, key: 5 },
     ]
@@ -140,6 +173,11 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
 
     return (
         <>
+            <ClearChatModal
+                clearChatModal={clearChatModal}
+                setclearChatModal={setclearChatModal}
+                handleClearChat={handleSuccess}
+            />
             <View
                 style={{
                     height: 60,
