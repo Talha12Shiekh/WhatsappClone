@@ -23,12 +23,16 @@ import {
 } from "@expo/vector-icons";
 import { useChatsContext } from '../../App';
 import Menu from './Menu';
-import { ClearChatModal } from './MessagesDialogs';
+import { ClearChatModal, ReportModal } from './MessagesDialogs';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
-const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages, online, lastMessageTime, setmutedDialogOpen, messagesNavbarAnimation, selectedMessages, ReplyContainerAnimation, setshowingReplyMessage, CloseContainer, selectedStarMessages, selectedMessageIndices, setModalVisible, setopenBlockModal, value, setshowloadingDialog, showloadingDialog }) => {
+const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages, online, lastMessageTime, setmutedDialogOpen, messagesNavbarAnimation, selectedMessages, ReplyContainerAnimation, setshowingReplyMessage, CloseContainer, selectedStarMessages, selectedMessageIndices, setModalVisible, setopenBlockModal, value, setshowloadingDialog }) => {
     let ChatNameLength = "loremipsumdolor";
+
+
+    const [showReportModal, setshowReportModal] = useState(false)
+    const [checkedReport, setCheckedReport] = useState(true)
 
     const navigation = useNavigation();
 
@@ -56,6 +60,9 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
     ];
 
     const [clearChatModal, setclearChatModal] = useState(false);
+
+
+
 
 
     const ForwardMessages = async () => {
@@ -89,7 +96,7 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
         }
     }
 
-    const [clearedChats,setclearedChats] = useState([]);
+    const [clearedChats, setclearedChats] = useState([]);
 
     const handleClearChat = (clearKey) => {
         const newClearedChats = chats.map(clearChat => {
@@ -105,20 +112,52 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
         setclearedChats(newClearedChats);
         setclearChatModal(p => !p)
     }
-
     const handleSuccess = () => {
         setshowloadingDialog(p => !p);
         setTimeout(() => {
             setshowloadingDialog(p => !p);
+            setclearedChats(clearedChats);
+            showToast("You cleared this chat");
         }, 500);
-
-        setclearedChats(clearedChats);
-        showToast("You cleared this chat");
-
     }
 
+    const [reportChats,setReportChats] = useState([])
+
+    function handleReportChat(){
+        setshowReportModal(p => !p)
+        const newReportedChats = chats.map(chat => {
+            if(chat.key == item.key){
+                if(checkedReport){
+                    return {
+                        ...chat,
+                        blocked: false,
+                        messages:(chat.messages.length = 0)
+                    }
+                }else {
+                    return chat;
+                }
+            }
+            return chat;
+        });
+        setReportChats(newReportedChats)
+    }
+
+    function handleReportSuccess(){
+        setshowloadingDialog(p => !p);
+
+        setTimeout(() => {
+            setshowloadingDialog(p => !p);
+            setchats(reportChats);
+                 
+        },500);
+
+        checkedReport ? showToast(`Report send and ${item.name} has been blocked`) : showToast("Your Report has been send to Whatsapp ")
+    }
+
+    
+
     const MoreClickedMenudata = [
-        { text: "Report", onPress: () => { }, key: 1 },
+        { text: "Report", onPress: () => handleReportChat(), key: 1 },
         { text: item.blocked ? "UnBlock" : "Block", onPress: () => handleBlockChats(), key: 2 },
         { text: "Clear Chat", onPress: () => handleClearChat(item.key), key: 3 },
         { text: "Export chat", onPress: () => { }, key: 4 },
@@ -171,12 +210,21 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
         showToast(`${selectedMessages.length} messages copied`);
     };
 
+   
     return (
         <>
             <ClearChatModal
                 clearChatModal={clearChatModal}
                 setclearChatModal={setclearChatModal}
                 handleClearChat={handleSuccess}
+            />
+            <ReportModal
+                showReportModal={showReportModal}
+                setshowReportModal={setshowReportModal}
+                setCheckedReport={setCheckedReport}
+                checkedReport={checkedReport}
+                name={item.name}
+                handleSuccess={handleReportSuccess}
             />
             <View
                 style={{

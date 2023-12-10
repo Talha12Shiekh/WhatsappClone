@@ -63,7 +63,7 @@ import MessageInput1 from "./MessageInput1";
 import ReactEmojiModal from "./ReactEmojiModal";
 import SingleMessagesScreenNavigationBar from "./SingleMessagesScreenNavigationBar";
 import SingleReaction from "./SingleReaction";
-import {BlockModal, ClearChatModal, LoadingModal, MuteNotificationsDialog} from "./MessagesDialogs";
+import {BlockModal, ClearChatModal, LoadingModal, MuteNotificationsDialog, ReportModal} from "./MessagesDialogs";
 import CustomModal from "./CustomModal";
 
 
@@ -149,9 +149,6 @@ const MessagesScreen = ({ navigation, route }) => {
   const selectedMessage = messages.filter(msg => msg.selected);
 
   const [selectedStarMessages, setselectedStarMessages] = useState(null);
-
-
-
 
 
   useEffect(() => {
@@ -280,6 +277,8 @@ const MessagesScreen = ({ navigation, route }) => {
     setContentHeight(e.nativeEvent.layout.height)
   }
 
+  
+
 
   return (
     <BottomSheetModalProvider>
@@ -287,7 +286,9 @@ const MessagesScreen = ({ navigation, route }) => {
      <LoadingModal
      showloadingDialog={showloadingDialog}
      setshowloadingDialog={setshowloadingDialog}
+     
      />
+
 
      <BlockModal
           name={item.name}

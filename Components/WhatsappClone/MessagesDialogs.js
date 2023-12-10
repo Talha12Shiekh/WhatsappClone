@@ -204,4 +204,31 @@ export const ClearChatModal = ({clearChatModal,setclearChatModal,handleClearChat
 }
 
 
+export const ReportModal = ({showReportModal,setshowReportModal,name,handleSuccess,checkedReport,setCheckedReport}) => {
+    return <CustomModal
+    visible={showReportModal}
+    setvisible={setshowReportModal}
+    AdditionalContent={() => {
+        return        <View style={{flexDirection:"row",maxWidth:250,marginRight:30,alignItems:"center",alignSelf:'flex-start',marginTop:0 }}>
+        <CheckBox
+            containerStyle={{ backgroundColor: CUSTOM_MODAL_BACKGROUND,marginLeft:0 }}
+            checked={checkedReport}
+            onPress={() => setCheckedReport(prev => !prev)}
+            iconType="material-community"
+            checkedIcon="checkbox-marked"
+            uncheckedIcon="checkbox-blank-outline"
+            checkedColor={ACTIVE_TAB_GREEN_COLOR}
+        />
+        <Text style={{color:CHAT_DATA_STATUS_COLOR}}>Block contact and delete chat</Text>
+    </View>
+    }}
+    title={`Report ${name} ?`}
+    description="This last 5 messages from this contact will be forwarded to WhatsApp This contact will not be notified "
+    secondBtnText={"Report"}
+    handleCancelPressed={() => {}}
+    handleSucess={handleSuccess}
+    
+    />
+}
+
 

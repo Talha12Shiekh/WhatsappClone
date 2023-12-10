@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableNativeFeedback } from 'react-native'
 import React, { useState } from 'react'
-import { CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, TAB_BACKGROUND_COLOR, TITLE_COLOR, ACTIVE_TAB_GREEN_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR } from './Variables'
+import { CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, TAB_BACKGROUND_COLOR, TITLE_COLOR, ACTIVE_TAB_GREEN_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR, EMOJI_BACKGROUND_COLOR } from './Variables'
 import image from "./Images/dImage.png";
 import { Dialog, CheckBox, Icon } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -78,7 +78,7 @@ const DisappearingMessages = ({ route }) => {
                     <Icon
                       name="radio-button-checked"
                       type="material"
-                      color="#6fc11d"
+                      color={ACTIVE_TAB_GREEN_COLOR}
                       size={25}
                       iconStyle={{ marginRight: 10 }}
                     />
@@ -87,7 +87,7 @@ const DisappearingMessages = ({ route }) => {
                     <Icon
                       name="radio-button-unchecked"
                       type="material"
-                      color="grey"
+                      color={EMOJI_BACKGROUND_COLOR}
                       size={25}
                       iconStyle={{ marginRight: 10 }}
                     />
