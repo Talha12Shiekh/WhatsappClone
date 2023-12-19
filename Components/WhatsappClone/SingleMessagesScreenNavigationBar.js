@@ -11,6 +11,7 @@ import {
     Ionicons,
 } from "react-native-vector-icons";
 import { MakeAnimation, RippleButton, showToast } from './Helpers';
+import { FormattedDate, FormattedTime, FormattedDateParts } from "react-intl";
 import {
     MaterialIcons,
     FontAwesome5,
@@ -32,7 +33,7 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
 
 
     const [showReportModal, setshowReportModal] = useState(false)
-    const [checkedReport, setCheckedReport] = useState(true)
+    const [checkedReport, setCheckedReport] = useState(false)
 
     const navigation = useNavigation();
 
@@ -92,15 +93,15 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
                 return chat;
             });
             setchats(newChats);
-            showToast("You unblocked this contact !")
+            showToast(`You ${item.blocked ? "UnBlocked" : "Blocked"} this contact !`)
         }
     }
 
-    const [clearedChats, setclearedChats] = useState([]);
+    const handleSuccess = () => {
+        setshowloadingDialog(p => !p);
 
-    const handleClearChat = (clearKey) => {
         const newClearedChats = chats.map(clearChat => {
-            if (clearChat.key == clearKey) {
+            if (clearChat.key == item.key) {
 
                 return {
                     ...clearChat,
@@ -109,58 +110,76 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
             }
             return clearChat;
         });
-        setclearedChats(newClearedChats);
-        setclearChatModal(p => !p)
-    }
-    const handleSuccess = () => {
-        setshowloadingDialog(p => !p);
+
         setTimeout(() => {
             setshowloadingDialog(p => !p);
-            setclearedChats(clearedChats);
-            showToast("You cleared this chat");
         }, 500);
+
+        setchats(newClearedChats);
+
+        showToast("You cleared this chat");
     }
 
-    const [reportChats,setReportChats] = useState([])
-
-    function handleReportChat(){
-        setshowReportModal(p => !p)
-        const newReportedChats = chats.map(chat => {
-            if(chat.key == item.key){
-                if(checkedReport){
-                    return {
-                        ...chat,
-                        blocked: false,
-                        messages:(chat.messages.length = 0)
-                    }
-                }else {
-                    return chat;
-                }
-            }
-            return chat;
-        });
-        setReportChats(newReportedChats)
-    }
 
     function handleReportSuccess(){
+        const newReportedChats = chats.map(reportchat => {
+            if(reportchat.key == item.key){
+                if(checkedReport){
+                    return {
+                        ...reportchat,
+                        blocked: true,
+                        messages:(reportchat.messages.length = 0)
+                    }
+                }else {
+                    return reportchat;
+                }
+            }
+            return reportchat;
+        });
+
         setshowloadingDialog(p => !p);
+
+        setchats(newReportedChats);
 
         setTimeout(() => {
             setshowloadingDialog(p => !p);
-            setchats(reportChats);
-                 
         },500);
 
         checkedReport ? showToast(`Report send and ${item.name} has been blocked`) : showToast("Your Report has been send to Whatsapp ")
     }
 
+
+    async function handleExportChat(){
+        const exportedChats = chats.map(exportchat => {
+            if(exportchat.key == item.key){
+                return  exportchat.messages.map(msg => ({
+                    time:msg.time,
+                    message:msg.message,
+                    date:item.time,
+                    name:item.name,
+                    key:Date.now()
+                }))
+            }
+        });
+        
+        try {
+            const result = await Share.share({
+                message: "Hello world how are you",
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+
+
+    }
+
     
 
     const MoreClickedMenudata = [
-        { text: "Report", onPress: () => handleReportChat(), key: 1 },
+        { text: "Report", onPress: () => setshowReportModal(p => !p), key: 1 },
         { text: item.blocked ? "UnBlock" : "Block", onPress: () => handleBlockChats(), key: 2 },
-        { text: "Clear Chat", onPress: () => handleClearChat(item.key), key: 3 },
-        { text: "Export chat", onPress: () => { }, key: 4 },
+        { text: "Clear Chat", onPress: () => setclearChatModal(p => !p), key: 3 },
+        { text: "Export chat", onPress: () => handleExportChat(), key: 4 },
         { text: "Add shortcut", onPress: () => { }, key: 5 },
     ]
 
