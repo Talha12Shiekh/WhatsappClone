@@ -1,5 +1,6 @@
 import { Text, View ,TouchableNativeFeedback} from 'react-native'
 import React from 'react'
+import { TAB_PRESS_ACTIVE_WHITE_COLOR } from './Variables'
 
 const SingleReaction = ({reaction}) => {
     return (

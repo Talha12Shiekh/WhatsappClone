@@ -57,7 +57,7 @@ const Chat = (item) => {
 
   function generateAboutLimit() {
     if (!item.pinned && !item.muted && !item.readed) {
-      return "Lorem ipsum dolor sit amet fdaskljfads";
+      return "Lorem ipsum dolor sit amet fdaskl ";
     } else {
       return "Lorem ipsum dolor sit am";
     }

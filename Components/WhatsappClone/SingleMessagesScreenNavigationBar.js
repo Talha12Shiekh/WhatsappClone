@@ -12,6 +12,9 @@ import {
 } from "react-native-vector-icons";
 import { MakeAnimation, RippleButton, showToast } from './Helpers';
 import { FormattedDate, FormattedTime, FormattedDateParts } from "react-intl";
+import * as FileSystem from 'expo-file-system';
+import uuid from 'react-native-uuid';
+import * as Sharing from 'expo-sharing';
 import {
     MaterialIcons,
     FontAwesome5,
@@ -161,15 +164,32 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
                 }))
             }
         });
+
+        let exportchatsArray = exportedChats.flat();
+
+        const fileData = exportchatsArray.map(({date,time,name,message}) => {
+            let formattedDate = new Date(date);
+            let dateString = `${formattedDate.getDate()}/${formattedDate.getMonth()},${formattedDate.getFullYear()}`;
+            let formattedTime = new Date(time);
+            let timeString = `${formattedTime.getHours()}:${formattedTime.getMinutes()}`
+            let AMPM = formattedTime.getHours() >= 12 ? "pm" : "am"; 
+
+            return `${dateString}, ${timeString} ${AMPM} - ${name}: ${message}`
+        })
+
+        let fileName = `Whatsapp Chat with ${item.number}.txt`
+
+        const filePath = FileSystem.documentDirectory + fileName;
         
         try {
-            const result = await Share.share({
-                message: "Hello world how are you",
+            await FileSystem.writeAsStringAsync(filePath, fileData.join("\n"), {
+                encoding: FileSystem.EncodingType.UTF8,
             });
+
+            await Sharing.shareAsync(filePath);
         } catch (error) {
             console.log(error.message);
         }
-
 
     }
 
