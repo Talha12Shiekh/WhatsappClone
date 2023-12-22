@@ -122,7 +122,7 @@ const MessageInput = React.forwardRef(function MessageInput({
     </Animated.View>
   }
 
-  const messageLenght = "Gzjzgidgkskfhdhahflhflhjgjljjjjl";
+  const messageLenght = "Gzjzgidgkskfhdhahflhflh";
 
   const withEmojis = /\p{Extended_Pictographic}/u
 
@@ -213,7 +213,7 @@ const MessageInput = React.forwardRef(function MessageInput({
               reactions: [],
               direction: "",
               backgroundColor:"transparent",
-              fontSize:15
+              fontSize:15,
             };
 
             if (value == "") return;

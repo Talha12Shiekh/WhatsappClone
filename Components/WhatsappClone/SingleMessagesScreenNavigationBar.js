@@ -27,13 +27,14 @@ import {
 } from "@expo/vector-icons";
 import { useChatsContext } from '../../App';
 import Menu from './Menu';
-import { ClearChatModal, ReportModal } from './MessagesDialogs';
+import { ClearChatModal, ReportModal,ExportChatModal } from './MessagesDialogs';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
 const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages, online, lastMessageTime, setmutedDialogOpen, messagesNavbarAnimation, selectedMessages, ReplyContainerAnimation, setshowingReplyMessage, CloseContainer, selectedStarMessages, selectedMessageIndices, setModalVisible, setopenBlockModal, value, setshowloadingDialog }) => {
     let ChatNameLength = "loremipsumdolor";
 
+    const [showexportModal,setshowexportModal] = useState(false);
 
     const [showReportModal, setshowReportModal] = useState(false)
     const [checkedReport, setCheckedReport] = useState(false)
@@ -153,6 +154,7 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
 
 
     async function handleExportChat(){
+        
         const exportedChats = chats.map(exportchat => {
             if(exportchat.key == item.key){
                 return  exportchat.messages.map(msg => ({
@@ -199,7 +201,7 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
         { text: "Report", onPress: () => setshowReportModal(p => !p), key: 1 },
         { text: item.blocked ? "UnBlock" : "Block", onPress: () => handleBlockChats(), key: 2 },
         { text: "Clear Chat", onPress: () => setclearChatModal(p => !p), key: 3 },
-        { text: "Export chat", onPress: () => handleExportChat(), key: 4 },
+        { text: "Export chat", onPress: () => setshowexportModal(p => !p), key: 4 },
         { text: "Add shortcut", onPress: () => { }, key: 5 },
     ]
 
@@ -252,6 +254,11 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
    
     return (
         <>
+        <ExportChatModal
+            showexportModal={showexportModal}
+            setshowexportModal={setshowexportModal}
+            handleSuccess={handleExportChat}
+        />
             <ClearChatModal
                 clearChatModal={clearChatModal}
                 setclearChatModal={setclearChatModal}

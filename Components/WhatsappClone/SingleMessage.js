@@ -182,19 +182,6 @@ const SingleMessage = React.forwardRef(function SingleMessage({
 
 
 
-  // useEffect(() => {
-  //   if(repliedMessage){
-  //     messageRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-  //       replyMsgstyles.push({width,transform:[{translateX:pageX},{translateY:8}],borderRadius:5})
-  //       msgReplyRef?.current?.setNativeProps({
-  //         style: replyMsgstyles,
-  //       });
-  //     });
-  //   }
-  // },[repliedMessage]);
-
-
-
   if (starred) {
     Animated.timing(starScaleAnimation, {
       toValue: 1,
@@ -284,7 +271,8 @@ const SingleMessage = React.forwardRef(function SingleMessage({
       keyExtractor={item => item.key}
       renderHiddenItem={(data, rowMap) => <View />}
       renderItem={() => {
-        return <Pressable
+        return (
+        <Pressable
         style={{ backgroundColor }}
         onPressIn={handleChangeMessageBackground}
         onPressOut={handleUnChangeMessageBackground}
@@ -339,7 +327,6 @@ const SingleMessage = React.forwardRef(function SingleMessage({
                   ? MESSAGE_BACKGROUND_COLOR
                   : ANSWER_BACKGROUND_COLOR,
                 position: "relative",
-
                 marginBottom: reactions.length !== 0 ? 30 : 10,
               },
             ]}
@@ -480,6 +467,7 @@ const SingleMessage = React.forwardRef(function SingleMessage({
 
         </View>
       </Pressable>
+      )
       }}
       />      
     </>

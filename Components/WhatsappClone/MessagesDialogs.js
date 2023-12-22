@@ -2,7 +2,6 @@ import { Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { CheckBox, Dialog, Icon } from '@rneui/base';
 import { ACTIVE_TAB_GREEN_COLOR, CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, CUSTOM_MODAL_BACKGROUND, EMOJI_BACKGROUND_COLOR, TAB_BACKGROUND_COLOR, TITLE_COLOR } from './Variables';
-import { ACTIONS } from './MessagesReducer';
 import { useChatsContext } from '../../App';
 import { showToast } from './Helpers';
 import CustomModal from './CustomModal';
@@ -201,6 +200,20 @@ export const ClearChatModal = ({clearChatModal,setclearChatModal,handleClearChat
     handleCancelPressed={() => {}}
     handleSucess={handleClearChat}
     />
+}
+
+export const ExportChatModal = ({showexportModal,setshowexportModal,handleSuccess}) => {
+    return <CustomModal
+    visible={showexportModal}
+    setvisible={setshowexportModal}
+    AdditionalContent={() => {}}
+    title="Export chat ? "
+    description="Including media will increase the size of the export"
+    secondBtnText="Include media"
+    firstbtntext='Without media'
+    handleCancelPressed={handleSuccess}
+    handleSucess={() => {}}
+    />   
 }
 
 

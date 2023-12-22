@@ -3,7 +3,7 @@ import React from 'react'
 import { ACTIVE_TAB_GREEN_COLOR, CHAT_DATA_STATUS_COLOR, CUSTOM_MODAL_BACKGROUND, MESSAGE_BACKGROUND_COLOR, TITLE_COLOR } from './Variables'
 import { TouchableOpacity } from 'react-native'
 
-const CustomModal = ({visible,setvisible,AdditionalContent,showMoreContent = true,title,description,secondBtnText,handleCancelPressed,handleSucess}) => {
+const CustomModal = ({visible,setvisible,AdditionalContent,showMoreContent = true,title,description,secondBtnText,handleCancelPressed,handleSucess,firstbtntext = "Cancel"}) => {
 
     return (
         <Modal
@@ -22,7 +22,7 @@ const CustomModal = ({visible,setvisible,AdditionalContent,showMoreContent = tru
                     {showMoreContent && <AdditionalContent />}
                     <View style={styles.btnsContainer}>
                         <TouchableOpacity onPress={() => {handleCancelPressed();setvisible(p => !p)}}>
-                            <Text style={styles.btnText}>Cancel</Text>
+                            <Text style={styles.btnText}>{firstbtntext}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => {handleSucess();setvisible(p => !p)}}>
                             <Text style={styles.btnText}>{secondBtnText}</Text>
