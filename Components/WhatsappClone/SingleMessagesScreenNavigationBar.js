@@ -455,7 +455,7 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
                             })
                         }}>
                             <Ionicons
-                                name="md-arrow-undo-sharp"
+                                name="arrow-undo-outline"
                                 size={ICONS_SIZE}
                                 color={TITLE_COLOR}
                             />
@@ -514,7 +514,7 @@ const SingleMessagesScreenNavigationBar = ({ dispatch, setvalue, item, messages,
                     </RippleButton>}
                     {!isDeletedforEveryOne && <RippleButton onPress={() => { ForwardMessages(); CloseContainer(); dispatch({ type: ACTIONS.COPY_TO_CLIPBOARD }) }}>
                         <Ionicons
-                            name="md-arrow-redo-sharp"
+                            name="arrow-redo-outline"
                             size={ICONS_SIZE}
                             color={TITLE_COLOR}
                         />

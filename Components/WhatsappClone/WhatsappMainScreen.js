@@ -2,43 +2,65 @@ import { View } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import Calls from "./Calls";
 import Status from "./Status";
 import Chats from "./Chats";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import WhatsAppNavbar from "./WhatsAppNavbar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import People from "react-native-vector-icons/Ionicons";
+import { AntDesign } from '@expo/vector-icons';
 import CommunityComponent from "./CommunityComponent";
-import {
-  useNavigation,
-  useIsFocused,
-} from "@react-navigation/native";
+import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
+
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { showToast } from "./Helpers";
-import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext, useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
-import { ACTIVE_TAB_GREEN_COLOR, INACTIVE_TAB_WHITE_COLOR, TAB_BACKGROUND_COLOR, TAB_PRESS_ACTIVE_WHITE_COLOR, CHAT_DATA_STATUS_COLOR, STORAGE_KEY, CALLS_STORAGE_KEY, CALLS_KEY, FILTER_STORAGE_KEY, ARCHIVED_STORAGE_KEY, FILTER_CALLS_STORAGE_KEY } from "./Variables"
+import {
+  useArchivedContext,
+  useCallsChatsContext,
+  useCallsContext,
+  useChatsContext,
+  useCallsFilterChatsContext,
+  useFilterChatsContext,
+} from "../../App";
+import {
+  ACTIVE_TAB_GREEN_COLOR,
+  INACTIVE_TAB_WHITE_COLOR,
+  TAB_BACKGROUND_COLOR,
+  TAB_PRESS_ACTIVE_WHITE_COLOR,
+  CHAT_DATA_STATUS_COLOR,
+  STORAGE_KEY,
+  CALLS_STORAGE_KEY,
+  CALLS_KEY,
+  FILTER_STORAGE_KEY,
+  ARCHIVED_STORAGE_KEY,
+  FILTER_CALLS_STORAGE_KEY,
+  CHAT_BACKROUND_COLOR,
+  TITLE_COLOR,
+} from "./Variables";
 
-const Tab = createMaterialTopTabNavigator();
-
+const Tab = createMaterialBottomTabNavigator();
 
 const WhatsappMainScreen = ({ isEnabled }) => {
   const { chats, setchats, storeChats } = useChatsContext();
-
+  createMaterialBottomTabNavigator
   const { calls, setcalls, storeCalls } = useCallsContext();
 
   const { archived, setarchived, storeArchivedChats } = useArchivedContext();
 
   const { callChats, setcallChats, storeCallChats } = useCallsChatsContext();
 
-  const { callFilterChats, setcallFilterChats, storeFilterCalls } = useCallsFilterChatsContext();
+  const { callFilterChats, setcallFilterChats, storeFilterCalls } =
+    useCallsFilterChatsContext();
 
-  const { FileredChats, setFileredChats, storeFilterChats } = useFilterChatsContext()
-
+  const { FileredChats, setFileredChats, storeFilterChats } =
+    useFilterChatsContext();
 
   const getChats = async () => {
     let asyncChats = await AsyncStorage.getItem(STORAGE_KEY);
     let updatedchats = await JSON.parse(asyncChats);
-    
+
     if (updatedchats !== null) {
       setchats(updatedchats);
       setFileredChats(updatedchats);
@@ -111,14 +133,13 @@ const WhatsappMainScreen = ({ isEnabled }) => {
     getFilterCalls();
   }, []);
 
-
   const [opensearchBar, setopensearchBar] = useState(false);
 
   const [currentTabIndex, setcurrentTabIndex] = useState(1);
 
   const [activeRoute, setactiveRoute] = useState("Chats");
 
-  const timeInMilliseconds = Date.now()
+  const timeInMilliseconds = Date.now();
 
   const handleChatsMaking = useCallback(
     (name, number, about, photo, edited, editedKey) => {
@@ -139,8 +160,8 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           readed: false,
           blocked: false,
           messages: [],
-          mutedNotifications:"",
-          disappearingMessages:""
+          mutedNotifications: "",
+          disappearingMessages: "",
         };
         const callInformation = {
           name,
@@ -155,9 +176,7 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           setchats((chts) => [...chts, ChatInformation]);
           setFileredChats((chts) => [...chts, ChatInformation]);
         } else {
-          const ChatToEdit = chats.findIndex(
-            (chat) => chat.key == editedKey
-          );
+          const ChatToEdit = chats.findIndex((chat) => chat.key == editedKey);
           const CallToEdit = calls?.find(
             (call) => call.name == chats[ChatToEdit].name
           );
@@ -246,31 +265,32 @@ const WhatsappMainScreen = ({ isEnabled }) => {
         setactiveRoute={setactiveRoute}
         activeRoute={activeRoute}
       />
-      <Tab.Navigator
+      {/* <Tab.Navigator
         initialRouteName="Chats"
         screenOptions={({ route }) => ({
           tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
           tabBarStyle: { backgroundColor: TAB_BACKGROUND_COLOR },
+          headerShown:false,
           tabBarIndicatorStyle: {
             backgroundColor: ACTIVE_TAB_GREEN_COLOR,
             height: 4,
           },
 
-          tabBarLabelStyle: {
-            textTransform: "none",
-            fontWeight: "bold",
-            fontSize: 15,
-          },
+          // tabBarLabelStyle: {
+          //   textTransform: "none",
+          //   fontWeight: "bold",
+          //   fontSize: 15,
+          // },
           tabBarPressColor: TAB_PRESS_ACTIVE_WHITE_COLOR,
           tabBarPressOpacity: 1,
           tabBarAndroidRipple: { borderless: false },
-          tabBarItemStyle: {
-            flexDirection: "row-reverse",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: -1,
-          },
+          // tabBarItemStyle: {
+          //   flexDirection: "row-reverse",
+          //   justifyContent: "center",
+          //   alignItems: "center",
+          //   zIndex: -1,
+          // },
           tabBarIcon: ({ focused, color }) => {
             let iconName;
 
@@ -348,6 +368,106 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             );
           }}
         </Tab.Screen>
+      </Tab.Navigator> */}
+
+      <Tab.Navigator
+      initialRouteName="Chats"
+      screenOptions={() => ({
+        headerShown:false,
+        tabBarLabelStyle: {
+            textTransform: "none",
+            fontWeight: "bold",
+            fontSize:12,
+            marginBottom:5,
+            color:TITLE_COLOR
+          },
+          tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
+          barStyle: { backgroundColor: CHAT_BACKROUND_COLOR ,height:60},
+          // tabBarPressOpacity: 1,
+          tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
+      })}
+      barStyle={{ backgroundColor: CHAT_BACKROUND_COLOR }}
+      activeColor={TITLE_COLOR}
+      inactiveColor={TITLE_COLOR}
+      >
+        <Tab.Screen name="Chats"
+        options={{
+          tabBarLabel: "Chats",
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View>
+                <MaterialCommunityIcons name="android-messages" size={24} color={TITLE_COLOR} />
+              </View>
+            );
+          },
+        }}
+         >
+          {(props) => {
+            return (
+              <Chats
+                {...props}
+                opensearchBar={opensearchBar}
+                handleChatsMaking={handleChatsMaking}
+                isEnabled={isEnabled}
+                setcurrentTabIndex={setcurrentTabIndex}
+              />
+            );
+          }}
+         </Tab.Screen>
+        <Tab.Screen name="Status" 
+        options={{tabBarLabel: "Updates", 
+        tabBarIcon: ({ focused }) => {
+          return (
+            <View>
+              <AntDesign name="earth" size={24} color={TITLE_COLOR} />
+            </View>
+          );
+        },
+
+        }}
+         >
+          {(props) => {
+            return (
+              <Status {...props} setcurrentTabIndex={setcurrentTabIndex} />
+            )
+          }}
+         </Tab.Screen>
+        <Tab.Screen name="Community" 
+        options={{tabBarLabel: "Communities" ,
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View>
+               <FontAwesome6 name="people-line" size={24} color={TITLE_COLOR} />
+              </View>
+            );
+          },}}
+         >
+          {(props) => {
+            return (
+              <Status {...props} setcurrentTabIndex={setcurrentTabIndex} />
+            )
+          }}
+         </Tab.Screen>
+        <Tab.Screen name="Calls" 
+        options={{tabBarLabel: "Calls",
+        tabBarIcon: ({ focused }) => {
+          return (
+            <View>
+             <Ionicons name="call-outline" size={24} color={TITLE_COLOR} />
+            </View>
+          );
+        },
+         }}
+         >
+          {(props) => {
+            return (
+              <Calls
+                {...props}
+                setcurrentTabIndex={setcurrentTabIndex}
+              />
+            );
+          }}
+         </Tab.Screen>
       </Tab.Navigator>
     </SafeAreaProvider>
   );

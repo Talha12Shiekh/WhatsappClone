@@ -1,6 +1,7 @@
 import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
+import { DefaultTheme } from "./Themes/DefaultTheme"
 import WhatsappMainScreen, {
-  
+
 } from "./Components/WhatsappClone/WhatsappMainScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -16,10 +17,6 @@ import CallInfo from "./Components/WhatsappClone/CallInfo";
 import MessagesScreen from "./Components/WhatsappClone/MessagesScreen";
 import Settings from "./Components/WhatsappClone/Settings";
 import { FormattedTime } from "react-intl";
-
-
-
-
 
 import {
   View,
@@ -54,6 +51,7 @@ import {
   FILTER_CALLS_STORAGE_KEY,
 } from "./Components/WhatsappClone/Variables"
 import DisappearingMessages from "./Components/WhatsappClone/DisappearingMessages";
+import { PaperProvider } from "react-native-paper";
 
 LogBox.ignoreLogs([
   "Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",
@@ -270,6 +268,7 @@ export default function App() {
       await AsyncStorage.setItem(CALLS_KEY, JSON.stringify(calls));
     };
 
+
     const storeFilterCalls = async () => {
       await AsyncStorage.setItem(
         FILTER_CALLS_STORAGE_KEY,
@@ -305,8 +304,12 @@ export default function App() {
     );
   };
 
+  const theme = {
+    ...DefaultTheme,
+  };
+
   return (
-    
+    <PaperProvider theme={theme}>
       <IntlProvider locale="en" onError={(error) => console.log(error)}>
         <MyProviders>
           <NavigationContainer>
@@ -424,13 +427,14 @@ export default function App() {
                 <Stack.Screen
                   name="DissapearingMessages"
                   component={DisappearingMessages}
-                  // options={{ headerTransparent: true }}
+                // options={{ headerTransparent: true }}
                 />
               </Stack.Group>
             </Stack.Navigator>
           </NavigationContainer>
         </MyProviders>
       </IntlProvider>
+    </PaperProvider>
   );
 }
 
