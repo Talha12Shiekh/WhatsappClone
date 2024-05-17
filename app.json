@@ -4,6 +4,9 @@
     "slug": "react_native_ultimate_projects",
     "version": "1.0.0",
     "orientation": "portrait",
+    "runtimeVersion":{
+      "policy":"sdkVersion"
+    },
     "plugins": [
       [
         "expo-image-picker",
@@ -17,7 +20,6 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [

@@ -1,8 +1,7 @@
 import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import { DefaultTheme } from "./Themes/DefaultTheme"
-import WhatsappMainScreen, {
-
-} from "./Components/WhatsappClone/WhatsappMainScreen";
+import { PaperProvider } from 'react-native-paper';
+import WhatsappMainScreen from "./Components/WhatsappClone/WhatsappMainScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import CommunityComponent from "./Components/WhatsappClone/CommunityComponent";
@@ -51,7 +50,6 @@ import {
   FILTER_CALLS_STORAGE_KEY,
 } from "./Components/WhatsappClone/Variables"
 import DisappearingMessages from "./Components/WhatsappClone/DisappearingMessages";
-import { PaperProvider } from "react-native-paper";
 
 LogBox.ignoreLogs([
   "Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",
