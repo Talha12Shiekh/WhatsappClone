@@ -6,6 +6,7 @@ import {
   Animated,
   TextInput,
   Alert,
+  Image,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Camera from "react-native-vector-icons/Feather";
@@ -15,7 +16,7 @@ import {
   showToast,
   MakeAnimation
 } from "./Helpers";
-import { AntDesign,MaterialIcons ,MaterialCommunityIcons,FontAwesome5,Octicons,Ionicons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons, MaterialCommunityIcons, FontAwesome5, Octicons, Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
 import {
@@ -24,12 +25,13 @@ import {
   TITLE_COLOR,
   CHAT_DATA_STATUS_COLOR,
   BADGE_BACKGROUND_COLOR,
+  CHAT_BACKROUND_COLOR
 } from "./Variables";
 import Menu from "./Menu";
 import {
   useNavigation,
 } from "@react-navigation/native";
-import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
+import { useArchivedContext, useCallsChatsContext, useCallsContext, useChatsContext, useCallsFilterChatsContext, useFilterChatsContext } from "../../App";
 import SelectedCallNavbar from "./SelectedCallNavbar";
 
 const WhatsAppNavbar = ({
@@ -42,17 +44,17 @@ const WhatsAppNavbar = ({
 }) => {
   // *! DATA OF THE BADGES IN THE NAVBAR
 
-  const {callChats,setcallChats,storeCallChats} = useCallsChatsContext()
+  const { callChats, setcallChats, storeCallChats } = useCallsChatsContext()
 
-  const {chats,setchats} = useChatsContext();
+  const { chats, setchats } = useChatsContext();
 
-  const {calls,setcalls} = useCallsContext();
+  const { calls, setcalls } = useCallsContext();
 
   const { setarchived } = useArchivedContext();
 
-  const {callFilterChats,setcallFilterChats} = useCallsFilterChatsContext();
+  const { callFilterChats, setcallFilterChats } = useCallsFilterChatsContext();
 
-  const { FileredChats,setFileredChats } = useFilterChatsContext();
+  const { FileredChats, setFileredChats } = useFilterChatsContext();
 
   const selected = chats.some((chat) => chat.selected);
 
@@ -69,11 +71,11 @@ const WhatsAppNavbar = ({
 
   const navigation = useNavigation();
 
-  let screens = ["Community", "Chats","Status","Calls"];
+  let screens = ["Community", "Chats", "Status", "Calls"];
 
   useEffect(() => {
-      setactiveRoute(screens[currentTabIndex]);
-  },[currentTabIndex])
+    setactiveRoute(screens[currentTabIndex]);
+  }, [currentTabIndex])
 
 
   const SelectChatMenuAnimation = useRef(new Animated.Value(0)).current;
@@ -82,7 +84,7 @@ const WhatsAppNavbar = ({
 
   const searchNavbarAnimation = useRef(new Animated.Value(0)).current;
 
-  const [showBadges,setShowBadges] = useState(true);
+  const [showBadges, setShowBadges] = useState(true);
 
   const MenuAnimation = useRef(new Animated.Value(0)).current;
 
@@ -99,8 +101,8 @@ const WhatsAppNavbar = ({
   // *! DATA OF THE MENU OF THE CHAT WHEN WE SELECT IT
 
   const SelectedChatMenuData = [
-    { text: "Add chat shortcut", onPress: () => {}, key: 1 },
-    { text: "View contact", onPress: () => {}, key: 2 },
+    { text: "Add chat shortcut", onPress: () => { }, key: 1 },
+    { text: "View contact", onPress: () => { }, key: 2 },
     {
       text: `Mark as ${readed ? "read" : "Unread"}`,
       onPress: () => {
@@ -111,7 +113,7 @@ const WhatsAppNavbar = ({
             return {
               ...chat,
               readed: !chat.readed,
-              selected:false
+              selected: false
             };
           }
           return chat;
@@ -122,39 +124,39 @@ const WhatsAppNavbar = ({
     },
     !isAllselected
       ? {
-          text: "Select all",
-          onPress: () => {
-            const newChats = [...chats];
-            const selectedAllChats = newChats.map((chat) => {
-              setisAllselected(true);
-              if (chat) {
-                return {
-                  ...chat,
-                  selected: true,
-                };
-              }
-            });
-            setchats(selectedAllChats);
-          },
-          key: 4,
-        }
-      : {
-          text: "UnSelect all",
-          onPress: () => {
-            const newChats = [...chats];
-            const selectedAllChats = newChats.map((chat) => {
-              setisAllselected(false);
-              if (chat) {
-                return {
-                  ...chat,
-                  selected: false,
-                };
-              }
-            });
-            setchats(selectedAllChats);
-          },
-          key: 5,
+        text: "Select all",
+        onPress: () => {
+          const newChats = [...chats];
+          const selectedAllChats = newChats.map((chat) => {
+            setisAllselected(true);
+            if (chat) {
+              return {
+                ...chat,
+                selected: true,
+              };
+            }
+          });
+          setchats(selectedAllChats);
         },
+        key: 4,
+      }
+      : {
+        text: "UnSelect all",
+        onPress: () => {
+          const newChats = [...chats];
+          const selectedAllChats = newChats.map((chat) => {
+            setisAllselected(false);
+            if (chat) {
+              return {
+                ...chat,
+                selected: false,
+              };
+            }
+          });
+          setchats(selectedAllChats);
+        },
+        key: 5,
+      },
   ];
 
   // *! FUNCTION TO NAVIGATE TO PROFILE
@@ -166,7 +168,7 @@ const WhatsAppNavbar = ({
 
 
 
-  function getSelectedChat(){
+  function getSelectedChat() {
     const selectedChat = chats?.filter(chat => chat.selected);
     return selectedChat[selectedChat.length - 1] || null;
   }
@@ -174,19 +176,19 @@ const WhatsAppNavbar = ({
 
   // *! USE EFFECT FOR SELECTINNG THE CHAT AND MAKING THE NAVBAR OPENING ANIMATION
 
-    if (selected) {
-      MakeAnimation(selectedNavbarAnimation,1,300);
-    } else {
-      MakeAnimation(selectedNavbarAnimation,0,300);
-    }
+  if (selected) {
+    MakeAnimation(selectedNavbarAnimation, 1, 300);
+  } else {
+    MakeAnimation(selectedNavbarAnimation, 0, 300);
+  }
 
   // *! USE EFFECT FOR OPENING THE SEARCH BAR
 
-    if (opensearchBar) {
-      MakeAnimation(searchNavbarAnimation,1,300)
-    } else {
-      MakeAnimation(searchNavbarAnimation,0,300)
-    }
+  if (opensearchBar) {
+    MakeAnimation(searchNavbarAnimation, 1, 300)
+  } else {
+    MakeAnimation(searchNavbarAnimation, 0, 300)
+  }
 
   const handleOpenSearchBar = () => {
     setopensearchBar(!opensearchBar);
@@ -212,8 +214,8 @@ const WhatsAppNavbar = ({
         if (chat.selected) {
           return {
             ...chat,
-            pinned:!chat.pinned,
-            selected:false
+            pinned: !chat.pinned,
+            selected: false
           };
         }
         return chat;
@@ -242,7 +244,7 @@ const WhatsAppNavbar = ({
         return {
           ...chat,
           muted: !chat.muted,
-          selected:false
+          selected: false
         };
       }
       return chat;
@@ -275,8 +277,7 @@ const WhatsAppNavbar = ({
     setchats(deletedChats);
     setFileredChats(deletedChats);
     showToast(
-      `${unSelectChatsArchived.length} chat${
-        unSelectChatsArchived.length > 1 ? "s" : ""
+      `${unSelectChatsArchived.length} chat${unSelectChatsArchived.length > 1 ? "s" : ""
       } Archieved`
     );
   }, [chats, setchats, setFileredChats]);
@@ -284,39 +285,39 @@ const WhatsAppNavbar = ({
   // *! FUNCTION TO FILTER THE CHAT
 
   const handleFilterChats = useCallback(
-    (vlue,route) => {
+    (vlue, route) => {
       setValue(vlue);
-      if(route == "Chats"){
-      if (vlue == "") {
-        setchats(FileredChats);
-      } else {
-        const FilteredItems = chats.filter((chat) => {
-          return chat.name.toLowerCase().includes(vlue.toLowerCase());
-        });
-
-        if (FilteredItems.length > 0) {
-          setchats(FilteredItems);
-        } else {
+      if (route == "Chats") {
+        if (vlue == "") {
           setchats(FileredChats);
+        } else {
+          const FilteredItems = chats.filter((chat) => {
+            return chat.name.toLowerCase().includes(vlue.toLowerCase());
+          });
+
+          if (FilteredItems.length > 0) {
+            setchats(FilteredItems);
+          } else {
+            setchats(FileredChats);
+          }
+        }
+      } else if (route == "Calls") {
+        if (vlue == "") {
+          setcalls(callFilterChats)
+        } else {
+          const FilteredCallItems = calls.filter((call) => {
+            return call.name.toLowerCase().includes(vlue.toLowerCase());
+          });
+
+          if (FilteredCallItems.length > 0) {
+            setcalls(FilteredCallItems);
+          } else {
+            setcalls(callFilterChats);
+          }
         }
       }
-    }else if(route == "Calls"){
-      if(vlue == ""){
-        setcalls(callFilterChats)
-      }else {
-        const FilteredCallItems = calls.filter((call) => {
-          return call.name.toLowerCase().includes(vlue.toLowerCase());
-        });
-
-        if (FilteredCallItems.length > 0) {
-          setcalls(FilteredCallItems);
-        } else {
-          setcalls(callFilterChats);
-        } 
-      }
-    }
     },
-    [setchats, chats,calls,callFilterChats,FileredChats]
+    [setchats, chats, calls, callFilterChats, FileredChats]
   );
 
   // *! FUNCTION TO GET THE SELECTED CHAT NUMBER
@@ -327,12 +328,12 @@ const WhatsAppNavbar = ({
     }
   });
 
-  const [selectedChatForNavbar,setselectedChatForNavbar] = useState(null);
+  const [selectedChatForNavbar, setselectedChatForNavbar] = useState(null);
 
   useEffect(() => {
     setselectedChatForNavbar(selectedChats[selectedChats.length - 1]);
   }, [selectedChats])
-  
+
 
   // *! FUNCTION TO DELETE THE CHAT
 
@@ -355,10 +356,10 @@ const WhatsAppNavbar = ({
     });
 
     const callsDeletedChats = newCalls.map(call => {
-      if(!deletedChatNames.includes(call.name)){
+      if (!deletedChatNames.includes(call.name)) {
         return {
           ...call,
-          name:call.number,
+          name: call.number,
         }
       }
       return call;
@@ -366,8 +367,7 @@ const WhatsAppNavbar = ({
 
 
     Alert.alert(
-      `Delete ${selectedChats.length > 1 ? selectedChats.length : "this"} Chat${
-        selectedChats.length > 1 ? "s" : ""
+      `Delete ${selectedChats.length > 1 ? selectedChats.length : "this"} Chat${selectedChats.length > 1 ? "s" : ""
       } ?`,
       "Messages will only be removed from this device and your devices on the newer versions of the Whatsapp",
       [
@@ -391,18 +391,20 @@ const WhatsAppNavbar = ({
       { cancelable: true }
     );
 
-  }, [chats, setchats, setFileredChats, callChats,calls]);
+  }, [chats, setchats, setFileredChats, callChats, calls]);
 
 
   // *! FUNCTION TO CHANGE THE DATA OF THE MENU
 
   useEffect(() => {
     if (activeRoute == "Community") {
-      const UpDatedData = [{ text: "Settings", onPress: () => {
-        navigation.navigate("Settings",{handleChatsMaking})
-      }, key: 10 }];
+      const UpDatedData = [{
+        text: "Settings", onPress: () => {
+          navigation.navigate("Settings", { handleChatsMaking })
+        }, key: 10
+      }];
       setMenuData(UpDatedData);
-    }else {
+    } else {
       const UpDatedData = [
         {
           text: "New Group",
@@ -425,10 +427,12 @@ const WhatsAppNavbar = ({
           },
           key: 3,
         },
-        { text: "Starred Messages", onPress: () => {}, key: 4 },
-        { text: "Settings", onPress: () => {
-          navigation.navigate("Settings",{handleChatsMaking})
-        }, key: 5 },
+        { text: "Starred Messages", onPress: () => { }, key: 4 },
+        {
+          text: "Settings", onPress: () => {
+            navigation.navigate("Settings", { handleChatsMaking })
+          }, key: 5
+        },
       ];
       setMenuData(UpDatedData);
     }
@@ -442,21 +446,21 @@ const WhatsAppNavbar = ({
 
   const isCallSelected = calls.some(cll => cll.selected);
 
- 
 
-    if(isCallSelected){
-      MakeAnimation(selectedCallNavbarAnimation,1,300)
-    }else {
-      MakeAnimation(selectedCallNavbarAnimation,0,300)
-    }
+
+  if (isCallSelected) {
+    MakeAnimation(selectedCallNavbarAnimation, 1, 300)
+  } else {
+    MakeAnimation(selectedCallNavbarAnimation, 0, 300)
+  }
 
   useEffect(() => {
-    if(activeRoute == "Chats"){
+    if (activeRoute == "Chats") {
       setShowBadges(true)
-    }else{
+    } else {
       setShowBadges(false)
     }
-  },[activeRoute])
+  }, [activeRoute])
 
 
 
@@ -466,7 +470,7 @@ const WhatsAppNavbar = ({
     setcalls(deletedCalls);
     setcallFilterChats(deletedCalls);
   }
-  
+
 
   return (
     <>
@@ -481,7 +485,7 @@ const WhatsAppNavbar = ({
       <Animated.View
         style={[
           styles.searchNavbarContainer,
-          { backgroundColor: TAB_BACKGROUND_COLOR,height:showBadges ? 210 : 60,overflow:"hidden" },
+          { backgroundColor: TAB_BACKGROUND_COLOR, height: showBadges ? 210 : 60, overflow: "hidden" },
           searchNavbarStyles,
         ]}
       >
@@ -498,7 +502,7 @@ const WhatsAppNavbar = ({
             placeholder="Search..."
             placeholderTextColor={CHAT_DATA_STATUS_COLOR}
             value={value}
-            onChangeText={(vlue) => handleFilterChats(vlue,activeRoute)}
+            onChangeText={(vlue) => handleFilterChats(vlue, activeRoute)}
             ref={inputRef}
           />
         </View>
@@ -528,7 +532,7 @@ const WhatsAppNavbar = ({
         </View>
       </Animated.View>
 
-      
+
       <Menu
         animation={SelectChatMenuAnimation}
         menuData={SelectedChatMenuData}
@@ -537,14 +541,14 @@ const WhatsAppNavbar = ({
         style={[
           styles.selectedChatNavbar,
           {
-            backgroundColor: TAB_BACKGROUND_COLOR,
+            backgroundColor: CHAT_BACKROUND_COLOR,
             transform: [{ scaleX: selectedNavbarAnimation }],
           },
         ]}
       >
         <View style={styles.chatsCountContainer}>
           <RippleButton
-            onPress={() => MakeAnimation(selectedNavbarAnimation,0,300)}
+            onPress={() => MakeAnimation(selectedNavbarAnimation, 0, 300)}
           >
             <AntDesign name="arrowleft" size={24} color={TITLE_COLOR} />
           </RippleButton>
@@ -565,12 +569,12 @@ const WhatsAppNavbar = ({
             <MaterialIcons name="delete" size={21} color={TITLE_COLOR} />
           </RippleButton>
           <RippleButton onPress={handleMuteChat}>
-            {(selectedChatForNavbar !== null && selectedChatForNavbar?.muted) ? <Octicons name="unmute" size={24} color={TITLE_COLOR} /> : <FontAwesome5 name="volume-mute" size={21} color={TITLE_COLOR} /> }
+            {(selectedChatForNavbar !== null && selectedChatForNavbar?.muted) ? <Octicons name="unmute" size={24} color={TITLE_COLOR} /> : <FontAwesome5 name="volume-mute" size={21} color={TITLE_COLOR} />}
           </RippleButton>
           <RippleButton onPress={hanldeArchieveChat}>
             <Ionicons name="archive-outline" size={21} color={TITLE_COLOR} />
           </RippleButton>
-          <RippleButton onPress={() => MakeAnimation(SelectChatMenuAnimation,1,1500)}>
+          <RippleButton onPress={() => MakeAnimation(SelectChatMenuAnimation, 1, 1500)}>
             <SimpleLineIcons
               name="options-vertical"
               color={TITLE_COLOR}
@@ -584,7 +588,7 @@ const WhatsAppNavbar = ({
       <View
         style={[
           styles.navbarContainer,
-          { backgroundColor: TAB_BACKGROUND_COLOR },
+          { backgroundColor: CHAT_BACKROUND_COLOR },
         ]}
       >
         <View style={styles.textContainer}>
@@ -598,7 +602,7 @@ const WhatsAppNavbar = ({
           <RippleButton onPress={() => navigation.navigate("Camera")}>
             <Camera name="camera" color={INACTIVE_TAB_WHITE_COLOR} size={18} />
           </RippleButton>
-          {activeRoute == "Community" ? null : (
+          {activeRoute == "Community" || activeRoute == "Chats" ? null : (
             <RippleButton onPress={handleOpenSearchBar}>
               <Search
                 name="search"
@@ -607,7 +611,7 @@ const WhatsAppNavbar = ({
               />
             </RippleButton>
           )}
-          <RippleButton onPress={() => MakeAnimation(MenuAnimation,1,1100)}>
+          <RippleButton onPress={() => MakeAnimation(MenuAnimation, 1, 1100)}>
             <SimpleLineIcons
               name="options-vertical"
               color={INACTIVE_TAB_WHITE_COLOR}
@@ -615,6 +619,10 @@ const WhatsAppNavbar = ({
             />
           </RippleButton>
         </View>
+      </View>
+      <View style={styles.newSearchInputContainer}>
+        <Image style={styles.metaAIIconStyle} source={require("./Images/MetaAI.png")} />
+        <TextInput placeholder="Ask Meta AI or Search" placeholderTextColor={CHAT_DATA_STATUS_COLOR} style={styles.newSearchInput} />
       </View>
     </>
   );
@@ -693,12 +701,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  badgeIcon:{
-    flex:1,
-    justifyContent:"center",
-    alignItems:"center"
+  badgeIcon: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   },
-  badgeText:{
-    flex:2
+  badgeText: {
+    flex: 2
   },
+  newSearchInput: {
+    width: "90%",
+    backgroundColor: TAB_BACKGROUND_COLOR,
+    padding: 12,
+    borderRadius: 50,
+    color: CHAT_DATA_STATUS_COLOR,
+    fontSize: 18,
+    paddingLeft: 55
+  },
+  newSearchInputContainer: {
+    backgroundColor: CHAT_BACKROUND_COLOR, justifyContent: "center", alignItems: "center",
+    position: "relative"
+  },
+  metaAIIconStyle: {
+    width: 50,
+    height: 50,
+    position: "absolute",
+    zIndex: 9999999999999,
+    left: 23
+  }
 });

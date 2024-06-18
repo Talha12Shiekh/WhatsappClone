@@ -4,8 +4,9 @@
     "slug": "react_native_ultimate_projects",
     "version": "1.0.0",
     "orientation": "portrait",
-    "runtimeVersion":{
-      "policy":"sdkVersion"
+    "scheme": "WhatsappClone",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     },
     "plugins": [
       [

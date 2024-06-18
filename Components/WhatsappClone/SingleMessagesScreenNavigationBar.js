@@ -25,7 +25,7 @@ import {
     Entypo,
     Foundation,
 } from "@expo/vector-icons";
-import { useChatsContext } from '../../App';
+import { useChatsContext } from "../../App";
 import Menu from './Menu';
 import { ClearChatModal, ReportModal,ExportChatModal } from './MessagesDialogs';
 import { useState } from 'react';

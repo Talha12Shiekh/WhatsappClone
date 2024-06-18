@@ -2,7 +2,7 @@ import { Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { CheckBox, Dialog, Icon } from '@rneui/base';
 import { ACTIVE_TAB_GREEN_COLOR, CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, CUSTOM_MODAL_BACKGROUND, EMOJI_BACKGROUND_COLOR, TAB_BACKGROUND_COLOR, TITLE_COLOR } from './Variables';
-import { useChatsContext } from '../../App';
+import { useChatsContext } from "../../App";;
 import { showToast } from './Helpers';
 import CustomModal from './CustomModal';
 

@@ -30,7 +30,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ACTIVE_TAB_GREEN_COLOR } from "./Variables";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { MakeAnimation } from "./Helpers";
-import { useArchivedContext, useChatsContext } from "../../App";
+import { useArchivedContext, useChatsContext } from "../../App";;
 
 if (
   Platform.OS === "android" &&

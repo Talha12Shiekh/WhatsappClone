@@ -29,7 +29,7 @@ import {
 } from "./Helpers";
 import { useFocusEffect } from "@react-navigation/native";
 import Menu from "./Menu";
-import { useArchivedContext, useChatsContext } from "../../App";
+import { useArchivedContext, useChatsContext } from "../../App";;
 
 const Archived = ({ route, navigation }) => {
   const checkedAnimaton = new Animated.Value(0);

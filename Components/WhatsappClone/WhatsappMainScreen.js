@@ -1,19 +1,22 @@
 import { View } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Ionicons } from '@expo/vector-icons';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
+// import { FontAwesome6 } from '@expo/vector-icons';
 import Calls from "./Calls";
 import Status from "./Status";
 import Chats from "./Chats";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import WhatsAppNavbar from "./WhatsAppNavbar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AntDesign } from '@expo/vector-icons';
+// import {FontAwesome6} from 'react-native-vector-icons';
+// import  FontAwesome6  from '@expo/vector-icons/FontAwesome6';
+// import { FontAwesome6 } from '@expo/vector-icons';
+import People from "react-native-vector-icons/Ionicons";
+// import FontAwesome6 from "react-native-vector-icons";
 import CommunityComponent from "./CommunityComponent";
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
-
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { showToast } from "./Helpers";
 import {
@@ -44,7 +47,7 @@ const Tab = createMaterialBottomTabNavigator();
 
 const WhatsappMainScreen = ({ isEnabled }) => {
   const { chats, setchats, storeChats } = useChatsContext();
-  createMaterialBottomTabNavigator
+
   const { calls, setcalls, storeCalls } = useCallsContext();
 
   const { archived, setarchived, storeArchivedChats } = useArchivedContext();
@@ -277,20 +280,20 @@ const WhatsappMainScreen = ({ isEnabled }) => {
             height: 4,
           },
 
-          // tabBarLabelStyle: {
-          //   textTransform: "none",
-          //   fontWeight: "bold",
-          //   fontSize: 15,
-          // },
+          tabBarLabelStyle: {
+            textTransform: "none",
+            fontWeight: "bold",
+            fontSize: 15,
+          },
           tabBarPressColor: TAB_PRESS_ACTIVE_WHITE_COLOR,
           tabBarPressOpacity: 1,
           tabBarAndroidRipple: { borderless: false },
-          // tabBarItemStyle: {
-          //   flexDirection: "row-reverse",
-          //   justifyContent: "center",
-          //   alignItems: "center",
-          //   zIndex: -1,
-          // },
+          tabBarItemStyle: {
+            flexDirection: "row-reverse",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: -1,
+          },
           tabBarIcon: ({ focused, color }) => {
             let iconName;
 
@@ -369,105 +372,86 @@ const WhatsappMainScreen = ({ isEnabled }) => {
           }}
         </Tab.Screen>
       </Tab.Navigator> */}
-
       <Tab.Navigator
-      initialRouteName="Chats"
-      screenOptions={() => ({
-        headerShown:false,
-        tabBarLabelStyle: {
-            textTransform: "none",
-            fontWeight: "bold",
-            fontSize:12,
-            marginBottom:5,
-            color:TITLE_COLOR
-          },
-          tabBarInactiveTintColor: INACTIVE_TAB_WHITE_COLOR,
-          barStyle: { backgroundColor: CHAT_BACKROUND_COLOR ,height:60},
-          // tabBarPressOpacity: 1,
-          tabBarActiveTintColor: ACTIVE_TAB_GREEN_COLOR,
-      })}
-      barStyle={{ backgroundColor: CHAT_BACKROUND_COLOR }}
-      activeColor={TITLE_COLOR}
-      inactiveColor={TITLE_COLOR}
+        inactiveColor={TITLE_COLOR}
+        initialRouteName="Chats"
+        activeColor={TITLE_COLOR}
+        barStyle={{ backgroundColor: CHAT_BACKROUND_COLOR }}
       >
         <Tab.Screen name="Chats"
-        options={{
-          tabBarLabel: "Chats",
+          options={{
+            tabBarLabel: "Chats",
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View>
+                  <MaterialCommunityIcons name="android-messages" size={24} color={TITLE_COLOR} />
+                </View>
+              );
+            },
+          }}
+        >
+          {(props) => {
+            return <Chats
+              {...props}
+              opensearchBar={opensearchBar}
+              handleChatsMaking={handleChatsMaking}
+              isEnabled={isEnabled}
+              setcurrentTabIndex={setcurrentTabIndex}
+            />
+          }}
+        </Tab.Screen>
+        <Tab.Screen name="Updates"
+          options={{
+            tabBarLabel: "Updates",
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View>
+                  <AntDesign name="earth" size={24} color={TITLE_COLOR} />
+                </View>
+              );
+            },
+
+          }}
+        >
+          {(props) => {
+            return <Status {...props} setcurrentTabIndex={setcurrentTabIndex} />
+          }}
+        </Tab.Screen>
+        <Tab.Screen name="Communities"
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View>
+                    <AntDesign name="earth" size={24} color={TITLE_COLOR} />
+                </View>
+              );
+            },
+
+          }}
+        >
+          {(props) => {
+            return <Community {...props} setcurrentTabIndex={setcurrentTabIndex} />
+          }}
+        </Tab.Screen>
+        <Tab.Screen  name="Calls" 
+         options={{tabBarLabel: "Calls",
+          tabBarColor:"red",
           tabBarIcon: ({ focused }) => {
             return (
               <View>
-                <MaterialCommunityIcons name="android-messages" size={24} color={TITLE_COLOR} />
+               <Ionicons name="call" size={24} color={TITLE_COLOR} />
               </View>
             );
           },
-        }}
-         >
+           }}
+        >
           {(props) => {
-            return (
-              <Chats
-                {...props}
-                opensearchBar={opensearchBar}
-                handleChatsMaking={handleChatsMaking}
-                isEnabled={isEnabled}
-                setcurrentTabIndex={setcurrentTabIndex}
-              />
-            );
+            return <Calls
+              {...props}
+              setcurrentTabIndex={setcurrentTabIndex}
+            />
           }}
-         </Tab.Screen>
-        <Tab.Screen name="Status" 
-        options={{tabBarLabel: "Updates", 
-        tabBarIcon: ({ focused }) => {
-          return (
-            <View>
-              <AntDesign name="earth" size={24} color={TITLE_COLOR} />
-            </View>
-          );
-        },
-
-        }}
-         >
-          {(props) => {
-            return (
-              <Status {...props} setcurrentTabIndex={setcurrentTabIndex} />
-            )
-          }}
-         </Tab.Screen>
-        <Tab.Screen name="Community" 
-        options={{tabBarLabel: "Communities" ,
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View>
-               <FontAwesome6 name="people-line" size={24} color={TITLE_COLOR} />
-              </View>
-            );
-          },}}
-         >
-          {(props) => {
-            return (
-              <Status {...props} setcurrentTabIndex={setcurrentTabIndex} />
-            )
-          }}
-         </Tab.Screen>
-        <Tab.Screen name="Calls" 
-        options={{tabBarLabel: "Calls",
-        tabBarIcon: ({ focused }) => {
-          return (
-            <View>
-             <Ionicons name="call-outline" size={24} color={TITLE_COLOR} />
-            </View>
-          );
-        },
-         }}
-         >
-          {(props) => {
-            return (
-              <Calls
-                {...props}
-                setcurrentTabIndex={setcurrentTabIndex}
-              />
-            );
-          }}
-         </Tab.Screen>
+        </Tab.Screen>
       </Tab.Navigator>
     </SafeAreaProvider>
   );

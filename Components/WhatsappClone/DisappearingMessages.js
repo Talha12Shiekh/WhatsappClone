@@ -4,7 +4,7 @@ import { CHAT_BACKROUND_COLOR, CHAT_DATA_STATUS_COLOR, TAB_BACKGROUND_COLOR, TIT
 import image from "./Images/dImage.png";
 import { Dialog, CheckBox, Icon } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useChatsContext } from "../../App";
+import { useChatsContext } from "../../App";;
 
 
 const DisappearingMessages = ({ route }) => {

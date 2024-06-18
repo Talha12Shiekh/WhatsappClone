@@ -25,7 +25,7 @@ import {
 } from "react-native-gesture-handler";
 import {Button} from "./Helpers";
 import { Ionicons } from "@expo/vector-icons";
-import { useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext } from "../../App";
+import { useCallsChatsContext, useCallsContext, useChatsContext,useCallsFilterChatsContext } from "../../App";;
 import CallTypeModal from "./CallTypeModal";
 
 const CallDetails = ({ route, navigation }) => {

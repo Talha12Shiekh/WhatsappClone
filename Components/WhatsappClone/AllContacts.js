@@ -13,8 +13,9 @@ import {
   CHAT_DATA_STATUS_COLOR,
   TAB_BACKGROUND_COLOR,
 } from "./Variables";
-import { useChatsContext } from "../../App";
 
+import { useChatsContext } from "../../App";;
+// "../../app/index"
 
 const AllContacts = ({ route ,navigation}) => {
   const { handleChatsMaking } = route.params;

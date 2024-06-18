@@ -1,10 +1,9 @@
 import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
-import { DefaultTheme } from "./Themes/DefaultTheme"
 import { PaperProvider } from 'react-native-paper';
-import WhatsappMainScreen from "./Components/WhatsappClone/WhatsappMainScreen";
+import WhatsappMainScreen from "./Components/WhatsappClone/WhatsappMainScreen"
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import CommunityComponent from "./Components/WhatsappClone/CommunityComponent";
+import CommunityComponent from "./Components/WhatsappClone/CommunityComponent"
 import { IntlProvider } from "react-intl";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Profile from "./Components/WhatsappClone/Profile";
@@ -16,6 +15,7 @@ import CallInfo from "./Components/WhatsappClone/CallInfo";
 import MessagesScreen from "./Components/WhatsappClone/MessagesScreen";
 import Settings from "./Components/WhatsappClone/Settings";
 import { FormattedTime } from "react-intl";
+import { DefaultTheme } from './Themes/DefaultTheme'
 
 import {
   View,
@@ -62,6 +62,10 @@ export const ArchivedContext = createContext([]);
 export const CallChatsContext = createContext([]);
 export const CallFilterChatsContext = createContext([]);
 export const FilterChatsContext = createContext([]);
+
+const theme = {
+  ...DefaultTheme,
+};
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -300,10 +304,6 @@ export default function App() {
         </CallsContext.Provider>
       </ChatsContext.Provider>
     );
-  };
-
-  const theme = {
-    ...DefaultTheme,
   };
 
   return (
