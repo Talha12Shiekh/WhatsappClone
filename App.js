@@ -305,6 +305,9 @@ export default function App() {
     );
   };
 
+
+
+
   return (
     
       <IntlProvider locale="en" onError={(error) => console.log(error)}>
